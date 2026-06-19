@@ -1,24 +1,10 @@
 {
   "source": "Justlife DS 2026 v0.5 — Component/cards (node 11714:1003)",
   "fileKey": "WOvsdFSWN9e0xwDB9u55Tn",
-  "generated": "2026-06-17",
-  "count": 73,
+  "generated": "2026-06-18",
+  "count": 94,
+  "live_count": 22,
   "components": [
-    {
-      "name": "Navigation Bar",
-      "kind": "set",
-      "variants": {
-        "active": [
-          "Bookings",
-          "Wallet",
-          "Profile",
-          "Home"
-        ]
-      },
-      "props": [],
-      "desc": "Bottom tab navigation. 4 active states.",
-      "live": true
-    },
     {
       "name": "Notification Permission",
       "kind": "set",
@@ -30,7 +16,7 @@
         ]
       },
       "props": [],
-      "desc": "Push notification opt-in dialog.",
+      "desc": "Push notification opt-in dialog. 3 states.",
       "live": false
     },
     {
@@ -56,7 +42,7 @@
         ]
       },
       "props": [],
-      "desc": "OTP channel selector.",
+      "desc": "OTP channel selector (WhatsApp / SMS).",
       "live": false
     },
     {
@@ -69,7 +55,7 @@
         ]
       },
       "props": [],
-      "desc": "OTP input field. 56x64.",
+      "desc": "OTP input field. default (border) / selected (brand).",
       "live": false
     },
     {
@@ -94,14 +80,14 @@
         "Show Tag"
       ],
       "desc": "Service grid tile: bg tertiary, tilted 3D icon, 9px label, optional yellow tag.",
-      "live": true
+      "live": false
     },
     {
       "name": "Category Block",
       "kind": "component",
       "variants": {},
       "props": [],
-      "desc": "Category block.",
+      "desc": "",
       "live": false
     },
     {
@@ -129,7 +115,7 @@
         "Show Close",
         "Show Dot"
       ],
-      "desc": "Notification card. 2 types x 8 bg.",
+      "desc": "Notification card. 2 types x 6 bg colors.",
       "live": false
     },
     {
@@ -153,6 +139,21 @@
       ],
       "desc": "Book Again card; recent booking history.",
       "live": false
+    },
+    {
+      "name": "Navigation Bar",
+      "kind": "set",
+      "variants": {
+        "active": [
+          "Bookings",
+          "Wallet",
+          "Profile",
+          "Home"
+        ]
+      },
+      "props": [],
+      "desc": "Bottom tab navigation: floating white pill, active tab in light-blue highlight. 4 tabs.",
+      "live": true
     },
     {
       "name": "Hero Colors",
@@ -188,13 +189,13 @@
       "variants": {
         "position": [
           "First",
+          "Last",
           "Second",
-          "Third",
-          "Last"
+          "Third"
         ]
       },
       "props": [],
-      "desc": "Carousel position dots.",
+      "desc": "",
       "live": false
     },
     {
@@ -207,8 +208,8 @@
         ]
       },
       "props": [],
-      "desc": "Modal sheet for choosing address or country; Selectable Item rows + Manage link.",
-      "live": true
+      "desc": "Modal sheet for choosing address or country; Selectable Item rows.",
+      "live": false
     },
     {
       "name": "Address",
@@ -290,7 +291,7 @@
       },
       "props": [],
       "desc": "Form controls: Checkbox/Radio/Toggle. S=16 M=24.",
-      "live": true
+      "live": false
     },
     {
       "name": "Tab Item",
@@ -313,7 +314,7 @@
       "kind": "component",
       "variants": {},
       "props": [],
-      "desc": "Tab group container.",
+      "desc": "",
       "live": false
     },
     {
@@ -353,7 +354,7 @@
         ]
       },
       "props": [],
-      "desc": "Far-away professional notice.",
+      "desc": "",
       "live": false
     },
     {
@@ -367,7 +368,7 @@
       },
       "props": [],
       "desc": "Currency indicator (Dirham/Riyal vector). NEVER use 'AED' text.",
-      "live": true
+      "live": false
     },
     {
       "name": "Top Picks Card",
@@ -434,6 +435,7 @@
       "props": [
         "Average Rating",
         "Total Reviews",
+        "Star Icon",
         "Show Star",
         "Show Review Count"
       ],
@@ -455,7 +457,12 @@
         "Row 4 Count",
         "Row 3 Count",
         "Row 2 Count",
-        "Row 1 Count"
+        "Row 1 Count",
+        "Show Row 5",
+        "Show Row 4",
+        "Show Row 3",
+        "Show Row 2",
+        "Show Row 1"
       ],
       "desc": "Five-row star distribution bars.",
       "live": false
@@ -532,12 +539,16 @@
       "kind": "component",
       "variants": {},
       "props": [
-        "headerText",
         "showStatusRow",
         "showReferenceRow",
         "showServiceRow",
-        "showDateRow",
-        "showFooter"
+        "showDateTimeRow",
+        "showAddressRow",
+        "showProfessionalRow",
+        "showTotalRow",
+        "showPaymentMethodRow",
+        "showFooter",
+        "headerText"
       ],
       "desc": "Booking details card (granular row toggles).",
       "live": true
@@ -560,9 +571,11 @@
         "Show Reference code",
         "Show Service",
         "Show Date & Time",
-        "Show Footer",
         "Show Address",
-        "Show Professional"
+        "Show Professional",
+        "Show Total (Inc VAT)",
+        "Show Payment Method",
+        "Show Footer"
       ],
       "desc": "Booking details preset variants.",
       "live": true
@@ -572,12 +585,14 @@
       "kind": "component",
       "variants": {},
       "props": [
-        "headerText",
         "showSubtotalRow",
         "showDiscountRow",
         "showServiceFeeRow",
+        "showDivider",
         "showTotalRow",
-        "showPaymentRow"
+        "showPaymentRow",
+        "showFooter",
+        "headerText"
       ],
       "desc": "Price breakdown card.",
       "live": true
@@ -601,7 +616,8 @@
         "Show Discount",
         "Show Service Fee",
         "Show Total (inc. VAT)",
-        "Show Payment"
+        "Show Payment",
+        "Show Disclaimer"
       ],
       "desc": "Price details preset variants.",
       "live": true
@@ -622,7 +638,8 @@
         "Show Payment Method",
         "Show Service",
         "Show Subtotal",
-        "Show Discount"
+        "Show Discount",
+        "Show To be Paid"
       ],
       "desc": "Package/subscription price summary.",
       "live": false
@@ -650,6 +667,7 @@
         "labelText",
         "valueText",
         "showChevron",
+        "showInfo",
         "showRating",
         "showCurrency"
       ],
@@ -745,14 +763,21 @@
         ]
       },
       "props": [
+        "Show Radio Button",
+        "3rd line",
+        "2nd line",
         "Title",
+        "Show Image",
+        "Show Flag",
         "Edit Title",
         "Edit 2nd line",
         "Edit 3rd line",
-        "Show Radio Button",
-        "Show Image",
-        "Show Flag",
-        "Show Tag"
+        "Show Tag",
+        "Show Type Icon",
+        "Show Edit",
+        "Show Delete",
+        "Show Message",
+        "Show Default Tag"
       ],
       "desc": "Canonical list card: title + 2nd/3rd line + radio.",
       "live": true
@@ -778,7 +803,7 @@
         "Show Subtitle",
         "Show Info"
       ],
-      "desc": "Selectable payment row.",
+      "desc": "Selectable payment row. Needs brand logos.",
       "live": true
     },
     {
@@ -788,6 +813,9 @@
         "type": [
           "Service",
           "Ledger"
+        ],
+        "platform": [
+          "Mobile"
         ],
         "state": [
           "Active",
@@ -827,7 +855,8 @@
         "Show Discount",
         "Show Details",
         "Show Chevron",
-        "Show Discount Badge"
+        "Show Discount Badge",
+        "Show Options Tag"
       ],
       "desc": "Combo/package selection row.",
       "live": true
@@ -890,7 +919,7 @@
         "Show Icon"
       ],
       "desc": "Tip/callout: icon + message on tonal bg.",
-      "live": true
+      "live": false
     },
     {
       "name": "List Item",
@@ -908,12 +937,12 @@
         ]
       },
       "props": [
-        "Label",
         "Show Icon",
-        "Show Chevron"
+        "Show Chevron",
+        "Label"
       ],
       "desc": "Icon + label + chevron nav row.",
-      "live": true
+      "live": false
     },
     {
       "name": "Special Instructions",
@@ -949,7 +978,7 @@
         "Show Chevron"
       ],
       "desc": "In-app notification card.",
-      "live": true
+      "live": false
     },
     {
       "name": "Frequency Summary",
@@ -1024,6 +1053,8 @@
         "Date",
         "Time",
         "Number",
+        "Old Date",
+        "Old Time",
         "Professional Name",
         "Caption",
         "Show Timeline",
@@ -1170,7 +1201,11 @@
         "Expiry",
         "Reference",
         "Description",
-        "Services"
+        "Services",
+        "Show Reference",
+        "Show Description",
+        "Show Services",
+        "Show Badge"
       ],
       "desc": "Credit/wallet list row.",
       "live": false
@@ -1249,9 +1284,368 @@
       "props": [
         "Name",
         "Show Bookings",
-        "Show Cancellation"
+        "Show Cancellation",
+        "Show On-time"
       ],
       "desc": "Professional incentives/tier card.",
+      "live": false
+    },
+    {
+      "name": "Payment Method Card",
+      "kind": "set",
+      "variants": {
+        "type": [
+          "Credit Card",
+          "Mastercard",
+          "Visa",
+          "Apple Pay",
+          "Tabby",
+          "Tamara",
+          "Google Pay",
+          "Cash"
+        ]
+      },
+      "props": [],
+      "desc": "Selectable payment option row. Needs brand logos.",
+      "live": false
+    },
+    {
+      "name": "Booking Status Card",
+      "kind": "set",
+      "variants": {
+        "state": [
+          "Professional Assigned",
+          "Confirmed",
+          "In Progress",
+          "Completed",
+          "On the Way",
+          "Cancelled",
+          "Multi Professional"
+        ]
+      },
+      "props": [
+        "Message",
+        "Pro Name"
+      ],
+      "desc": "Booking lifecycle status row.",
+      "live": false
+    },
+    {
+      "name": "Package Details Card",
+      "kind": "set",
+      "variants": {
+        "state": [
+          "Active",
+          "Expired"
+        ]
+      },
+      "props": [
+        "Title",
+        "Description",
+        "Show Remaining"
+      ],
+      "desc": "Purchased package summary.",
+      "live": false
+    },
+    {
+      "name": "Professional Types",
+      "kind": "set",
+      "variants": {
+        "type": [
+          "With Rating",
+          "No Image",
+          "No Rating",
+          "Verified"
+        ]
+      },
+      "props": [
+        "Name"
+      ],
+      "desc": "Compact inline professional label.",
+      "live": false
+    },
+    {
+      "name": "Wallet Card",
+      "kind": "set",
+      "variants": {
+        "type": [
+          "Credit",
+          "Credit - 0",
+          "Credit - Login",
+          "Promotions",
+          "Promotions Single"
+        ]
+      },
+      "props": [],
+      "desc": "Navy credit/promotions card.",
+      "live": false
+    },
+    {
+      "name": "Note Chip",
+      "kind": "set",
+      "variants": {
+        "state": [
+          "Default",
+          "Selected"
+        ]
+      },
+      "props": [
+        "Label"
+      ],
+      "desc": "Small note/preference chip with icon + label.",
+      "live": false
+    },
+    {
+      "name": "Special Instructions Card",
+      "kind": "set",
+      "variants": {
+        "state": [
+          "Info",
+          "Empty",
+          "Filled"
+        ]
+      },
+      "props": [
+        "Title",
+        "Action"
+      ],
+      "desc": "Booking instructions block.",
+      "live": false
+    },
+    {
+      "name": "Category Card",
+      "kind": "set",
+      "variants": {
+        "state": [
+          "Default",
+          "Selected"
+        ]
+      },
+      "props": [
+        "Label"
+      ],
+      "desc": "Small category/deal tile with image + label.",
+      "live": true
+    },
+    {
+      "name": "Rated Card",
+      "kind": "set",
+      "variants": {
+        "state": [
+          "Default",
+          "Tip",
+          "Add Tip"
+        ]
+      },
+      "props": [
+        "Title"
+      ],
+      "desc": "Post-service rating summary.",
+      "live": false
+    },
+    {
+      "name": "Flex Card",
+      "kind": "set",
+      "variants": {
+        "state": [
+          "Default",
+          "Selected"
+        ]
+      },
+      "props": [
+        "Title"
+      ],
+      "desc": "Selectable service/combo row with price.",
+      "live": false
+    },
+    {
+      "name": "Book Card",
+      "kind": "set",
+      "variants": {
+        "book": [
+          "Default",
+          "Small",
+          "With Professional"
+        ]
+      },
+      "props": [
+        "Title"
+      ],
+      "desc": "Service/combo row for booking.",
+      "live": false
+    },
+    {
+      "name": "Form Checkbox Row",
+      "kind": "set",
+      "variants": {
+        "state": [
+          "Default",
+          "Selected"
+        ]
+      },
+      "props": [
+        "Label"
+      ],
+      "desc": "Labeled checkbox row for forms/preferences.",
+      "live": false
+    },
+    {
+      "name": "Service Image",
+      "kind": "set",
+      "variants": {
+        "image": [
+          "Service 01",
+          "Service 02",
+          "Service 03",
+          "Service 04",
+          "Duct & Filter Cleaning",
+          "AC Deep Cleaning",
+          "Bundle Offer",
+          "Body Scrub",
+          "Targeted Relief",
+          "Consultation",
+          "Targeted Foot Massage",
+          "Thai Foot Massage",
+          "Massage",
+          "AC Filter Cleaning"
+        ]
+      },
+      "props": [],
+      "desc": "Reusable service/category image.",
+      "live": false
+    },
+    {
+      "name": "Navbar / App",
+      "kind": "set",
+      "variants": {
+        "platform": [
+          "App"
+        ],
+        "state": [
+          "Default",
+          "Responsive"
+        ]
+      },
+      "props": [
+        "Show Plus Banner",
+        "Show Total",
+        "Show Old Price",
+        "Show Discount",
+        "Show Chevron",
+        "Show Subtitle",
+        "Show Button",
+        "Show Home Indicator",
+        "Price",
+        "Banner Text",
+        "Show Confetti Banner",
+        "Show Apple Pay"
+      ],
+      "desc": "Mobile bottom checkout & CTA bar (price + Continue button + optional plus banner).",
+      "live": false
+    },
+    {
+      "name": "Navbar / Web",
+      "kind": "set",
+      "variants": {
+        "platform": [
+          "Web"
+        ],
+        "state": [
+          "Default",
+          "Alert"
+        ]
+      },
+      "props": [
+        "Show Alert",
+        "Show Button",
+        "Alert Text"
+      ],
+      "desc": "Web bottom checkout bar.",
+      "live": false
+    },
+    {
+      "name": "Savings Banner",
+      "kind": "component",
+      "variants": {},
+      "props": [
+        "Show Confetti",
+        "Show Icon",
+        "Show Dirham",
+        "Show Chevron",
+        "Label",
+        "Amount",
+        "Show Banner"
+      ],
+      "desc": "Confetti celebration + savings info bar.",
+      "live": false
+    },
+    {
+      "name": "App Header",
+      "kind": "component",
+      "variants": {},
+      "props": [
+        "Show Back",
+        "Show Step",
+        "Show Search",
+        "Show Heart",
+        "Show Actions",
+        "Show Progress",
+        "Title",
+        "Step Text"
+      ],
+      "desc": "Mobile screen header (back, step, search, heart, progress).",
+      "live": false
+    },
+    {
+      "name": "Web Header",
+      "kind": "component",
+      "variants": {},
+      "props": [
+        "Show Location",
+        "Show Search",
+        "Show Lang",
+        "Show Flag",
+        "Show User",
+        "Location Text",
+        "User Name"
+      ],
+      "desc": "Desktop top navigation.",
+      "live": false
+    },
+    {
+      "name": "Breadcrumb",
+      "kind": "component",
+      "variants": {},
+      "props": [],
+      "desc": "Navigation path (Home > ... > Current).",
+      "live": false
+    },
+    {
+      "name": "Pop-up Web Header",
+      "kind": "component",
+      "variants": {},
+      "props": [
+        "Show Step",
+        "Show Back",
+        "Title",
+        "Step Text"
+      ],
+      "desc": "Modal/checkout header.",
+      "live": false
+    },
+    {
+      "name": "Responsive Header",
+      "kind": "component",
+      "variants": {},
+      "props": [
+        "Show Breadcrumb",
+        "Show Step",
+        "Show Back",
+        "Show Header Name",
+        "Title",
+        "Step Text"
+      ],
+      "desc": "Mobile-web header (Safari chrome + DS content).",
       "live": false
     }
   ]

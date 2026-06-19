@@ -872,7 +872,9 @@
         "path": "2D%20Icons%20%28export%20SVG%29/chevron-left.svg",
         "tags": [
           "chevron",
-          "left"
+          "left",
+          "back",
+          "previous"
         ]
       },
       {
@@ -1525,7 +1527,9 @@
         "path": "2D%20Icons%20%28export%20SVG%29/x-mark.svg",
         "tags": [
           "x",
-          "mark"
+          "mark",
+          "close",
+          "dismiss"
         ]
       },
       {
