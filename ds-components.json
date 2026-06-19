@@ -3,7 +3,7 @@
   "fileKey": "WOvsdFSWN9e0xwDB9u55Tn",
   "generated": "2026-06-18",
   "count": 94,
-  "live_count": 22,
+  "live_count": 24,
   "components": [
     {
       "name": "Notification Permission",
@@ -1541,7 +1541,7 @@
         "Show Apple Pay"
       ],
       "desc": "Mobile bottom checkout & CTA bar (price + Continue button + optional plus banner).",
-      "live": false
+      "live": true
     },
     {
       "name": "Navbar / Web",
@@ -1594,7 +1594,7 @@
         "Step Text"
       ],
       "desc": "Mobile screen header (back, step, search, heart, progress).",
-      "live": false
+      "live": true
     },
     {
       "name": "Web Header",
