@@ -1,8 +1,8 @@
 {
   "source": "Justlife DS 2026 v0.5 — Component/cards (node 11714:1003)",
   "fileKey": "WOvsdFSWN9e0xwDB9u55Tn",
-  "generated": "2026-06-18",
-  "count": 94,
+  "generated": "2026-06-19",
+  "count": 93,
   "live_count": 24,
   "components": [
     {
@@ -55,7 +55,7 @@
         ]
       },
       "props": [],
-      "desc": "OTP input field. default (border) / selected (brand).",
+      "desc": "OTP input field. default / selected.",
       "live": false
     },
     {
@@ -115,7 +115,7 @@
         "Show Close",
         "Show Dot"
       ],
-      "desc": "Notification card. 2 types x 6 bg colors.",
+      "desc": "Notification card. 2 types x bg colors.",
       "live": false
     },
     {
@@ -191,7 +191,10 @@
           "First",
           "Last",
           "Second",
-          "Third"
+          "Third",
+          "first",
+          "second",
+          "third"
         ]
       },
       "props": [],
@@ -208,7 +211,7 @@
         ]
       },
       "props": [],
-      "desc": "Modal sheet for choosing address or country; Selectable Item rows.",
+      "desc": "Modal sheet for choosing address or country.",
       "live": false
     },
     {
@@ -367,7 +370,7 @@
         ]
       },
       "props": [],
-      "desc": "Currency indicator (Dirham/Riyal vector). NEVER use 'AED' text.",
+      "desc": "Currency indicator (Dirham/Riyal vector). NEVER use AED text.",
       "live": false
     },
     {
@@ -389,7 +392,7 @@
       "live": false
     },
     {
-      "name": "Thank You Card",
+      "name": "Booking Status",
       "kind": "set",
       "variants": {
         "type": [
@@ -406,7 +409,7 @@
       "props": [
         "Show Actions Container"
       ],
-      "desc": "Booking confirmation header.",
+      "desc": "Booking confirmation/status header (was Thank You Card). 8 states.",
       "live": false
     },
     {
@@ -539,18 +542,33 @@
       "kind": "component",
       "variants": {},
       "props": [
-        "showStatusRow",
-        "showReferenceRow",
+        "showInstructionsInput",
+        "showFooter",
         "showServiceRow",
+        "showReferenceRow",
+        "showStatusRow",
+        "showDateRow",
+        "showStartTimeRow",
+        "showDurationRow",
+        "showMaterialsRow",
+        "headerText",
+        "showComboService",
+        "showFrequencyRow",
         "showDateTimeRow",
         "showAddressRow",
         "showProfessionalRow",
         "showTotalRow",
         "showPaymentMethodRow",
-        "showFooter",
-        "headerText"
+        "showServiceDetails",
+        "showFullSessionDuration",
+        "showSubtotal",
+        "showDiscount",
+        "showServiceFee",
+        "showShowMoreLink",
+        "showFooterShowReceipt",
+        "showDisclaimer"
       ],
-      "desc": "Booking details card (granular row toggles).",
+      "desc": "Booking details card (granular row toggles, expanded).",
       "live": true
     },
     {
@@ -571,13 +589,21 @@
         "Show Reference code",
         "Show Service",
         "Show Date & Time",
+        "Show 'Show more' link",
+        "Show Footer",
+        "Show Service Details",
+        "Show Frequency",
         "Show Address",
-        "Show Professional",
         "Show Total (Inc VAT)",
         "Show Payment Method",
-        "Show Footer"
+        "Show Subtotal",
+        "Show Discount",
+        "Show Service Fee",
+        "Show Professional",
+        "Show Full Session Duration",
+        "Show Disclaimer"
       ],
-      "desc": "Booking details preset variants.",
+      "desc": "Booking details preset variants (expanded toggles).",
       "live": true
     },
     {
@@ -592,7 +618,8 @@
         "showTotalRow",
         "showPaymentRow",
         "showFooter",
-        "headerText"
+        "headerText",
+        "footerLabel"
       ],
       "desc": "Price breakdown card.",
       "live": true
@@ -616,10 +643,21 @@
         "Show Discount",
         "Show Service Fee",
         "Show Total (inc. VAT)",
-        "Show Payment",
-        "Show Disclaimer"
+        "Show Full Session Duration",
+        "Show Disclaimer",
+        "Show Justlife +",
+        "Show Date & Time",
+        "Show Professional",
+        "Show Service Details",
+        "Show Add ons",
+        "Show Materials",
+        "Show Frequency",
+        "Show Friday Fee",
+        "Show Time slot extra fee",
+        "Show Fuel Surcharge Fee",
+        "Fuel Fee Free"
       ],
-      "desc": "Price details preset variants.",
+      "desc": "Price details preset variants (many optional rows).",
       "live": true
     },
     {
@@ -653,7 +691,10 @@
           "table text + chevron",
           "payment text line",
           "price text line",
+          "price text line info",
           "with professional",
+          "with multi pro",
+          "justlife+ discount",
           "service combo",
           "Card table text"
         ],
@@ -666,12 +707,22 @@
       "props": [
         "labelText",
         "valueText",
+        "ratingText",
+        "countText",
+        "percentText",
+        "amountText",
+        "showVisa",
         "showChevron",
         "showInfo",
         "showRating",
+        "showSubItem2",
+        "showSubItem3",
+        "showSubItem4",
+        "subItem1Title",
+        "subItem1Bullets",
         "showCurrency"
       ],
-      "desc": "Generic label/value table row.",
+      "desc": "Generic label/value table row (expanded sub-items).",
       "live": false
     },
     {
@@ -803,7 +854,7 @@
         "Show Subtitle",
         "Show Info"
       ],
-      "desc": "Selectable payment row. Needs brand logos.",
+      "desc": "Selectable payment row. Brand logos via assets.",
       "live": true
     },
     {
@@ -828,6 +879,10 @@
       "props": [
         "Show Details",
         "Show Chevron",
+        "Show Image Plain",
+        "Show Service Icons",
+        "Show Service signal Icon",
+        "Show Service Icons plain",
         "Credit",
         "Promo"
       ],
@@ -856,6 +911,7 @@
         "Show Details",
         "Show Chevron",
         "Show Discount Badge",
+        "Show Edit Combo",
         "Show Options Tag"
       ],
       "desc": "Combo/package selection row.",
@@ -879,7 +935,7 @@
         ]
       },
       "props": [],
-      "desc": "Quantity stepper (minus/qty/plus).",
+      "desc": "Quantity stepper (minus/qty/plus). S22 M26 L32.",
       "live": true
     },
     {
@@ -1291,46 +1347,6 @@
       "live": false
     },
     {
-      "name": "Payment Method Card",
-      "kind": "set",
-      "variants": {
-        "type": [
-          "Credit Card",
-          "Mastercard",
-          "Visa",
-          "Apple Pay",
-          "Tabby",
-          "Tamara",
-          "Google Pay",
-          "Cash"
-        ]
-      },
-      "props": [],
-      "desc": "Selectable payment option row. Needs brand logos.",
-      "live": false
-    },
-    {
-      "name": "Booking Status Card",
-      "kind": "set",
-      "variants": {
-        "state": [
-          "Professional Assigned",
-          "Confirmed",
-          "In Progress",
-          "Completed",
-          "On the Way",
-          "Cancelled",
-          "Multi Professional"
-        ]
-      },
-      "props": [
-        "Message",
-        "Pro Name"
-      ],
-      "desc": "Booking lifecycle status row.",
-      "live": false
-    },
-    {
       "name": "Package Details Card",
       "kind": "set",
       "variants": {
@@ -1519,11 +1535,13 @@
       "kind": "set",
       "variants": {
         "platform": [
-          "App"
+          "app",
+          "web"
         ],
         "state": [
-          "Default",
-          "Responsive"
+          "Responsive",
+          "extended",
+          "Default"
         ]
       },
       "props": [
@@ -1538,9 +1556,11 @@
         "Price",
         "Banner Text",
         "Show Confetti Banner",
-        "Show Apple Pay"
+        "Show Apple Pay",
+        "Show Items",
+        "Show Payment Summary"
       ],
-      "desc": "Mobile bottom checkout & CTA bar (price + Continue button + optional plus banner).",
+      "desc": "Mobile bottom checkout & CTA bar (price + Continue + plus banner + items/payment summary).",
       "live": true
     },
     {
@@ -1574,9 +1594,13 @@
         "Show Chevron",
         "Label",
         "Amount",
+        "Show Light Banner",
+        "Show Light Icon",
+        "Show Light Chevron",
+        "Light Banner Text",
         "Show Banner"
       ],
-      "desc": "Confetti celebration + savings info bar.",
+      "desc": "Confetti celebration + savings info bar (navy + light variants).",
       "live": false
     },
     {
@@ -1590,10 +1614,13 @@
         "Show Heart",
         "Show Actions",
         "Show Progress",
+        "Show Next Step",
+        "Show Status Bar",
         "Title",
-        "Step Text"
+        "Step Text",
+        "Next Step Text"
       ],
-      "desc": "Mobile screen header (back, step, search, heart, progress).",
+      "desc": "Mobile screen header (back, step, search, heart, progress, next step).",
       "live": true
     },
     {
@@ -1642,10 +1669,29 @@
         "Show Step",
         "Show Back",
         "Show Header Name",
+        "Show Safari Bar",
         "Title",
         "Step Text"
       ],
       "desc": "Mobile-web header (Safari chrome + DS content).",
+      "live": false
+    },
+    {
+      "name": "Summary Item Card",
+      "kind": "set",
+      "variants": {
+        "state": [
+          "Selected",
+          "Default"
+        ]
+      },
+      "props": [
+        "Title",
+        "Show Image",
+        "Show Old Price",
+        "Show What's Included"
+      ],
+      "desc": "Line item in the checkout summary list (image + title + price + what's included).",
       "live": false
     }
   ]
