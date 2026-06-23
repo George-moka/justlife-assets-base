@@ -8,14 +8,29 @@ const ASSET_BASE =
   "https://cdn.jsdelivr.net/gh/George-moka/justlife-assets-base@main/";
 
 // ---- DS tokens ----
+// Justlife DS token source — resolved from @justlife/tokens (single source of truth; values mirror the DS repo)
+const DS = {
+  bg: { primary: "#FFFFFF", secondary: "#FBFAF7", tertiary: "#F5F5F5", canvas: "#FBFAF7", brand: "#00C3FF", brandHover: "#00A8DC", brandSubtle: "#B3EEFF", selected: "#F4FEFF", inverse: "#1A1A1A", tertiaryAction: "#135163" },
+  text: { primary: "#1A1A1A", secondary: "#666666", tertiary: "#AAAAAA", disabled: "#7E8080", brand: "#00C3FF", onBrand: "#FFFFFF", inverse: "#FFFFFF", link: "#00A8DC", success: "#496B00", error: "#D42222" },
+  border: { default: "#DDDDDD", brand: "#00C3FF", strong: "#7E8080" },
+  blue: { b50: "#E6F9FF", b900: "#134453" },
+  green: { g300: "#BBFF33", g500: "#8BC34A" },
+  yellow: { y500: "#FFCC27", y800: "#7A4A00" },
+  red: { r500: "#EF4444", r600: "#D42222" },
+  success: { text: "#496B00", bgSoft: "#E4FFB8", bgSolid: "#8BC34A", chip: "#BBFF33" },
+  danger: { text: "#D42222", bgSoft: "#FFE0E0", solid: "#EF4444" },
+  btn: { tertiaryBg: "#135163", tertiaryText: "#FFFFFF", disabledBg: "#DDDDDD", disabledText: "#7E8080", disabledBorder: "#DDDDDD" },
+  radioSelected: "#00C3FF",
+};
+// Semantic aliases used across renderers — every value traces to the DS token source above
 const C = {
-  brand: "#00C3FF", link: "#00A8DC", inkOnBrand: "#FFFFFF",
-  bg: "#FFFFFF", bg2: "#FBFAF7", bg3: "#F5F5F5",          // primary / secondary / tertiary
-  text: "#1A1A1A", text2: "#666666", text3: "#9A9A9A", disabled: "#7E8080",
-  border: "#DDDDDD", borderStrong: "#CCCCCC",
-  selected: "#F4FEFF", brandBg: "#E6F9FF",
-  success: "#496B00", successBg: "#E4FFB8", danger: "#D42222", dangerBg: "#FFE0E0",
-  yellow: "#FFCC27", yellowInk: "#524008", purple: "#AD6BB5",
+  brand: DS.bg.brand, link: DS.text.link, inkOnBrand: DS.text.onBrand,
+  bg: DS.bg.primary, bg2: DS.bg.secondary, bg3: DS.bg.tertiary,
+  text: DS.text.primary, text2: DS.text.secondary, text3: DS.text.tertiary, disabled: DS.text.disabled,
+  border: DS.border.default, borderStrong: DS.border.strong,
+  selected: DS.bg.selected, brandBg: DS.blue.b50,
+  success: DS.success.text, successBg: DS.success.bgSoft, danger: DS.danger.text, dangerBg: DS.danger.bgSoft,
+  yellow: DS.yellow.y500, yellowInk: DS.yellow.y800, purple: "#AD6BB5",
 };
 const R = { xs: 4, r6: 6, sm: 8, md: 8, lg: 12, xl: 20, pill: 999 };
 const S = { xs: 4, sm: 6, md: 8, lg: 12, xl: 16, x2: 20 };
@@ -399,8 +414,8 @@ function PrimaryButton({ label = "Continue", price, variant = "primary", size = 
   // DS Button: 5 variants × sizes × states (incl. new Outline). Outline = transparent bg + colored border + colored text.
   const V = {
     primary:   { bg: C.brand,   fg: "#fff" },
-    secondary: { bg: C.yellow,  fg: "#7A4A00" },
-    tertiary:  { bg: "#135163", fg: "#fff" },
+    secondary: { bg: C.yellow,  fg: DS.yellow.y800 },
+    tertiary:  { bg: DS.btn.tertiaryBg, fg: DS.btn.tertiaryText },
     danger:    { bg: C.danger,  fg: "#fff" },
     pill:      { bg: C.brand,   fg: "#fff" },
   }[String(variant).toLowerCase()] || { bg: C.brand, fg: "#fff" };
@@ -451,7 +466,7 @@ function AppHeader({ title = "Women's Salon", step, nextStep, back = true, searc
         </div>
         {pct != null && (
           <div style={{ display: "flex", gap: 14, alignItems: "center", padding: "0 16px 12px" }}>
-            <div style={{ height: 4, width: 149, background: "#F5F5F5", borderRadius: 100, overflow: "hidden" }}>
+            <div style={{ height: 4, width: 149, background: DS.bg.tertiary, borderRadius: 100, overflow: "hidden" }}>
               <div style={{ height: 4, width: 149 * pct, background: C.brand, borderRadius: 100 }} />
             </div>
             {nextStep && <span style={{ fontSize: 9, color: "#666" }}>{nextStep}</span>}
@@ -472,7 +487,7 @@ function NavbarApp({ price = "62.10", oldPrice, discount, subtitle, button = "Ne
   return (
     <div style={{ background: C.bg2, borderTopLeftRadius: 20, borderTopRightRadius: 20, flex: "0 0 auto", filter: "drop-shadow(0 -8px 20px rgba(0,0,0,.10))" }}>
       {plusBanner && (
-        <div style={{ display: "flex", alignItems: "center", gap: 8, background: "#135163", padding: "10px 16px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, background: DS.bg.tertiaryAction, padding: "10px 16px" }}>
           <span style={{ width: 18, height: 18, borderRadius: 4, background: "#ffffff33", flex: "0 0 18px" }} />
           <span style={{ fontSize: 11, color: "#fff" }}>{plusBanner}</span>
         </div>
@@ -484,7 +499,7 @@ function NavbarApp({ price = "62.10", oldPrice, discount, subtitle, button = "Ne
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 <span style={{ fontSize: 9, color: "#666" }}>Total</span>
                 {oldPrice && <span style={{ display: "inline-flex", alignItems: "center", gap: 3, fontSize: 9, color: "#666", textDecoration: "line-through" }}><Dh size={9} color="#666" />{cleanNum(oldPrice)}</span>}
-                {discount && <span style={{ display: "inline-flex", alignItems: "center", background: "#BBFF33", color: "#524008", fontSize: 9, fontWeight: 600, padding: "1px 5px", borderRadius: 4 }}>{String(discount).replace(/%/g, "")}%</span>}
+                {discount && <span style={{ display: "inline-flex", alignItems: "center", background: DS.success.chip, color: DS.success.text, fontSize: 9, fontWeight: 600, padding: "1px 5px", borderRadius: 4 }}>{String(discount).replace(/%/g, "")}%</span>}
               </div>
             )}
             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -494,7 +509,7 @@ function NavbarApp({ price = "62.10", oldPrice, discount, subtitle, button = "Ne
             </div>
             {subtitle && <div style={{ fontSize: 9, color: "#666" }}>{subtitle}</div>}
           </div>
-          <div style={{ background: "#FFCC27", color: "#7A4A00", fontWeight: 500, fontSize: 11, padding: "12px 20px", borderRadius: 8, whiteSpace: "nowrap" }}>{button}</div>
+          <div style={{ background: DS.yellow.y500, color: DS.yellow.y800, fontWeight: 500, fontSize: 11, padding: "12px 20px", borderRadius: 8, whiteSpace: "nowrap" }}>{button}</div>
         </div>
       </div>
       {homeIndicator && (
@@ -514,16 +529,16 @@ function BottomNav({ active = 0 }) {
     "M4 5h13.5A2.5 2.5 0 0120 7.5V8h-4.5a3 3 0 100 6H20v.5a2.5 2.5 0 01-2.5 2.5H4a2 2 0 01-2-2V7a2 2 0 012-2zm12 5a1.5 1.5 0 000 3H21a.5.5 0 00.5-.5v-2a.5.5 0 00-.5-.5z",
     "M12 12.5a4.25 4.25 0 100-8.5 4.25 4.25 0 000 8.5zM4 19.6C4 16.3 7.6 14.5 12 14.5s8 1.8 8 5.1V20a1 1 0 01-1 1H5a1 1 0 01-1-1z",
   ];
-  const ic = (i, on) => <svg width="24" height="24" viewBox="0 0 24 24" fill={on ? "#134453" : "#8A9098"}><path d={paths[i]} /></svg>;
+  const ic = (i, on) => <svg width="24" height="24" viewBox="0 0 24 24" fill={on ? DS.blue.b900 : "#8A9098"}><path d={paths[i]} /></svg>;
   return (
     <div style={{ display: "flex", justifyContent: "center", padding: "15px 16px 23px", background: C.bg }}>
       <div style={{ display: "flex", flex: 1, height: 60, background: "#fff", borderRadius: 12, padding: "2px 3px", alignItems: "center", boxShadow: "0 6px 22px rgba(19,68,83,.13)", border: `1px solid ${C.border}` }}>
         {tabs.map((t, i) => {
           const on = i === active;
           return (
-            <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4, height: 46, borderRadius: 12, background: on ? "#E6F9FF" : "transparent" }}>
+            <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4, height: 46, borderRadius: 12, background: on ? DS.blue.b50 : "transparent" }}>
               <span style={{ width: 24, height: 24, display: "flex", alignItems: "center", justifyContent: "center" }}>{ic(i, on)}</span>
-              <span style={{ fontSize: 9, lineHeight: "13px", letterSpacing: 0.25, textAlign: "center", color: on ? "#134453" : C.text2, fontWeight: on ? 600 : 400 }}>{t}</span>
+              <span style={{ fontSize: 9, lineHeight: "13px", letterSpacing: 0.25, textAlign: "center", color: on ? DS.blue.b900 : C.text2, fontWeight: on ? 600 : 400 }}>{t}</span>
             </div>
           );
         })}
