@@ -1,0 +1,2065 @@
+{
+  "generatedAt": "built-from-repo",
+  "groups": {
+    "photos": [
+      {
+        "id": "avatar-1",
+        "name": "Avatar-1",
+        "path": "Photos%20%28export%20PNG%29/Avatar-1.png",
+        "tags": [
+          "avatar",
+          "1"
+        ]
+      },
+      {
+        "id": "avatar-10",
+        "name": "Avatar-10",
+        "path": "Photos%20%28export%20PNG%29/Avatar-10.png",
+        "tags": [
+          "avatar",
+          "10"
+        ]
+      },
+      {
+        "id": "avatar-11",
+        "name": "Avatar-11",
+        "path": "Photos%20%28export%20PNG%29/Avatar-11.png",
+        "tags": [
+          "avatar",
+          "11"
+        ]
+      },
+      {
+        "id": "avatar-12",
+        "name": "Avatar-12",
+        "path": "Photos%20%28export%20PNG%29/Avatar-12.png",
+        "tags": [
+          "avatar",
+          "12"
+        ]
+      },
+      {
+        "id": "avatar-13",
+        "name": "Avatar-13",
+        "path": "Photos%20%28export%20PNG%29/Avatar-13.png",
+        "tags": [
+          "avatar",
+          "13"
+        ]
+      },
+      {
+        "id": "avatar-14",
+        "name": "Avatar-14",
+        "path": "Photos%20%28export%20PNG%29/Avatar-14.png",
+        "tags": [
+          "avatar",
+          "14"
+        ]
+      },
+      {
+        "id": "avatar-15",
+        "name": "Avatar-15",
+        "path": "Photos%20%28export%20PNG%29/Avatar-15.png",
+        "tags": [
+          "avatar",
+          "15"
+        ]
+      },
+      {
+        "id": "avatar-16",
+        "name": "Avatar-16",
+        "path": "Photos%20%28export%20PNG%29/Avatar-16.png",
+        "tags": [
+          "avatar",
+          "16"
+        ]
+      },
+      {
+        "id": "avatar-17",
+        "name": "Avatar-17",
+        "path": "Photos%20%28export%20PNG%29/Avatar-17.png",
+        "tags": [
+          "avatar",
+          "17"
+        ]
+      },
+      {
+        "id": "avatar-18",
+        "name": "Avatar-18",
+        "path": "Photos%20%28export%20PNG%29/Avatar-18.png",
+        "tags": [
+          "avatar",
+          "18"
+        ]
+      },
+      {
+        "id": "avatar-19",
+        "name": "Avatar-19",
+        "path": "Photos%20%28export%20PNG%29/Avatar-19.png",
+        "tags": [
+          "avatar",
+          "19"
+        ]
+      },
+      {
+        "id": "avatar-2",
+        "name": "Avatar-2",
+        "path": "Photos%20%28export%20PNG%29/Avatar-2.png",
+        "tags": [
+          "avatar",
+          "2"
+        ]
+      },
+      {
+        "id": "avatar-20",
+        "name": "Avatar-20",
+        "path": "Photos%20%28export%20PNG%29/Avatar-20.png",
+        "tags": [
+          "avatar",
+          "20"
+        ]
+      },
+      {
+        "id": "avatar-21",
+        "name": "Avatar-21",
+        "path": "Photos%20%28export%20PNG%29/Avatar-21.png",
+        "tags": [
+          "avatar",
+          "21"
+        ]
+      },
+      {
+        "id": "avatar-3",
+        "name": "Avatar-3",
+        "path": "Photos%20%28export%20PNG%29/Avatar-3.png",
+        "tags": [
+          "avatar",
+          "3"
+        ]
+      },
+      {
+        "id": "avatar-4",
+        "name": "Avatar-4",
+        "path": "Photos%20%28export%20PNG%29/Avatar-4.png",
+        "tags": [
+          "avatar",
+          "4"
+        ]
+      },
+      {
+        "id": "avatar-5",
+        "name": "Avatar-5",
+        "path": "Photos%20%28export%20PNG%29/Avatar-5.png",
+        "tags": [
+          "avatar",
+          "5"
+        ]
+      },
+      {
+        "id": "avatar-6",
+        "name": "Avatar-6",
+        "path": "Photos%20%28export%20PNG%29/Avatar-6.png",
+        "tags": [
+          "avatar",
+          "6"
+        ]
+      },
+      {
+        "id": "avatar-7",
+        "name": "Avatar-7",
+        "path": "Photos%20%28export%20PNG%29/Avatar-7.png",
+        "tags": [
+          "avatar",
+          "7"
+        ]
+      },
+      {
+        "id": "avatar-8",
+        "name": "Avatar-8",
+        "path": "Photos%20%28export%20PNG%29/Avatar-8.png",
+        "tags": [
+          "avatar",
+          "8"
+        ]
+      },
+      {
+        "id": "avatar-9",
+        "name": "Avatar-9",
+        "path": "Photos%20%28export%20PNG%29/Avatar-9.png",
+        "tags": [
+          "avatar",
+          "9"
+        ]
+      },
+      {
+        "id": "avatar",
+        "name": "Avatar",
+        "path": "Photos%20%28export%20PNG%29/Avatar.png",
+        "tags": [
+          "avatar"
+        ]
+      },
+      {
+        "id": "service image-1",
+        "name": "Service Image-1",
+        "path": "Photos%20%28export%20PNG%29/Service%20Image-1.png",
+        "tags": [
+          "service image",
+          "1"
+        ]
+      },
+      {
+        "id": "service image-10",
+        "name": "Service Image-10",
+        "path": "Photos%20%28export%20PNG%29/Service%20Image-10.png",
+        "tags": [
+          "service image",
+          "10"
+        ]
+      },
+      {
+        "id": "service image-11",
+        "name": "Service Image-11",
+        "path": "Photos%20%28export%20PNG%29/Service%20Image-11.png",
+        "tags": [
+          "service image",
+          "11"
+        ]
+      },
+      {
+        "id": "service image-12",
+        "name": "Service Image-12",
+        "path": "Photos%20%28export%20PNG%29/Service%20Image-12.png",
+        "tags": [
+          "service image",
+          "12"
+        ]
+      },
+      {
+        "id": "service image-13",
+        "name": "Service Image-13",
+        "path": "Photos%20%28export%20PNG%29/Service%20Image-13.png",
+        "tags": [
+          "service image",
+          "13"
+        ]
+      },
+      {
+        "id": "service image-2",
+        "name": "Service Image-2",
+        "path": "Photos%20%28export%20PNG%29/Service%20Image-2.png",
+        "tags": [
+          "service image",
+          "2"
+        ]
+      },
+      {
+        "id": "service image-3",
+        "name": "Service Image-3",
+        "path": "Photos%20%28export%20PNG%29/Service%20Image-3.png",
+        "tags": [
+          "service image",
+          "3"
+        ]
+      },
+      {
+        "id": "service image-4",
+        "name": "Service Image-4",
+        "path": "Photos%20%28export%20PNG%29/Service%20Image-4.png",
+        "tags": [
+          "service image",
+          "4"
+        ]
+      },
+      {
+        "id": "service image-5",
+        "name": "Service Image-5",
+        "path": "Photos%20%28export%20PNG%29/Service%20Image-5.png",
+        "tags": [
+          "service image",
+          "5"
+        ]
+      },
+      {
+        "id": "service image-6",
+        "name": "Service Image-6",
+        "path": "Photos%20%28export%20PNG%29/Service%20Image-6.png",
+        "tags": [
+          "service image",
+          "6"
+        ]
+      },
+      {
+        "id": "service image-7",
+        "name": "Service Image-7",
+        "path": "Photos%20%28export%20PNG%29/Service%20Image-7.png",
+        "tags": [
+          "service image",
+          "7"
+        ]
+      },
+      {
+        "id": "service image-8",
+        "name": "Service Image-8",
+        "path": "Photos%20%28export%20PNG%29/Service%20Image-8.png",
+        "tags": [
+          "service image",
+          "8"
+        ]
+      },
+      {
+        "id": "service image-9",
+        "name": "Service Image-9",
+        "path": "Photos%20%28export%20PNG%29/Service%20Image-9.png",
+        "tags": [
+          "service image",
+          "9"
+        ]
+      },
+      {
+        "id": "service image",
+        "name": "Service Image",
+        "path": "Photos%20%28export%20PNG%29/Service%20Image.png",
+        "tags": [
+          "service image"
+        ]
+      },
+      {
+        "id": "avatar-active",
+        "name": "avatar-active",
+        "path": "Photos%20%28export%20PNG%29/avatar-active.png",
+        "tags": [
+          "avatar",
+          "active"
+        ]
+      },
+      {
+        "id": "avatar-disabled",
+        "name": "avatar-disabled",
+        "path": "Photos%20%28export%20PNG%29/avatar-disabled.png",
+        "tags": [
+          "avatar",
+          "disabled"
+        ]
+      },
+      {
+        "id": "beauty-pinktober-en-99",
+        "name": "beauty-pinktober-en-99",
+        "path": "Photos%20%28export%20PNG%29/beauty-pinktober-en-99.png",
+        "tags": [
+          "beauty",
+          "pinktober",
+          "en",
+          "99"
+        ]
+      },
+      {
+        "id": "common-sv-handyman-en-hm50",
+        "name": "common-sv-handyman-en-hm50",
+        "path": "Photos%20%28export%20PNG%29/common-sv-handyman-en-hm50.png",
+        "tags": [
+          "common",
+          "sv",
+          "handyman",
+          "en",
+          "hm50"
+        ]
+      },
+      {
+        "id": "common-sv-pest-control-en-50pestc",
+        "name": "common-sv-pest-control-en-50pestc",
+        "path": "Photos%20%28export%20PNG%29/common-sv-pest-control-en-50pestc.png",
+        "tags": [
+          "common",
+          "sv",
+          "pest",
+          "control",
+          "en",
+          "50pestc"
+        ]
+      },
+      {
+        "id": "healthcare-flu-vaccine-en-vax30-dxb-all",
+        "name": "healthcare-flu-vaccine-en-vax30-dxb-all",
+        "path": "Photos%20%28export%20PNG%29/healthcare-flu-vaccine-en-vax30-dxb-all.png",
+        "tags": [
+          "healthcare",
+          "flu",
+          "vaccine",
+          "en",
+          "vax30",
+          "dxb",
+          "all"
+        ]
+      },
+      {
+        "id": "healthcare-lab-tests-en-labt50-dxb-visitor",
+        "name": "healthcare-lab-tests-en-labt50-dxb-visitor",
+        "path": "Photos%20%28export%20PNG%29/healthcare-lab-tests-en-labt50-dxb-visitor.png",
+        "tags": [
+          "healthcare",
+          "lab",
+          "tests",
+          "en",
+          "labt50",
+          "dxb",
+          "visitor"
+        ]
+      },
+      {
+        "id": "professional-card-2",
+        "name": "professional-card-2",
+        "path": "Photos%20%28export%20PNG%29/professional-card-2.png",
+        "tags": [
+          "professional",
+          "card",
+          "2"
+        ]
+      },
+      {
+        "id": "professional-card-3",
+        "name": "professional-card-3",
+        "path": "Photos%20%28export%20PNG%29/professional-card-3.png",
+        "tags": [
+          "professional",
+          "card",
+          "3"
+        ]
+      },
+      {
+        "id": "professional-card-4",
+        "name": "professional-card-4",
+        "path": "Photos%20%28export%20PNG%29/professional-card-4.png",
+        "tags": [
+          "professional",
+          "card",
+          "4"
+        ]
+      },
+      {
+        "id": "professional-card-5",
+        "name": "professional-card-5",
+        "path": "Photos%20%28export%20PNG%29/professional-card-5.png",
+        "tags": [
+          "professional",
+          "card",
+          "5"
+        ]
+      },
+      {
+        "id": "professional-card-6",
+        "name": "professional-card-6",
+        "path": "Photos%20%28export%20PNG%29/professional-card-6.png",
+        "tags": [
+          "professional",
+          "card",
+          "6"
+        ]
+      },
+      {
+        "id": "professional-card-7",
+        "name": "professional-card-7",
+        "path": "Photos%20%28export%20PNG%29/professional-card-7.png",
+        "tags": [
+          "professional",
+          "card",
+          "7"
+        ]
+      },
+      {
+        "id": "professional-card-8",
+        "name": "professional-card-8",
+        "path": "Photos%20%28export%20PNG%29/professional-card-8.png",
+        "tags": [
+          "professional",
+          "card",
+          "8"
+        ]
+      },
+      {
+        "id": "professional-card",
+        "name": "professional-card",
+        "path": "Photos%20%28export%20PNG%29/professional-card.png",
+        "tags": [
+          "professional",
+          "card"
+        ]
+      },
+      {
+        "id": "professional-cleaning-female-01",
+        "name": "professional-cleaning-female-01",
+        "path": "Photos%20%28export%20PNG%29/professional-cleaning-female-01.png",
+        "tags": [
+          "professional",
+          "cleaning",
+          "female",
+          "01"
+        ]
+      },
+      {
+        "id": "professional-cleaning-female-02",
+        "name": "professional-cleaning-female-02",
+        "path": "Photos%20%28export%20PNG%29/professional-cleaning-female-02.png",
+        "tags": [
+          "professional",
+          "cleaning",
+          "female",
+          "02"
+        ]
+      },
+      {
+        "id": "professional-cleaning-female-03",
+        "name": "professional-cleaning-female-03",
+        "path": "Photos%20%28export%20PNG%29/professional-cleaning-female-03.png",
+        "tags": [
+          "professional",
+          "cleaning",
+          "female",
+          "03"
+        ]
+      },
+      {
+        "id": "professional-cleaning-female-04",
+        "name": "professional-cleaning-female-04",
+        "path": "Photos%20%28export%20PNG%29/professional-cleaning-female-04.png",
+        "tags": [
+          "professional",
+          "cleaning",
+          "female",
+          "04"
+        ]
+      },
+      {
+        "id": "professional-cleaning-female-05",
+        "name": "professional-cleaning-female-05",
+        "path": "Photos%20%28export%20PNG%29/professional-cleaning-female-05.png",
+        "tags": [
+          "professional",
+          "cleaning",
+          "female",
+          "05"
+        ]
+      },
+      {
+        "id": "professional-cleaning-female-06",
+        "name": "professional-cleaning-female-06",
+        "path": "Photos%20%28export%20PNG%29/professional-cleaning-female-06.png",
+        "tags": [
+          "professional",
+          "cleaning",
+          "female",
+          "06"
+        ]
+      },
+      {
+        "id": "professional-cleaning-female-07",
+        "name": "professional-cleaning-female-07",
+        "path": "Photos%20%28export%20PNG%29/professional-cleaning-female-07.png",
+        "tags": [
+          "professional",
+          "cleaning",
+          "female",
+          "07"
+        ]
+      },
+      {
+        "id": "professional-cleaning-male-01",
+        "name": "professional-cleaning-male-01",
+        "path": "Photos%20%28export%20PNG%29/professional-cleaning-male-01.png",
+        "tags": [
+          "professional",
+          "cleaning",
+          "male",
+          "01"
+        ]
+      },
+      {
+        "id": "professional-cleaning-male-02",
+        "name": "professional-cleaning-male-02",
+        "path": "Photos%20%28export%20PNG%29/professional-cleaning-male-02.png",
+        "tags": [
+          "professional",
+          "cleaning",
+          "male",
+          "02"
+        ]
+      },
+      {
+        "id": "professional-doctor-female-01",
+        "name": "professional-doctor-female-01",
+        "path": "Photos%20%28export%20PNG%29/professional-doctor-female-01.png",
+        "tags": [
+          "professional",
+          "doctor",
+          "female",
+          "01"
+        ]
+      },
+      {
+        "id": "professional-doctor-female-02",
+        "name": "professional-doctor-female-02",
+        "path": "Photos%20%28export%20PNG%29/professional-doctor-female-02.png",
+        "tags": [
+          "professional",
+          "doctor",
+          "female",
+          "02"
+        ]
+      },
+      {
+        "id": "professional-doctor-female-03",
+        "name": "professional-doctor-female-03",
+        "path": "Photos%20%28export%20PNG%29/professional-doctor-female-03.png",
+        "tags": [
+          "professional",
+          "doctor",
+          "female",
+          "03"
+        ]
+      },
+      {
+        "id": "professional-handyman-01",
+        "name": "professional-handyman-01",
+        "path": "Photos%20%28export%20PNG%29/professional-handyman-01.png",
+        "tags": [
+          "professional",
+          "handyman",
+          "01"
+        ]
+      },
+      {
+        "id": "professional-handyman-02",
+        "name": "professional-handyman-02",
+        "path": "Photos%20%28export%20PNG%29/professional-handyman-02.png",
+        "tags": [
+          "professional",
+          "handyman",
+          "02"
+        ]
+      },
+      {
+        "id": "professional-nurse-female-01",
+        "name": "professional-nurse-female-01",
+        "path": "Photos%20%28export%20PNG%29/professional-nurse-female-01.png",
+        "tags": [
+          "professional",
+          "nurse",
+          "female",
+          "01"
+        ]
+      },
+      {
+        "id": "professional-nurse-female-02",
+        "name": "professional-nurse-female-02",
+        "path": "Photos%20%28export%20PNG%29/professional-nurse-female-02.png",
+        "tags": [
+          "professional",
+          "nurse",
+          "female",
+          "02"
+        ]
+      },
+      {
+        "id": "professional-nurse-female-03",
+        "name": "professional-nurse-female-03",
+        "path": "Photos%20%28export%20PNG%29/professional-nurse-female-03.png",
+        "tags": [
+          "professional",
+          "nurse",
+          "female",
+          "03"
+        ]
+      },
+      {
+        "id": "professional-salon-female-01",
+        "name": "professional-salon-female-01",
+        "path": "Photos%20%28export%20PNG%29/professional-salon-female-01.png",
+        "tags": [
+          "professional",
+          "salon",
+          "female",
+          "01"
+        ]
+      },
+      {
+        "id": "professional-salon-female-02",
+        "name": "professional-salon-female-02",
+        "path": "Photos%20%28export%20PNG%29/professional-salon-female-02.png",
+        "tags": [
+          "professional",
+          "salon",
+          "female",
+          "02"
+        ]
+      },
+      {
+        "id": "professional-salon-male-01",
+        "name": "professional-salon-male-01",
+        "path": "Photos%20%28export%20PNG%29/professional-salon-male-01.png",
+        "tags": [
+          "professional",
+          "salon",
+          "male",
+          "01"
+        ]
+      }
+    ],
+    "icons": [
+      {
+        "id": "arrow-down",
+        "name": "arrow-down",
+        "path": "2D%20Icons%20%28export%20SVG%29/arrow-down.svg",
+        "tags": [
+          "arrow",
+          "down"
+        ]
+      },
+      {
+        "id": "arrow-left",
+        "name": "arrow-left",
+        "path": "2D%20Icons%20%28export%20SVG%29/arrow-left.svg",
+        "tags": [
+          "arrow",
+          "left"
+        ]
+      },
+      {
+        "id": "arrow-right",
+        "name": "arrow-right",
+        "path": "2D%20Icons%20%28export%20SVG%29/arrow-right.svg",
+        "tags": [
+          "arrow",
+          "right"
+        ]
+      },
+      {
+        "id": "arrow-up",
+        "name": "arrow-up",
+        "path": "2D%20Icons%20%28export%20SVG%29/arrow-up.svg",
+        "tags": [
+          "arrow",
+          "up"
+        ]
+      },
+      {
+        "id": "badge-question-mark",
+        "name": "badge-question-mark",
+        "path": "2D%20Icons%20%28export%20SVG%29/badge-question-mark.svg",
+        "tags": [
+          "badge",
+          "question",
+          "mark"
+        ]
+      },
+      {
+        "id": "badge",
+        "name": "badge",
+        "path": "2D%20Icons%20%28export%20SVG%29/badge.svg",
+        "tags": [
+          "badge"
+        ]
+      },
+      {
+        "id": "banknote",
+        "name": "banknote",
+        "path": "2D%20Icons%20%28export%20SVG%29/banknote.svg",
+        "tags": [
+          "banknote"
+        ]
+      },
+      {
+        "id": "battery-warning",
+        "name": "battery-warning",
+        "path": "2D%20Icons%20%28export%20SVG%29/battery-warning.svg",
+        "tags": [
+          "battery",
+          "warning"
+        ]
+      },
+      {
+        "id": "battery",
+        "name": "battery",
+        "path": "2D%20Icons%20%28export%20SVG%29/battery.svg",
+        "tags": [
+          "battery"
+        ]
+      },
+      {
+        "id": "bell",
+        "name": "bell",
+        "path": "2D%20Icons%20%28export%20SVG%29/bell.svg",
+        "tags": [
+          "bell"
+        ]
+      },
+      {
+        "id": "bookmark",
+        "name": "bookmark",
+        "path": "2D%20Icons%20%28export%20SVG%29/bookmark.svg",
+        "tags": [
+          "bookmark"
+        ]
+      },
+      {
+        "id": "box",
+        "name": "box",
+        "path": "2D%20Icons%20%28export%20SVG%29/box.svg",
+        "tags": [
+          "box"
+        ]
+      },
+      {
+        "id": "building",
+        "name": "building",
+        "path": "2D%20Icons%20%28export%20SVG%29/building.svg",
+        "tags": [
+          "building"
+        ]
+      },
+      {
+        "id": "calendar-check",
+        "name": "calendar-check",
+        "path": "2D%20Icons%20%28export%20SVG%29/calendar-check.svg",
+        "tags": [
+          "calendar",
+          "check"
+        ]
+      },
+      {
+        "id": "calendar",
+        "name": "calendar",
+        "path": "2D%20Icons%20%28export%20SVG%29/calendar.svg",
+        "tags": [
+          "calendar"
+        ]
+      },
+      {
+        "id": "camera",
+        "name": "camera",
+        "path": "2D%20Icons%20%28export%20SVG%29/camera.svg",
+        "tags": [
+          "camera"
+        ]
+      },
+      {
+        "id": "chat",
+        "name": "chat",
+        "path": "2D%20Icons%20%28export%20SVG%29/chat.svg",
+        "tags": [
+          "chat"
+        ]
+      },
+      {
+        "id": "check",
+        "name": "check",
+        "path": "2D%20Icons%20%28export%20SVG%29/check.svg",
+        "tags": [
+          "check"
+        ]
+      },
+      {
+        "id": "chevron-down",
+        "name": "chevron-down",
+        "path": "2D%20Icons%20%28export%20SVG%29/chevron-down.svg",
+        "tags": [
+          "chevron",
+          "down"
+        ]
+      },
+      {
+        "id": "chevron-left",
+        "name": "chevron-left",
+        "path": "2D%20Icons%20%28export%20SVG%29/chevron-left.svg",
+        "tags": [
+          "chevron",
+          "left",
+          "back",
+          "previous"
+        ]
+      },
+      {
+        "id": "chevron-right",
+        "name": "chevron-right",
+        "path": "2D%20Icons%20%28export%20SVG%29/chevron-right.svg",
+        "tags": [
+          "chevron",
+          "right"
+        ]
+      },
+      {
+        "id": "chevron-up",
+        "name": "chevron-up",
+        "path": "2D%20Icons%20%28export%20SVG%29/chevron-up.svg",
+        "tags": [
+          "chevron",
+          "up"
+        ]
+      },
+      {
+        "id": "chevrons-right",
+        "name": "chevrons-right",
+        "path": "2D%20Icons%20%28export%20SVG%29/chevrons-right.svg",
+        "tags": [
+          "chevrons",
+          "right"
+        ]
+      },
+      {
+        "id": "clock",
+        "name": "clock",
+        "path": "2D%20Icons%20%28export%20SVG%29/clock.svg",
+        "tags": [
+          "clock"
+        ]
+      },
+      {
+        "id": "cloud",
+        "name": "cloud",
+        "path": "2D%20Icons%20%28export%20SVG%29/cloud.svg",
+        "tags": [
+          "cloud"
+        ]
+      },
+      {
+        "id": "copy",
+        "name": "copy",
+        "path": "2D%20Icons%20%28export%20SVG%29/copy.svg",
+        "tags": [
+          "copy"
+        ]
+      },
+      {
+        "id": "credit-card",
+        "name": "credit-card",
+        "path": "2D%20Icons%20%28export%20SVG%29/credit-card.svg",
+        "tags": [
+          "credit",
+          "card"
+        ]
+      },
+      {
+        "id": "currency",
+        "name": "currency",
+        "path": "2D%20Icons%20%28export%20SVG%29/currency.svg",
+        "tags": [
+          "currency"
+        ]
+      },
+      {
+        "id": "download",
+        "name": "download",
+        "path": "2D%20Icons%20%28export%20SVG%29/download.svg",
+        "tags": [
+          "download"
+        ]
+      },
+      {
+        "id": "ellipsis",
+        "name": "ellipsis",
+        "path": "2D%20Icons%20%28export%20SVG%29/ellipsis.svg",
+        "tags": [
+          "ellipsis"
+        ]
+      },
+      {
+        "id": "external-link",
+        "name": "external-link",
+        "path": "2D%20Icons%20%28export%20SVG%29/external-link.svg",
+        "tags": [
+          "external",
+          "link"
+        ]
+      },
+      {
+        "id": "eye-off",
+        "name": "eye-off",
+        "path": "2D%20Icons%20%28export%20SVG%29/eye-off.svg",
+        "tags": [
+          "eye",
+          "off"
+        ]
+      },
+      {
+        "id": "eye",
+        "name": "eye",
+        "path": "2D%20Icons%20%28export%20SVG%29/eye.svg",
+        "tags": [
+          "eye"
+        ]
+      },
+      {
+        "id": "file",
+        "name": "file",
+        "path": "2D%20Icons%20%28export%20SVG%29/file.svg",
+        "tags": [
+          "file"
+        ]
+      },
+      {
+        "id": "flag",
+        "name": "flag",
+        "path": "2D%20Icons%20%28export%20SVG%29/flag.svg",
+        "tags": [
+          "flag"
+        ]
+      },
+      {
+        "id": "folder",
+        "name": "folder",
+        "path": "2D%20Icons%20%28export%20SVG%29/folder.svg",
+        "tags": [
+          "folder"
+        ]
+      },
+      {
+        "id": "gift",
+        "name": "gift",
+        "path": "2D%20Icons%20%28export%20SVG%29/gift.svg",
+        "tags": [
+          "gift"
+        ]
+      },
+      {
+        "id": "globe",
+        "name": "globe",
+        "path": "2D%20Icons%20%28export%20SVG%29/globe.svg",
+        "tags": [
+          "globe"
+        ]
+      },
+      {
+        "id": "grid-2x2",
+        "name": "grid-2x2",
+        "path": "2D%20Icons%20%28export%20SVG%29/grid-2x2.svg",
+        "tags": [
+          "grid",
+          "2x2"
+        ]
+      },
+      {
+        "id": "headset",
+        "name": "headset",
+        "path": "2D%20Icons%20%28export%20SVG%29/headset.svg",
+        "tags": [
+          "headset"
+        ]
+      },
+      {
+        "id": "heart",
+        "name": "heart",
+        "path": "2D%20Icons%20%28export%20SVG%29/heart.svg",
+        "tags": [
+          "heart"
+        ]
+      },
+      {
+        "id": "history",
+        "name": "history",
+        "path": "2D%20Icons%20%28export%20SVG%29/history.svg",
+        "tags": [
+          "history"
+        ]
+      },
+      {
+        "id": "house",
+        "name": "house",
+        "path": "2D%20Icons%20%28export%20SVG%29/house.svg",
+        "tags": [
+          "house"
+        ]
+      },
+      {
+        "id": "image",
+        "name": "image",
+        "path": "2D%20Icons%20%28export%20SVG%29/image.svg",
+        "tags": [
+          "image"
+        ]
+      },
+      {
+        "id": "info",
+        "name": "info",
+        "path": "2D%20Icons%20%28export%20SVG%29/info.svg",
+        "tags": [
+          "info"
+        ]
+      },
+      {
+        "id": "key",
+        "name": "key",
+        "path": "2D%20Icons%20%28export%20SVG%29/key.svg",
+        "tags": [
+          "key"
+        ]
+      },
+      {
+        "id": "link",
+        "name": "link",
+        "path": "2D%20Icons%20%28export%20SVG%29/link.svg",
+        "tags": [
+          "link"
+        ]
+      },
+      {
+        "id": "list-filter",
+        "name": "list-filter",
+        "path": "2D%20Icons%20%28export%20SVG%29/list-filter.svg",
+        "tags": [
+          "list",
+          "filter"
+        ]
+      },
+      {
+        "id": "list",
+        "name": "list",
+        "path": "2D%20Icons%20%28export%20SVG%29/list.svg",
+        "tags": [
+          "list"
+        ]
+      },
+      {
+        "id": "lock",
+        "name": "lock",
+        "path": "2D%20Icons%20%28export%20SVG%29/lock.svg",
+        "tags": [
+          "lock"
+        ]
+      },
+      {
+        "id": "mail",
+        "name": "mail",
+        "path": "2D%20Icons%20%28export%20SVG%29/mail.svg",
+        "tags": [
+          "mail"
+        ]
+      },
+      {
+        "id": "map-pin",
+        "name": "map-pin",
+        "path": "2D%20Icons%20%28export%20SVG%29/map-pin.svg",
+        "tags": [
+          "map",
+          "pin"
+        ]
+      },
+      {
+        "id": "map",
+        "name": "map",
+        "path": "2D%20Icons%20%28export%20SVG%29/map.svg",
+        "tags": [
+          "map"
+        ]
+      },
+      {
+        "id": "menu",
+        "name": "menu",
+        "path": "2D%20Icons%20%28export%20SVG%29/menu.svg",
+        "tags": [
+          "menu"
+        ]
+      },
+      {
+        "id": "minus",
+        "name": "minus",
+        "path": "2D%20Icons%20%28export%20SVG%29/minus.svg",
+        "tags": [
+          "minus"
+        ]
+      },
+      {
+        "id": "moon",
+        "name": "moon",
+        "path": "2D%20Icons%20%28export%20SVG%29/moon.svg",
+        "tags": [
+          "moon"
+        ]
+      },
+      {
+        "id": "paperclip",
+        "name": "paperclip",
+        "path": "2D%20Icons%20%28export%20SVG%29/paperclip.svg",
+        "tags": [
+          "paperclip"
+        ]
+      },
+      {
+        "id": "pause",
+        "name": "pause",
+        "path": "2D%20Icons%20%28export%20SVG%29/pause.svg",
+        "tags": [
+          "pause"
+        ]
+      },
+      {
+        "id": "pencil",
+        "name": "pencil",
+        "path": "2D%20Icons%20%28export%20SVG%29/pencil.svg",
+        "tags": [
+          "pencil"
+        ]
+      },
+      {
+        "id": "percent",
+        "name": "percent",
+        "path": "2D%20Icons%20%28export%20SVG%29/percent.svg",
+        "tags": [
+          "percent"
+        ]
+      },
+      {
+        "id": "phone",
+        "name": "phone",
+        "path": "2D%20Icons%20%28export%20SVG%29/phone.svg",
+        "tags": [
+          "phone"
+        ]
+      },
+      {
+        "id": "play",
+        "name": "play",
+        "path": "2D%20Icons%20%28export%20SVG%29/play.svg",
+        "tags": [
+          "play"
+        ]
+      },
+      {
+        "id": "plus",
+        "name": "plus",
+        "path": "2D%20Icons%20%28export%20SVG%29/plus.svg",
+        "tags": [
+          "plus"
+        ]
+      },
+      {
+        "id": "printer",
+        "name": "printer",
+        "path": "2D%20Icons%20%28export%20SVG%29/printer.svg",
+        "tags": [
+          "printer"
+        ]
+      },
+      {
+        "id": "qr-code",
+        "name": "qr-code",
+        "path": "2D%20Icons%20%28export%20SVG%29/qr-code.svg",
+        "tags": [
+          "qr",
+          "code"
+        ]
+      },
+      {
+        "id": "receipt",
+        "name": "receipt",
+        "path": "2D%20Icons%20%28export%20SVG%29/receipt.svg",
+        "tags": [
+          "receipt"
+        ]
+      },
+      {
+        "id": "refresh-ccw",
+        "name": "refresh-ccw",
+        "path": "2D%20Icons%20%28export%20SVG%29/refresh-ccw.svg",
+        "tags": [
+          "refresh",
+          "ccw"
+        ]
+      },
+      {
+        "id": "repeat",
+        "name": "repeat",
+        "path": "2D%20Icons%20%28export%20SVG%29/repeat.svg",
+        "tags": [
+          "repeat"
+        ]
+      },
+      {
+        "id": "scan",
+        "name": "scan",
+        "path": "2D%20Icons%20%28export%20SVG%29/scan.svg",
+        "tags": [
+          "scan"
+        ]
+      },
+      {
+        "id": "scissors",
+        "name": "scissors",
+        "path": "2D%20Icons%20%28export%20SVG%29/scissors.svg",
+        "tags": [
+          "scissors"
+        ]
+      },
+      {
+        "id": "search",
+        "name": "search",
+        "path": "2D%20Icons%20%28export%20SVG%29/search.svg",
+        "tags": [
+          "search"
+        ]
+      },
+      {
+        "id": "send",
+        "name": "send",
+        "path": "2D%20Icons%20%28export%20SVG%29/send.svg",
+        "tags": [
+          "send"
+        ]
+      },
+      {
+        "id": "settings",
+        "name": "settings",
+        "path": "2D%20Icons%20%28export%20SVG%29/settings.svg",
+        "tags": [
+          "settings"
+        ]
+      },
+      {
+        "id": "share",
+        "name": "share",
+        "path": "2D%20Icons%20%28export%20SVG%29/share.svg",
+        "tags": [
+          "share"
+        ]
+      },
+      {
+        "id": "shield",
+        "name": "shield",
+        "path": "2D%20Icons%20%28export%20SVG%29/shield.svg",
+        "tags": [
+          "shield"
+        ]
+      },
+      {
+        "id": "shopping-bag",
+        "name": "shopping-bag",
+        "path": "2D%20Icons%20%28export%20SVG%29/shopping-bag.svg",
+        "tags": [
+          "shopping",
+          "bag"
+        ]
+      },
+      {
+        "id": "shopping-cart",
+        "name": "shopping-cart",
+        "path": "2D%20Icons%20%28export%20SVG%29/shopping-cart.svg",
+        "tags": [
+          "shopping",
+          "cart"
+        ]
+      },
+      {
+        "id": "signal",
+        "name": "signal",
+        "path": "2D%20Icons%20%28export%20SVG%29/signal.svg",
+        "tags": [
+          "signal"
+        ]
+      },
+      {
+        "id": "smile",
+        "name": "smile",
+        "path": "2D%20Icons%20%28export%20SVG%29/smile.svg",
+        "tags": [
+          "smile"
+        ]
+      },
+      {
+        "id": "sparkle",
+        "name": "sparkle",
+        "path": "2D%20Icons%20%28export%20SVG%29/sparkle.svg",
+        "tags": [
+          "sparkle"
+        ]
+      },
+      {
+        "id": "spray-can",
+        "name": "spray-can",
+        "path": "2D%20Icons%20%28export%20SVG%29/spray-can.svg",
+        "tags": [
+          "spray",
+          "can"
+        ]
+      },
+      {
+        "id": "square-arrow-right-exit",
+        "name": "square-arrow-right-exit",
+        "path": "2D%20Icons%20%28export%20SVG%29/square-arrow-right-exit.svg",
+        "tags": [
+          "square",
+          "arrow",
+          "right",
+          "exit"
+        ]
+      },
+      {
+        "id": "star",
+        "name": "star",
+        "path": "2D%20Icons%20%28export%20SVG%29/star.svg",
+        "tags": [
+          "star"
+        ]
+      },
+      {
+        "id": "sun",
+        "name": "sun",
+        "path": "2D%20Icons%20%28export%20SVG%29/sun.svg",
+        "tags": [
+          "sun"
+        ]
+      },
+      {
+        "id": "tag",
+        "name": "tag",
+        "path": "2D%20Icons%20%28export%20SVG%29/tag.svg",
+        "tags": [
+          "tag"
+        ]
+      },
+      {
+        "id": "thumbs-down",
+        "name": "thumbs-down",
+        "path": "2D%20Icons%20%28export%20SVG%29/thumbs-down.svg",
+        "tags": [
+          "thumbs",
+          "down"
+        ]
+      },
+      {
+        "id": "thumbs-up",
+        "name": "thumbs-up",
+        "path": "2D%20Icons%20%28export%20SVG%29/thumbs-up.svg",
+        "tags": [
+          "thumbs",
+          "up"
+        ]
+      },
+      {
+        "id": "ticket",
+        "name": "ticket",
+        "path": "2D%20Icons%20%28export%20SVG%29/ticket.svg",
+        "tags": [
+          "ticket"
+        ]
+      },
+      {
+        "id": "timer",
+        "name": "timer",
+        "path": "2D%20Icons%20%28export%20SVG%29/timer.svg",
+        "tags": [
+          "timer"
+        ]
+      },
+      {
+        "id": "trash",
+        "name": "trash",
+        "path": "2D%20Icons%20%28export%20SVG%29/trash.svg",
+        "tags": [
+          "trash"
+        ]
+      },
+      {
+        "id": "truck",
+        "name": "truck",
+        "path": "2D%20Icons%20%28export%20SVG%29/truck.svg",
+        "tags": [
+          "truck"
+        ]
+      },
+      {
+        "id": "upload",
+        "name": "upload",
+        "path": "2D%20Icons%20%28export%20SVG%29/upload.svg",
+        "tags": [
+          "upload"
+        ]
+      },
+      {
+        "id": "user-plus",
+        "name": "user-plus",
+        "path": "2D%20Icons%20%28export%20SVG%29/user-plus.svg",
+        "tags": [
+          "user",
+          "plus"
+        ]
+      },
+      {
+        "id": "user",
+        "name": "user",
+        "path": "2D%20Icons%20%28export%20SVG%29/user.svg",
+        "tags": [
+          "user"
+        ]
+      },
+      {
+        "id": "users",
+        "name": "users",
+        "path": "2D%20Icons%20%28export%20SVG%29/users.svg",
+        "tags": [
+          "users"
+        ]
+      },
+      {
+        "id": "wallet",
+        "name": "wallet",
+        "path": "2D%20Icons%20%28export%20SVG%29/wallet.svg",
+        "tags": [
+          "wallet"
+        ]
+      },
+      {
+        "id": "wifi",
+        "name": "wifi",
+        "path": "2D%20Icons%20%28export%20SVG%29/wifi.svg",
+        "tags": [
+          "wifi"
+        ]
+      },
+      {
+        "id": "wrench",
+        "name": "wrench",
+        "path": "2D%20Icons%20%28export%20SVG%29/wrench.svg",
+        "tags": [
+          "wrench"
+        ]
+      },
+      {
+        "id": "x-mark",
+        "name": "x-mark",
+        "path": "2D%20Icons%20%28export%20SVG%29/x-mark.svg",
+        "tags": [
+          "x",
+          "mark",
+          "close",
+          "dismiss"
+        ]
+      },
+      {
+        "id": "zap",
+        "name": "zap",
+        "path": "2D%20Icons%20%28export%20SVG%29/zap.svg",
+        "tags": [
+          "zap"
+        ]
+      },
+      {
+        "id": "bahrain",
+        "name": "bahrain",
+        "path": "Flags%20%28export%20SVG%29/bahrain.svg",
+        "tags": [
+          "bahrain"
+        ]
+      },
+      {
+        "id": "ksa",
+        "name": "ksa",
+        "path": "Flags%20%28export%20SVG%29/ksa.svg",
+        "tags": [
+          "ksa"
+        ]
+      },
+      {
+        "id": "kuwait",
+        "name": "kuwait",
+        "path": "Flags%20%28export%20SVG%29/kuwait.svg",
+        "tags": [
+          "kuwait"
+        ]
+      },
+      {
+        "id": "oman",
+        "name": "oman",
+        "path": "Flags%20%28export%20SVG%29/oman.svg",
+        "tags": [
+          "oman"
+        ]
+      },
+      {
+        "id": "qatar",
+        "name": "qatar",
+        "path": "Flags%20%28export%20SVG%29/qatar.svg",
+        "tags": [
+          "qatar"
+        ]
+      },
+      {
+        "id": "uae",
+        "name": "uae",
+        "path": "Flags%20%28export%20SVG%29/uae.svg",
+        "tags": [
+          "uae"
+        ]
+      },
+      {
+        "id": "amex",
+        "name": "amex",
+        "path": "Payment%20Cards%20%28export%20SVG%29/amex.svg",
+        "tags": [
+          "amex"
+        ]
+      },
+      {
+        "id": "apple-pay",
+        "name": "apple-pay",
+        "path": "Payment%20Cards%20%28export%20SVG%29/apple-pay.svg",
+        "tags": [
+          "apple",
+          "pay"
+        ]
+      },
+      {
+        "id": "careem",
+        "name": "careem",
+        "path": "Payment%20Cards%20%28export%20SVG%29/careem.svg",
+        "tags": [
+          "careem"
+        ]
+      },
+      {
+        "id": "google-pay",
+        "name": "google-pay",
+        "path": "Payment%20Cards%20%28export%20SVG%29/google-pay.svg",
+        "tags": [
+          "google",
+          "pay"
+        ]
+      },
+      {
+        "id": "master",
+        "name": "master",
+        "path": "Payment%20Cards%20%28export%20SVG%29/master.svg",
+        "tags": [
+          "master"
+        ]
+      },
+      {
+        "id": "tabby",
+        "name": "tabby",
+        "path": "Payment%20Cards%20%28export%20SVG%29/tabby.svg",
+        "tags": [
+          "tabby"
+        ]
+      },
+      {
+        "id": "tamara-logo-en",
+        "name": "tamara-logo-en",
+        "path": "Payment%20Cards%20%28export%20SVG%29/tamara-logo-en.svg",
+        "tags": [
+          "tamara",
+          "logo",
+          "en"
+        ]
+      },
+      {
+        "id": "visa",
+        "name": "visa",
+        "path": "Payment%20Cards%20%28export%20SVG%29/visa.svg",
+        "tags": [
+          "visa"
+        ]
+      },
+      {
+        "id": "assist",
+        "name": "assist",
+        "path": "Shapes%20%28export%20SVG%29/assist.svg",
+        "tags": [
+          "assist"
+        ]
+      },
+      {
+        "id": "care",
+        "name": "care",
+        "path": "Shapes%20%28export%20SVG%29/care.svg",
+        "tags": [
+          "care"
+        ]
+      },
+      {
+        "id": "clean",
+        "name": "clean",
+        "path": "Shapes%20%28export%20SVG%29/clean.svg",
+        "tags": [
+          "clean"
+        ]
+      },
+      {
+        "id": "heal",
+        "name": "heal",
+        "path": "Shapes%20%28export%20SVG%29/heal.svg",
+        "tags": [
+          "heal"
+        ]
+      }
+    ],
+    "icons3d": [
+      {
+        "id": "ac-cleaning",
+        "name": "ac-cleaning",
+        "path": "3D%20Icons%20%28export%20PNG%29/ac-cleaning.png",
+        "tags": [
+          "ac",
+          "cleaning"
+        ]
+      },
+      {
+        "id": "babysitting",
+        "name": "babysitting",
+        "path": "3D%20Icons%20%28export%20PNG%29/babysitting.png",
+        "tags": [
+          "babysitting"
+        ]
+      },
+      {
+        "id": "car-wash",
+        "name": "car-wash",
+        "path": "3D%20Icons%20%28export%20PNG%29/car-wash.png",
+        "tags": [
+          "car",
+          "wash"
+        ]
+      },
+      {
+        "id": "cleaning-old",
+        "name": "cleaning-old",
+        "path": "3D%20Icons%20%28export%20PNG%29/cleaning-old.png",
+        "tags": [
+          "cleaning",
+          "old"
+        ]
+      },
+      {
+        "id": "cleaning-subscription",
+        "name": "cleaning-subscription",
+        "path": "3D%20Icons%20%28export%20PNG%29/cleaning-subscription.png",
+        "tags": [
+          "cleaning",
+          "subscription"
+        ]
+      },
+      {
+        "id": "cleaning-subscription2",
+        "name": "cleaning-subscription2",
+        "path": "3D%20Icons%20%28export%20PNG%29/cleaning-subscription2.png",
+        "tags": [
+          "cleaning",
+          "subscription2"
+        ]
+      },
+      {
+        "id": "deep-cleaning",
+        "name": "deep-cleaning",
+        "path": "3D%20Icons%20%28export%20PNG%29/deep-cleaning.png",
+        "tags": [
+          "deep",
+          "cleaning"
+        ]
+      },
+      {
+        "id": "disinfection",
+        "name": "disinfection",
+        "path": "3D%20Icons%20%28export%20PNG%29/disinfection.png",
+        "tags": [
+          "disinfection"
+        ]
+      },
+      {
+        "id": "doctor-at-home",
+        "name": "doctor-at-home",
+        "path": "3D%20Icons%20%28export%20PNG%29/doctor-at-home.png",
+        "tags": [
+          "doctor",
+          "at",
+          "home"
+        ]
+      },
+      {
+        "id": "flu-vaccine",
+        "name": "flu-vaccine",
+        "path": "3D%20Icons%20%28export%20PNG%29/flu-vaccine.png",
+        "tags": [
+          "flu",
+          "vaccine"
+        ]
+      },
+      {
+        "id": "furniture-cleaning",
+        "name": "furniture-cleaning",
+        "path": "3D%20Icons%20%28export%20PNG%29/furniture-cleaning.png",
+        "tags": [
+          "furniture",
+          "cleaning"
+        ]
+      },
+      {
+        "id": "general-cleaning",
+        "name": "general-cleaning",
+        "path": "3D%20Icons%20%28export%20PNG%29/general-cleaning.png",
+        "tags": [
+          "general",
+          "cleaning"
+        ]
+      },
+      {
+        "id": "hair-care",
+        "name": "hair-care",
+        "path": "3D%20Icons%20%28export%20PNG%29/hair-care.png",
+        "tags": [
+          "hair",
+          "care"
+        ]
+      },
+      {
+        "id": "handymen",
+        "name": "handymen",
+        "path": "3D%20Icons%20%28export%20PNG%29/handymen.png",
+        "tags": [
+          "handymen"
+        ]
+      },
+      {
+        "id": "healthcare",
+        "name": "healthcare",
+        "path": "3D%20Icons%20%28export%20PNG%29/healthcare.png",
+        "tags": [
+          "healthcare"
+        ]
+      },
+      {
+        "id": "home-inspection",
+        "name": "home-inspection",
+        "path": "3D%20Icons%20%28export%20PNG%29/home-inspection.png",
+        "tags": [
+          "home",
+          "inspection"
+        ]
+      },
+      {
+        "id": "home-painting",
+        "name": "home-painting",
+        "path": "3D%20Icons%20%28export%20PNG%29/home-painting.png",
+        "tags": [
+          "home",
+          "painting"
+        ]
+      },
+      {
+        "id": "instant-home-cleaning",
+        "name": "instant-home-cleaning",
+        "path": "3D%20Icons%20%28export%20PNG%29/instant-home-cleaning.png",
+        "tags": [
+          "instant",
+          "home",
+          "cleaning"
+        ]
+      },
+      {
+        "id": "iv-therapy",
+        "name": "iv-therapy",
+        "path": "3D%20Icons%20%28export%20PNG%29/iv-therapy.png",
+        "tags": [
+          "iv",
+          "therapy"
+        ]
+      },
+      {
+        "id": "lab-tests",
+        "name": "lab-tests",
+        "path": "3D%20Icons%20%28export%20PNG%29/lab-tests.png",
+        "tags": [
+          "lab",
+          "tests"
+        ]
+      },
+      {
+        "id": "lashes-brows",
+        "name": "lashes-brows",
+        "path": "3D%20Icons%20%28export%20PNG%29/lashes-brows.png",
+        "tags": [
+          "lashes",
+          "brows"
+        ]
+      },
+      {
+        "id": "laundry-dry-cleaning",
+        "name": "laundry-dry-cleaning",
+        "path": "3D%20Icons%20%28export%20PNG%29/laundry-dry-cleaning.png",
+        "tags": [
+          "laundry",
+          "dry",
+          "cleaning"
+        ]
+      },
+      {
+        "id": "men-s-spa",
+        "name": "men-s-spa",
+        "path": "3D%20Icons%20%28export%20PNG%29/men-s-spa.png",
+        "tags": [
+          "men",
+          "s",
+          "spa"
+        ]
+      },
+      {
+        "id": "nail-couture",
+        "name": "nail-couture",
+        "path": "3D%20Icons%20%28export%20PNG%29/nail-couture.png",
+        "tags": [
+          "nail",
+          "couture"
+        ]
+      },
+      {
+        "id": "nurse-care",
+        "name": "nurse-care",
+        "path": "3D%20Icons%20%28export%20PNG%29/nurse-care.png",
+        "tags": [
+          "nurse",
+          "care"
+        ]
+      },
+      {
+        "id": "online-therapy",
+        "name": "online-therapy",
+        "path": "3D%20Icons%20%28export%20PNG%29/online-therapy.png",
+        "tags": [
+          "online",
+          "therapy"
+        ]
+      },
+      {
+        "id": "packers-and-movers",
+        "name": "packers-and-movers",
+        "path": "3D%20Icons%20%28export%20PNG%29/packers-and-movers.png",
+        "tags": [
+          "packers",
+          "and",
+          "movers"
+        ]
+      },
+      {
+        "id": "packers-movers",
+        "name": "packers-movers",
+        "path": "3D%20Icons%20%28export%20PNG%29/packers-movers.png",
+        "tags": [
+          "packers",
+          "movers"
+        ]
+      },
+      {
+        "id": "pcr-tests",
+        "name": "pcr-tests",
+        "path": "3D%20Icons%20%28export%20PNG%29/pcr-tests.png",
+        "tags": [
+          "pcr",
+          "tests"
+        ]
+      },
+      {
+        "id": "personal-trainer",
+        "name": "personal-trainer",
+        "path": "3D%20Icons%20%28export%20PNG%29/personal-trainer.png",
+        "tags": [
+          "personal",
+          "trainer"
+        ]
+      },
+      {
+        "id": "pest-control",
+        "name": "pest-control",
+        "path": "3D%20Icons%20%28export%20PNG%29/pest-control.png",
+        "tags": [
+          "pest",
+          "control"
+        ]
+      },
+      {
+        "id": "pet-grooming",
+        "name": "pet-grooming",
+        "path": "3D%20Icons%20%28export%20PNG%29/pet-grooming.png",
+        "tags": [
+          "pet",
+          "grooming"
+        ]
+      },
+      {
+        "id": "physiotherapy",
+        "name": "physiotherapy",
+        "path": "3D%20Icons%20%28export%20PNG%29/physiotherapy.png",
+        "tags": [
+          "physiotherapy"
+        ]
+      },
+      {
+        "id": "premium-grooming",
+        "name": "premium-grooming",
+        "path": "3D%20Icons%20%28export%20PNG%29/premium-grooming.png",
+        "tags": [
+          "premium",
+          "grooming"
+        ]
+      },
+      {
+        "id": "salon-spa",
+        "name": "salon-spa",
+        "path": "3D%20Icons%20%28export%20PNG%29/salon-spa.png",
+        "tags": [
+          "salon",
+          "spa"
+        ]
+      },
+      {
+        "id": "salon",
+        "name": "salon",
+        "path": "3D%20Icons%20%28export%20PNG%29/salon.png",
+        "tags": [
+          "salon"
+        ]
+      },
+      {
+        "id": "sneaker-cleaning",
+        "name": "sneaker-cleaning",
+        "path": "3D%20Icons%20%28export%20PNG%29/sneaker-cleaning.png",
+        "tags": [
+          "sneaker",
+          "cleaning"
+        ]
+      },
+      {
+        "id": "spray-tanning",
+        "name": "spray-tanning",
+        "path": "3D%20Icons%20%28export%20PNG%29/spray-tanning.png",
+        "tags": [
+          "spray",
+          "tanning"
+        ]
+      },
+      {
+        "id": "water-tank-cleaning",
+        "name": "water-tank-cleaning",
+        "path": "3D%20Icons%20%28export%20PNG%29/water-tank-cleaning.png",
+        "tags": [
+          "water",
+          "tank",
+          "cleaning"
+        ]
+      },
+      {
+        "id": "window-cleaning",
+        "name": "window-cleaning",
+        "path": "3D%20Icons%20%28export%20PNG%29/window-cleaning.png",
+        "tags": [
+          "window",
+          "cleaning"
+        ]
+      },
+      {
+        "id": "women-s-spa",
+        "name": "women-s-spa",
+        "path": "3D%20Icons%20%28export%20PNG%29/women-s-spa.png",
+        "tags": [
+          "women",
+          "s",
+          "spa"
+        ]
+      }
+    ]
+  }
+}
