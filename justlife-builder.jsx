@@ -216,16 +216,112 @@ function ComboSelection({ image, title = "Classic Mani-Pedi", price = "100", old
   );
 }
 
-// Selectable Item — canonical list card (title + 2nd/3rd line + radio)
-function SelectableItem({ title = "Home", line2 = "Al Sahab Tower 2, 1102", line3 = "Dubai Marina, Dubai", selected = false, control = "radio" }) {
+// Payment brand -> asset logo id (real DS logos from the asset CDN)
+const PAY_LOGO = { visa: "visa", mastercard: "master", master: "master", "master card": "master", amex: "amex", "american express": "amex", "apple pay": "apple-pay", applepay: "apple-pay", "google pay": "google-pay", googlepay: "google-pay", tabby: "tabby", tamara: "tamara-logo-en", careem: "careem", "careem pay": "careem" };
+const payLogoId = (k) => PAY_LOGO[String(k || "").toLowerCase().trim()];
+
+// Selectable Item — canonical list card (title + 2nd/3rd line + optional tag + radio)
+function SelectableItem({ title = "Home — Al Barsha 1", line2 = "Villa 12, Street 4B, Al Barsha 1, Dubai", line3, tag, selected = false, control = "radio" }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 8, padding: 16, borderRadius: R.lg, border: `${selected ? 1.5 : 0.75}px solid ${selected ? C.brand : C.border}`, background: selected ? C.selected : C.bg }}>
       <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2 }}>
         <div style={{ fontSize: 11, fontWeight: 600, color: C.text }}>{title}</div>
-        {line2 && <div style={{ fontSize: 11, color: C.disabled }}>{line2}</div>}
-        {line3 && <div style={{ fontSize: 9, color: selected ? C.brand : C.disabled, letterSpacing: 0.25 }}>{line3}</div>}
+        {line2 && <div style={{ fontSize: 11, color: C.text2 }}>{line2}</div>}
+        {line3 && <div style={{ fontSize: 9, color: C.text2, letterSpacing: 0.25 }}>{line3}</div>}
+        {tag && <div style={{ fontSize: 9, fontWeight: 600, color: C.link, marginTop: 2 }}>{tag}</div>}
       </div>
       <ControlDot type={control} selected={selected} />
+    </div>
+  );
+}
+
+// ——— Selectable Item family (DS 18211-18226): shared state colors ———
+const selState = (state) => state === "selected"
+  ? { bg: C.selected, border: C.brand, text: C.link, bold: true }
+  : state === "disabled"
+  ? { bg: C.bg3, border: "transparent", text: C.disabled, bold: false }
+  : { bg: C.bg2, border: C.border, text: C.text, bold: false };
+
+// Selectable Item / Date — 55x53 tile (day 9 + date 11 SemiBold), horizontal strip
+function DateSelector({ items, active = 1 }) {
+  const days = items && items.length ? items : [
+    { day: "Wed", date: "10 Feb" }, { day: "Thu", date: "11 Feb" }, { day: "Fri", date: "12 Feb" },
+    { day: "Sat", date: "13 Feb" }, { day: "Sun", date: "14 Feb", disabled: true },
+  ];
+  return (
+    <div style={{ display: "flex", gap: S.md, overflowX: "auto", margin: "0 -16px", padding: "0 16px" }}>
+      {days.map((d, i) => {
+        const st = selState(d.disabled ? "disabled" : i === active ? "selected" : "default");
+        return (
+          <div key={i} style={{ flex: "0 0 55px", width: 55, height: 53, borderRadius: R.md, background: st.bg, border: `1px solid ${st.border}`, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2 }}>
+            <span style={{ fontSize: 9, color: st.text }}>{d.day}</span>
+            <span style={{ fontSize: 11, fontWeight: 600, color: st.text }}>{d.date}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// Selectable Item / Time Slot with Tag — 91x43 card + floating tag (Extra=brand / Off=green)
+function TimeSlotPicker({ items, active = 0 }) {
+  const slots = items && items.length ? items : [
+    { time: "08:00-08:30" }, { time: "08:30-09:00", tag: "5 EXTRA", tagType: "extra" },
+    { time: "09:00-09:30", tag: "5 OFF", tagType: "off" }, { time: "09:30-10:00", disabled: true },
+  ];
+  return (
+    <div style={{ display: "flex", gap: S.md, overflowX: "auto", margin: "0 -16px", padding: "8px 16px 0" }}>
+      {slots.map((s, i) => {
+        const st = selState(s.disabled ? "disabled" : i === active ? "selected" : "default");
+        const off = s.tagType === "off";
+        return (
+          <div key={i} style={{ position: "relative", flex: "0 0 auto" }}>
+            <div style={{ height: 35, padding: "0 10px", borderRadius: R.md, background: st.bg, border: `1px solid ${st.border}`, display: "flex", alignItems: "center" }}>
+              <span style={{ fontSize: 11, fontWeight: st.bold ? 600 : 400, color: st.text, whiteSpace: "nowrap" }}>{s.time}</span>
+            </div>
+            {s.tag && (
+              <span style={{ position: "absolute", top: -8, right: -4, display: "inline-flex", alignItems: "center", gap: 2, background: off ? DS.success.chip : C.brand, color: off ? DS.yellow.y800 : "#fff", fontSize: 9, fontWeight: 600, padding: "1px 5px", borderRadius: R.xs, whiteSpace: "nowrap" }}>
+                {!off && <Dh size={7} color="#fff" />}{off && <Dh size={7} color={DS.yellow.y800} />}{s.tag}
+              </span>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// Selectable Item / Number Box — 40x40 count boxes (bedrooms/bathrooms etc.)
+function NumberBoxRow({ label, count = 5, active = 0, items }) {
+  const nums = items && items.length ? items : Array.from({ length: count }, (_, i) => ({ n: i + 1 }));
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: S.md }}>
+      {label && <div style={{ fontSize: 11, fontWeight: 600, color: C.text }}>{label}</div>}
+      <div style={{ display: "flex", gap: S.md, flexWrap: "wrap" }}>
+        {nums.map((x, i) => {
+          const st = selState(x.disabled ? "disabled" : i === active ? "selected" : "default");
+          return (
+            <div key={i} style={{ width: 40, height: 40, borderRadius: R.md, background: st.bg, border: `1px solid ${st.border}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: st.bold ? 600 : 400, color: st.text }}>{x.n}</div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// Disclaimer — tonal callout (success/warning/error/neutral) 9px SemiBold + optional Details link
+function Disclaimer({ message = "Enjoy free cancellation up to 6 hours before your booking", type = "success", button, icon = true }) {
+  const T = {
+    success: { bg: C.successBg, fg: "#2E4400" },
+    warning: { bg: "#FFF8EE", fg: DS.yellow.y800 },
+    error:   { bg: C.dangerBg, fg: C.danger },
+    neutral: { bg: C.bg3, fg: C.text2 },
+  }[String(type).toLowerCase()] || { bg: C.successBg, fg: "#2E4400" };
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 8, background: T.bg, borderRadius: R.md, padding: "10px 12px" }}>
+      {icon && <AlertCircle size={14} color={T.fg} style={{ flex: "0 0 14px" }} />}
+      <span style={{ flex: 1, fontSize: 9, fontWeight: 600, color: T.fg, lineHeight: 1.4 }}>{message}</span>
+      {button && <span style={{ fontSize: 9, fontWeight: 600, color: C.link, whiteSpace: "nowrap" }}>{button}</span>}
     </div>
   );
 }
@@ -378,32 +474,60 @@ function BookingDetails({ title = "Booking Details", status = "Confirmed", refer
   );
 }
 
-function PriceDetails({ title = "Payment Summary", rows, total = "219.00" }) {
-  const r = rows && rows.length ? rows : [{ label: "Subtotal", value: "78.00" }, { label: "Discount", value: "9.00", discount: true }, { label: "Service Fee", value: "9.00" }];
+function PriceDetails({ title = "Price Breakdown", rows, total = "367.13", totalLabel = "Total (inc. VAT)", payment, footer }) {
+  const r = rows && rows.length ? rows : [
+    { label: "Deep Cleaning (3BR)", value: "349" },
+    { label: "Add-on: Inside Fridge", value: "49" },
+    { label: "Promo Code (CLEAN20)", value: "87.40", discount: true },
+    { label: "VAT (5%)", value: "17.53" },
+  ];
+  const payLogo = payment && (payment.logo || payLogoId(payment.method || payment.brand));
   return (
     <div style={{ background: C.bg2, borderRadius: R.lg, padding: 12 }}>
-      <div style={{ fontWeight: 600, fontSize: 11, marginBottom: S.md }}>{title}</div>
+      {title && <div style={{ fontWeight: 600, fontSize: 11, marginBottom: S.md }}>{title}</div>}
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-        {r.map((x, i) => (
-          <div key={i} style={{ display: "flex", justifyContent: "space-between", fontSize: 11 }}>
-            <span style={{ color: C.text2 }}>{x.label}</span>
-            <span><Price value={String(x.value).replace("-", "")} size={11} color={x.discount ? C.success : C.text} /></span>
-          </div>
-        ))}
+        {r.map((x, i) => {
+          const val = cleanNum(String(x.value)).replace(/^-/, "");
+          const disc = x.discount || x.tone === "discount";
+          return (
+            <div key={i} style={{ display: "flex", justifyContent: "space-between", fontSize: 11 }}>
+              <span style={{ color: C.text2 }}>{x.label}</span>
+              {disc
+                ? <span style={{ display: "inline-flex", alignItems: "center", color: C.success, fontWeight: 600 }}>−<Dh size={9} color={C.success} />{val}</span>
+                : <Price value={val} size={11} />}
+            </div>
+          );
+        })}
         <div style={{ borderTop: `1px solid ${C.border}`, marginTop: 4, paddingTop: 8, display: "flex", justifyContent: "space-between" }}>
-          <span style={{ fontWeight: 600, fontSize: 11 }}>Total (inc. VAT)</span><span style={{ fontWeight: 600 }}><Price value={total} size={11} /></span>
+          <span style={{ fontWeight: 600, fontSize: 11 }}>{totalLabel}</span><span style={{ fontWeight: 600 }}><Price value={total} size={11} /></span>
         </div>
+        {payment && (
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 11, paddingTop: 2 }}>
+            <span style={{ color: C.text2 }}>Payment</span>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+              {payLogo && <Img id={payLogo} style={{ width: 30, height: 18, objectFit: "contain" }} />}
+              {payment.last4 && <span style={{ color: C.text }}>**** {payment.last4}</span>}
+            </span>
+          </div>
+        )}
+        {footer && <div style={{ fontSize: 9, color: C.text2, marginTop: 2, lineHeight: 1.4 }}>{footer}</div>}
       </div>
     </div>
   );
 }
 
-function PaymentMethod({ brand = "VISA", last4 = "5414", selected = true }) {
+function PaymentMethod({ brand = "Visa", method, last4 = "4782", selected = true, subtitle, logo }) {
+  const logoId = logo || payLogoId(method || brand);
   return (
-    <div style={{ background: C.bg2, borderRadius: R.lg, padding: 12, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: S.md }}>
-        <span style={{ fontWeight: 600, fontStyle: "italic", color: "#1A1F71", fontSize: 11, letterSpacing: 0.5 }}>{brand}</span>
-        <span style={{ fontSize: 11, color: C.text, letterSpacing: 1 }}>**** **** **** {last4}</span>
+    <div style={{ background: C.bg2, borderRadius: R.lg, padding: 12, display: "flex", alignItems: "center", justifyContent: "space-between", border: `1px solid ${selected ? C.brand : "transparent"}` }}>
+      <div style={{ display: "flex", alignItems: "center", gap: S.md, minWidth: 0 }}>
+        {logoId
+          ? <Img id={logoId} style={{ width: 38, height: 24, objectFit: "contain", flex: "0 0 38px" }} />
+          : <span style={{ fontWeight: 600, fontStyle: "italic", color: "#1A1F71", fontSize: 11, letterSpacing: 0.5 }}>{brand}</span>}
+        <div style={{ display: "flex", flexDirection: "column", gap: 1, minWidth: 0 }}>
+          {last4 && <span style={{ fontSize: 11, color: C.text, letterSpacing: 1 }}>**** **** **** {last4}</span>}
+          {subtitle && <span style={{ fontSize: 9, color: C.text2 }}>{subtitle}</span>}
+        </div>
       </div>
       <ControlDot type="radio" selected={selected} />
     </div>
@@ -576,6 +700,10 @@ const LIVE = {
   "Quantity Stepper": { c: QuantityStepper }, "Add-ons Card": { c: AddonsCard },
   "Frequency Option": { c: FrequencyOptions }, "Subscription Schedule": { c: SubscriptionSchedule },
   "Special Instructions": { c: SpecialInstructions },
+  "Selectable Item / Date": { c: DateSelector }, "Date Selector": { c: DateSelector },
+  "Selectable Item / Time Slot with Tag": { c: TimeSlotPicker }, "Time Slot": { c: TimeSlotPicker }, "Selectable Item / Time Slot": { c: TimeSlotPicker },
+  "Selectable Item / Number Box": { c: NumberBoxRow }, "Number Box": { c: NumberBoxRow },
+  "Disclaimer": { c: Disclaimer },
   "Booking Details — Variants": { c: BookingDetails }, "Booking Details": { c: BookingDetails },
   "Price Details — Variants": { c: PriceDetails }, "Price Details": { c: PriceDetails }, "Payment Summary": { c: PriceDetails },
   "Payment Method": { c: PaymentMethod }, "Button": { c: PrimaryButton, sticky: true },
@@ -629,7 +757,11 @@ function catalogText(groups, catalog, lite) {
     '- "Homepage Section" {title,action,items:[{label,icon(3D icon id),tag}]}  (services grid of tiles)',
     '- "Service Card" / "Product Card" {title,duration,desc,price,oldPrice,cta(Add|Select),image(photo id)}',
     '- "Combo Selection" {title,price,oldPrice,control(checkbox|radio),selected,image(photo id)}',
-    '- "Selectable Item" {title,line2,line3,selected,control(radio|checkbox)}  (address/list row)',
+    '- "Selectable Item" {title,line2,line3,tag,selected,control(radio|checkbox)}  address/list row; tag e.g. "Default address" (brand)',
+    '- "Selectable Item / Date" {items:[{day,date,disabled}],active}  horizontal date strip (booking calendar). Use on Date & Time screens.',
+    '- "Selectable Item / Time Slot with Tag" {items:[{time,tag,tagType(extra|off),disabled}],active}  time slots; tag "5 EXTRA" (brand) or "5 OFF" (green). Use after Date.',
+    '- "Selectable Item / Number Box" {label,count,active}  numbered boxes (bedrooms/bathrooms/units count)',
+    '- "Disclaimer" {message,type(success|warning|error|neutral),button}  tonal callout e.g. free-cancellation note; button e.g. "Details"',
     '- "Plan Booking Card" {title,status(Active|Confirmed|Completed|Cancelled),rows:[{label,value,brand}],pro,rating,cta}',
     '- "Cashback Card" {title,amount,desc,expiry,cta}',
     '- "Rating Summary" {score,count}',
@@ -639,8 +771,8 @@ function catalogText(groups, catalog, lite) {
     '- "Quantity Stepper" {value}',
     '- "Special Instructions" {label,action}',
     '- "Booking Details — Variants" {title,status,reference,service,datetime}',
-    '- "Price Details — Variants" {title,rows:[{label,value,discount}],total}',
-    '- "Payment Method" {brand,last4,selected}',
+    '- "Price Details — Variants" {title,rows:[{label,value,discount}],total,totalLabel,payment:{method,last4},footer}  discount rows render as −﷼value in green',
+    '- "Payment Method" {method(Visa|Mastercard|Amex|Apple Pay|Google Pay|Tabby|Careem),last4,subtitle,selected}  renders the real brand logo',
     '- "Button" {label,price,variant,size,outline}  variant: primary|secondary|tertiary|danger|pill · size: xs|small|medium|large · outline:true = transparent + colored border/text',
     '- "App Header" {title,step,nextStep,back,search,heart,progress(0-1)}  (TOP screen header; non-home screens; always FIRST)',
     '- "Navbar / App" {price,oldPrice,discount,subtitle,button,plusBanner,total}  (BOTTOM checkout/CTA bar with price; use for booking/checkout; always LAST)',
