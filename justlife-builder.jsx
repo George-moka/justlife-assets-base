@@ -326,6 +326,68 @@ function Disclaimer({ message = "Enjoy free cancellation up to 6 hours before yo
   );
 }
 
+// Booking Status — confirmation/status header card (DS 12644:3058). radius 20, bg secondary.
+function BookingStatus({ type = "confirmed", title, message, pro, eta, actions = true }) {
+  const t = String(type).toLowerCase();
+  const heads = {
+    "confirmed": { h: "Booking confirmed!", m: "We'll share professional's details 1 hour prior to your booking." },
+    "on-the-way": { h: "On the way!", m: "We'll arrive between 13:00-14:00." },
+    "with-professional": { h: "Professional arrived", m: "We'll arrive between 13:00-14:00." },
+    "professional assigned": { h: "Professional assigned", m: "We'll arrive between 13:00-14:00." },
+    "in-progress": { h: "Service in progress", m: "Your service has started." },
+    "completed": { h: "Service completed", m: "Thanks for booking with Justlife!" },
+    "cancelled": { h: "Booking cancelled", m: "Your booking has been cancelled." },
+  };
+  const d = heads[t] || heads["confirmed"];
+  const showPro = pro && t !== "confirmed" && t !== "cancelled";
+  return (
+    <div style={{ background: C.bg2, borderRadius: 20, padding: 16, display: "flex", flexDirection: "column", gap: 10 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <div style={{ width: 44, height: 44, borderRadius: "50%", background: DS.bg.brandSubtle, display: "flex", alignItems: "center", justifyContent: "center", flex: "0 0 44px" }}>
+          <div style={{ width: 26, height: 26, borderRadius: "50%", background: C.brand, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Check size={14} color="#fff" />
+          </div>
+        </div>
+        <div style={{ minWidth: 0 }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: C.text }}>{title || d.h}</div>
+          <div style={{ fontSize: 11, color: C.text, opacity: .85, lineHeight: 1.4, marginTop: 2 }}>{message || d.m}</div>
+        </div>
+      </div>
+      {showPro && (
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#fff", borderRadius: R.xs, padding: "3px 8px" }}>
+            <span style={{ width: 16, height: 16, borderRadius: "50%", background: C.bg3, flex: "0 0 16px" }} />
+            <span style={{ fontSize: 9, fontWeight: 600, color: C.brand }}>{pro}</span>
+          </span>
+          {actions && (t.includes("assigned") || t.includes("professional")) && (
+            <span style={{ display: "inline-flex", gap: 8 }}>
+              {["Chat", "Call"].map(a => (
+                <span key={a} style={{ background: "#fff", borderRadius: 200, padding: "6px 14px", fontSize: 11, fontWeight: 600, color: C.success }}>{a}</span>
+              ))}
+            </span>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Info Card — tonal tip/callout (Warning/Info/Success/Brand)
+function InfoCard({ text = "Tip: our professionals bring their own supplies.", tone = "info", icon = true }) {
+  const T = {
+    warning: { bg: "#FFF8EE", fg: DS.yellow.y800 },
+    info:    { bg: C.brandBg, fg: DS.blue.b900 },
+    success: { bg: C.successBg, fg: "#2E4400" },
+    brand:   { bg: DS.bg.brandSubtle, fg: DS.blue.b900 },
+  }[String(tone).toLowerCase()] || { bg: C.brandBg, fg: DS.blue.b900 };
+  return (
+    <div style={{ display: "flex", alignItems: "flex-start", gap: 8, background: T.bg, borderRadius: R.md, padding: "10px 12px" }}>
+      {icon && <AlertCircle size={14} color={T.fg} style={{ flex: "0 0 14px", marginTop: 1 }} />}
+      <span style={{ fontSize: 11, color: T.fg, lineHeight: 1.45 }}>{text}</span>
+    </div>
+  );
+}
+
 // Plan Booking Card — booking/subscription summary
 function PlanBookingCard({ title = "Cleaning Subscription", status = "Active", rows, pro = "Hussein", proAvatar, rating = "4.7", cta = "View Schedule" }) {
   const r = rows && rows.length ? rows : [
@@ -704,6 +766,8 @@ const LIVE = {
   "Selectable Item / Time Slot with Tag": { c: TimeSlotPicker }, "Time Slot": { c: TimeSlotPicker }, "Selectable Item / Time Slot": { c: TimeSlotPicker },
   "Selectable Item / Number Box": { c: NumberBoxRow }, "Number Box": { c: NumberBoxRow },
   "Disclaimer": { c: Disclaimer },
+  "Booking Status": { c: BookingStatus }, "Thank You Card": { c: BookingStatus },
+  "Info Card": { c: InfoCard },
   "Booking Details — Variants": { c: BookingDetails }, "Booking Details": { c: BookingDetails },
   "Price Details — Variants": { c: PriceDetails }, "Price Details": { c: PriceDetails }, "Payment Summary": { c: PriceDetails },
   "Payment Method": { c: PaymentMethod }, "Button": { c: PrimaryButton, sticky: true },
@@ -713,6 +777,257 @@ const LIVE = {
 const norm = (s) => String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, "");
 const LIVE_BY_NORM = Object.fromEntries(Object.entries(LIVE).map(([k, v]) => [norm(k), v]));
 const resolveLive = (name) => LIVE[name] || LIVE_BY_NORM[norm(name)] || null;
+
+// ============================================================
+//  WEB BUILDER — desktop components (DS tokens: colors, Poppins, radius)
+// ============================================================
+const WF = { h1: 32, h2: 22, h3: 16, body: 14, small: 12, tiny: 11 };
+
+function WebHeader({ brand = "Justlife", links, cta = "Book Now", user }) {
+  const L = links && links.length ? links : ["Services", "Pricing", "About", "Contact"];
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 28, padding: "16px 36px", background: C.bg, borderBottom: `1px solid ${C.border}`, flex: "0 0 auto" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <JustlifeMark size={22} /><span style={{ fontWeight: 600, fontSize: WF.h3, color: C.text }}>{brand}</span>
+      </div>
+      <div style={{ display: "flex", gap: 22, marginLeft: 12 }}>
+        {L.map((l, i) => <span key={i} style={{ fontSize: WF.small, color: i === 0 ? C.text : C.text2, fontWeight: i === 0 ? 600 : 400 }}>{l}</span>)}
+      </div>
+      <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 14 }}>
+        {user && <span style={{ fontSize: WF.small, color: C.text2 }}>{user}</span>}
+        <span style={{ background: C.brand, color: "#fff", fontWeight: 600, fontSize: WF.small, padding: "9px 20px", borderRadius: R.md }}>{cta}</span>
+      </div>
+    </div>
+  );
+}
+
+function WebHero({ title = "Home services, on demand", subtitle = "Book trusted professionals for cleaning, salon and more — in minutes.", cta = "Get Started", cta2, image, stat }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 40, padding: "48px 44px", background: `linear-gradient(120deg, ${C.selected}, ${C.bg})`, borderRadius: R.xl }}>
+      <div style={{ flex: "1 1 380px", minWidth: 0 }}>
+        <div style={{ fontSize: WF.h1, fontWeight: 600, lineHeight: 1.12, letterSpacing: "-0.02em", color: C.text }}>{title}</div>
+        <div style={{ fontSize: WF.body, color: C.text2, marginTop: 14, maxWidth: 460, lineHeight: 1.55 }}>{subtitle}</div>
+        <div style={{ display: "flex", gap: 12, marginTop: 26 }}>
+          <span style={{ background: C.brand, color: "#fff", fontWeight: 600, fontSize: WF.small, padding: "12px 26px", borderRadius: R.md }}>{cta}</span>
+          {cta2 && <span style={{ border: `1px solid ${C.border}`, color: C.text, fontWeight: 600, fontSize: WF.small, padding: "12px 26px", borderRadius: R.md, background: C.bg }}>{cta2}</span>}
+        </div>
+        {stat && <div style={{ fontSize: WF.tiny, color: C.text2, marginTop: 20 }}>{stat}</div>}
+      </div>
+      <Img id={image} radius={R.lg} ph={C.bg3} style={{ flex: "0 0 280px", width: 280, height: 195 }} />
+    </div>
+  );
+}
+
+function StatCards({ items }) {
+  const its = items && items.length ? items : [
+    { label: "Total Bookings", value: "12,480", delta: "+12%" }, { label: "Revenue", value: "418,200", delta: "+8%", currency: true },
+    { label: "Active Pros", value: "324", delta: "+4%" }, { label: "Avg. Rating", value: "4.8", delta: "+0.1" },
+  ];
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(its.length, 4)}, 1fr)`, gap: 16 }}>
+      {its.map((s, i) => (
+        <div key={i} style={{ background: C.bg2, borderRadius: R.lg, padding: 18, border: `1px solid ${C.border}` }}>
+          <div style={{ fontSize: WF.tiny, color: C.text2 }}>{s.label}</div>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginTop: 6 }}>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 3, fontSize: WF.h2, fontWeight: 600, color: C.text }}>
+              {s.currency && <Dh size={15} color={C.text} />}{s.value}
+            </span>
+            {s.delta && <span style={{ fontSize: WF.tiny, fontWeight: 600, color: String(s.delta).startsWith("-") ? C.danger : C.success, background: String(s.delta).startsWith("-") ? C.dangerBg : C.successBg, padding: "1px 7px", borderRadius: R.xs }}>{s.delta}</span>}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ChartCard({ title = "Bookings over time", bars, labels }) {
+  const B = bars && bars.length ? bars : [42, 58, 50, 74, 66, 88, 96, 80, 104, 92, 118, 126];
+  const L = labels && labels.length ? labels : ["J","F","M","A","M","J","J","A","S","O","N","D"];
+  const max = Math.max(...B);
+  return (
+    <div style={{ background: C.bg2, borderRadius: R.lg, padding: 20, border: `1px solid ${C.border}` }}>
+      <div style={{ fontSize: WF.small, fontWeight: 600, color: C.text, marginBottom: 16 }}>{title}</div>
+      <div style={{ display: "flex", alignItems: "flex-end", gap: 8, height: 140 }}>
+        {B.map((v, i) => (
+          <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+            <div style={{ width: "100%", height: `${Math.max(4, (v / max) * 118)}px`, background: i === B.length - 1 ? C.brand : DS.bg.brandSubtle, borderRadius: "6px 6px 2px 2px" }} />
+            <span style={{ fontSize: 9, color: C.text3 }}>{L[i] || ""}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function DataTable({ title = "Recent bookings", columns, rows }) {
+  const cols = columns && columns.length === 5 ? columns : ["Customer", "Service", "Date", "Amount", "Status"];
+  const rws = rows && rows.length ? rows : [
+    ["Sara M.", "Deep Cleaning", "23 Jun", "349", "Confirmed"],
+    ["Ahmed K.", "AC Cleaning", "23 Jun", "199", "In progress"],
+    ["Lina H.", "Salon at Home", "22 Jun", "260", "Completed"],
+    ["Omar T.", "Mani-Pedi", "22 Jun", "120", "Cancelled"],
+  ];
+  const stColor = (s) => /confirm|complete/i.test(s) ? C.success : /cancel/i.test(s) ? C.danger : C.link;
+  const stBg = (s) => /confirm|complete/i.test(s) ? C.successBg : /cancel/i.test(s) ? C.dangerBg : C.brandBg;
+  return (
+    <div style={{ background: C.bg2, borderRadius: R.lg, border: `1px solid ${C.border}`, overflow: "hidden" }}>
+      <div style={{ fontSize: WF.small, fontWeight: 600, color: C.text, padding: "16px 20px 10px" }}>{title}</div>
+      <div style={{ display: "grid", gridTemplateColumns: `1.2fr 1.4fr .8fr .8fr 1fr`, padding: "8px 20px", borderBottom: `1px solid ${C.border}` }}>
+        {cols.map((c, i) => <span key={i} style={{ fontSize: WF.tiny, fontWeight: 600, color: C.text2 }}>{c}</span>)}
+      </div>
+      {rws.map((r, i) => (
+        <div key={i} style={{ display: "grid", gridTemplateColumns: `1.2fr 1.4fr .8fr .8fr 1fr`, padding: "11px 20px", borderBottom: i < rws.length - 1 ? `1px solid ${C.border}` : "none", alignItems: "center" }}>
+          {(Array.isArray(r) ? r : []).slice(0, 5).map((cell, j) => {
+            if (j === 3) return <span key={j} style={{ display: "inline-flex", alignItems: "center", gap: 2, fontSize: WF.tiny, color: C.text }}><Dh size={9} color={C.text} />{cleanNum(String(cell))}</span>;
+            if (j === 4) return <span key={j}><span style={{ fontSize: 10, fontWeight: 600, color: stColor(String(cell)), background: stBg(String(cell)), padding: "3px 9px", borderRadius: R.pill }}>{cell}</span></span>;
+            return <span key={j} style={{ fontSize: WF.tiny, color: j === 0 ? C.text : C.text2, fontWeight: j === 0 ? 500 : 400 }}>{cell}</span>;
+          })}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function WebCardGrid({ title = "Our services", items, columns = 3 }) {
+  const its = items && items.length ? items : [
+    { title: "Home Cleaning", desc: "Trusted hourly cleaning with supplies.", price: "89" },
+    { title: "Salon at Home", desc: "Beauty services at your doorstep.", price: "120" },
+    { title: "AC Cleaning", desc: "Duct and filter deep cleaning.", price: "199" },
+  ];
+  return (
+    <div>
+      {title && <div style={{ fontSize: WF.h2, fontWeight: 600, color: C.text, marginBottom: 18, letterSpacing: "-0.01em" }}>{title}</div>}
+      <div style={{ display: "grid", gridTemplateColumns: `repeat(${Math.max(1, Math.min(columns || 3, its.length))}, 1fr)`, gap: 18 }}>
+        {its.map((c, i) => (
+          <div key={i} style={{ background: C.bg2, borderRadius: R.lg, border: `1px solid ${C.border}`, overflow: "hidden" }}>
+            <Img id={c.image} ph={C.bg3} style={{ width: "100%", height: 125 }} />
+            <div style={{ padding: 16 }}>
+              <div style={{ fontSize: WF.body, fontWeight: 600, color: C.text }}>{c.title}</div>
+              {c.desc && <div style={{ fontSize: WF.tiny, color: C.text2, marginTop: 6, lineHeight: 1.5 }}>{c.desc}</div>}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 14 }}>
+                {c.price ? <span style={{ display: "inline-flex", alignItems: "center", gap: 3, fontSize: WF.body, fontWeight: 600, color: C.text }}><Dh size={12} color={C.text} />{cleanNum(c.price)}</span> : <span />}
+                <span style={{ fontSize: WF.tiny, fontWeight: 600, color: C.link }}>Book →</span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function WebSidebar({ items, active = 0 }) {
+  const its = items && items.length ? items : ["Dashboard", "Bookings", "Professionals", "Customers", "Payments", "Reports", "Settings"];
+  return (
+    <div style={{ width: 190, flex: "0 0 190px", background: C.bg2, borderRight: `1px solid ${C.border}`, padding: "18px 10px", display: "flex", flexDirection: "column", gap: 4, overflowY: "auto" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "4px 12px 16px" }}>
+        <JustlifeMark size={20} /><span style={{ fontWeight: 600, fontSize: WF.small, color: C.text }}>Admin</span>
+      </div>
+      {its.map((l, i) => (
+        <div key={i} style={{ fontSize: WF.tiny, fontWeight: i === active ? 600 : 400, color: i === active ? DS.blue.b900 : C.text2, background: i === active ? C.brandBg : "transparent", padding: "9px 12px", borderRadius: R.md }}>{l}</div>
+      ))}
+    </div>
+  );
+}
+
+function WebFooter({ brand = "Justlife", columns }) {
+  const cols = columns && columns.length ? columns : [
+    { title: "Services", links: ["Cleaning", "Salon", "Healthcare"] },
+    { title: "Company", links: ["About", "Careers", "Press"] },
+    { title: "Support", links: ["Help Center", "Contact", "Terms"] },
+  ];
+  return (
+    <div style={{ background: DS.bg.inverse, color: "#fff", borderRadius: R.xl, padding: "32px 36px", display: "flex", gap: 54, flexWrap: "wrap" }}>
+      <div style={{ flex: "1 1 200px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}><span style={{ fontWeight: 600, fontSize: WF.h3 }}>{brand}</span></div>
+        <div style={{ fontSize: WF.tiny, color: "#ffffff99", marginTop: 10, maxWidth: 260, lineHeight: 1.6 }}>Everyday services, delivered to your door across the UAE and KSA.</div>
+      </div>
+      {cols.map((c, i) => (
+        <div key={i}>
+          <div style={{ fontSize: WF.tiny, fontWeight: 600, marginBottom: 10 }}>{c.title}</div>
+          {(c.links || []).map((l, j) => <div key={j} style={{ fontSize: WF.tiny, color: "#ffffff99", marginBottom: 7 }}>{l}</div>)}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function WebForm({ title = "Get in touch", fields, cta = "Submit" }) {
+  const F = fields && fields.length ? fields : ["Full name", "Email address", "Message"];
+  return (
+    <div style={{ background: C.bg2, borderRadius: R.lg, border: `1px solid ${C.border}`, padding: 24, maxWidth: 480 }}>
+      <div style={{ fontSize: WF.h3, fontWeight: 600, color: C.text, marginBottom: 16 }}>{title}</div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        {F.map((f, i) => (
+          <div key={i}>
+            <div style={{ fontSize: WF.tiny, fontWeight: 500, color: C.text2, marginBottom: 5 }}>{f}</div>
+            <div style={{ height: /message|notes|details/i.test(String(f)) ? 74 : 38, background: C.bg, border: `1px solid ${C.border}`, borderRadius: R.md }} />
+          </div>
+        ))}
+        <span style={{ background: C.brand, color: "#fff", fontWeight: 600, fontSize: WF.small, padding: "11px 0", borderRadius: R.md, textAlign: "center", marginTop: 4 }}>{cta}</span>
+      </div>
+    </div>
+  );
+}
+
+const WEB_LIVE = {
+  "Web Header": { c: WebHeader, top: true }, "Web Hero": { c: WebHero }, "Stat Cards": { c: StatCards },
+  "Chart": { c: ChartCard }, "Chart Card": { c: ChartCard }, "Data Table": { c: DataTable }, "Table": { c: DataTable },
+  "Card Grid": { c: WebCardGrid }, "Services Grid": { c: WebCardGrid }, "Sidebar": { c: WebSidebar, side: true },
+  "Footer": { c: WebFooter }, "Form": { c: WebForm }, "Contact Form": { c: WebForm },
+};
+const WEB_BY_NORM = Object.fromEntries(Object.entries(WEB_LIVE).map(([k, v]) => [norm(k), v]));
+const resolveWeb = (name) => WEB_LIVE[name] || WEB_BY_NORM[norm(name)] || null;
+
+function BrowserFrame({ children }) {
+  return (
+    <div style={{ flex: "1 1 640px", minWidth: 340, maxWidth: 1000, background: "#0b0b0b", borderRadius: 18, padding: 8, boxShadow: "0 30px 60px rgba(0,0,0,.18)" }}>
+      <div style={{ background: C.bg, borderRadius: 12, overflow: "hidden", display: "flex", flexDirection: "column", height: 620 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "9px 14px", background: C.bg2, borderBottom: `1px solid ${C.border}`, flex: "0 0 auto" }}>
+          <span style={{ display: "flex", gap: 5 }}>{["#FF5F57", "#FEBC2E", "#28C840"].map(c => <span key={c} style={{ width: 10, height: 10, borderRadius: "50%", background: c }} />)}</span>
+          <span style={{ flex: 1, maxWidth: 340, margin: "0 auto", background: C.bg, border: `1px solid ${C.border}`, borderRadius: 7, fontSize: 10.5, color: C.text2, textAlign: "center", padding: "4px 12px" }}>justlife.com</span>
+          <span style={{ width: 40 }} />
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function WebScreen({ spec }) {
+  const nodes = (spec && spec.nodes) || [];
+  const top = [], side = [], flow = [];
+  const seen = new Set();
+  for (const n of nodes) {
+    if (seen.has(n.component)) continue; seen.add(n.component);
+    const r = resolveWeb(n.component);
+    if (!r) { flow.push({ n, r: null }); continue; }
+    (r.top ? top : r.side ? side : flow).push({ n, r });
+  }
+  const body = (
+    <div style={{ flex: 1, overflowY: "auto", padding: 22, display: "flex", flexDirection: "column", gap: 20, minWidth: 0 }}>
+      {flow.length === 0 && <div style={{ margin: "auto", textAlign: "center", color: C.text3 }}><ArrowRight size={26} /><div style={{ marginTop: 8, fontSize: 13 }}>Your generated page appears here</div></div>}
+      {flow.map(({ n, r }, i) => { const Comp = r ? r.c : GenericDSCard; const ex = r ? {} : { __name: n.component }; return <Comp key={i} {...(n.props || {})} {...ex} />; })}
+    </div>
+  );
+  return (
+    <div style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0, fontFamily: FONT }}>
+      {top.map(({ n, r }, i) => { const Comp = r.c; return <Comp key={i} {...(n.props || {})} />; })}
+      {side.length
+        ? <div style={{ display: "flex", flex: 1, minHeight: 0 }}>{side.map(({ n, r }, i) => { const Comp = r.c; return <Comp key={i} {...(n.props || {})} />; })}{body}</div>
+        : body}
+    </div>
+  );
+}
+
+const WEB_RULES = `RULES (WEB):
+1. Use ONLY these component names: "Web Header" {brand,links:[string],cta,user} · "Sidebar" {items:[string],active} · "Web Hero" {title,subtitle,cta,cta2,image(photo id),stat} · "Stat Cards" {items:[{label,value,delta,currency:bool}]} · "Chart" {title,bars:[12 numbers],labels:[12 short strings]} · "Data Table" {title,columns:[5 strings],rows:[[name,service,date,amount-number,status]]} · "Card Grid" {title,items:[{title,desc,price,image(photo id)}],columns} · "Form" {title,fields:[string],cta} · "Footer" {brand,columns:[{title,links:[string]}]}.
+2. Output STRICT JSON ONLY: {"title":string,"platform":"web","nodes":[{"component":<name>,"props":{...}}]}. No markdown.
+3. Prices/amounts are NUMBERS ONLY (no currency words) — the Dirham symbol renders automatically.
+4. MATCH PAGE TYPE:
+   - DASHBOARD/ADMIN -> "Sidebar" FIRST, then "Stat Cards", "Chart", "Data Table". NO Web Hero / Web Header / Footer on dashboards.
+   - WEBSITE/LANDING -> "Web Header" FIRST, then "Web Hero", "Card Grid", optional "Form", "Footer" LAST. NO Sidebar on websites.
+5. Use each component AT MOST once. 3-6 nodes. Rich, realistic Justlife content (real service names, believable numbers). Table status values: Confirmed | In progress | Completed | Cancelled.`;
 
 // ============================================================
 function PhoneFrame({ children }) {
@@ -762,6 +1077,8 @@ function catalogText(groups, catalog, lite) {
     '- "Selectable Item / Time Slot with Tag" {items:[{time,tag,tagType(extra|off),disabled}],active}  time slots; tag "5 EXTRA" (brand) or "5 OFF" (green). Use after Date.',
     '- "Selectable Item / Number Box" {label,count,active}  numbered boxes (bedrooms/bathrooms/units count)',
     '- "Disclaimer" {message,type(success|warning|error|neutral),button}  tonal callout e.g. free-cancellation note; button e.g. "Details"',
+    '- "Booking Status" {type(confirmed|on-the-way|professional assigned|in-progress|completed|cancelled),title,message,pro}  status header card. Use FIRST on confirmation/tracking screens (after App Header).',
+    '- "Info Card" {text,tone(info|warning|success|brand)}  inline tip/callout',
     '- "Plan Booking Card" {title,status(Active|Confirmed|Completed|Cancelled),rows:[{label,value,brand}],pro,rating,cta}',
     '- "Cashback Card" {title,amount,desc,expiry,cta}',
     '- "Rating Summary" {score,count}',
@@ -812,13 +1129,19 @@ const SCREEN_RULES = `RULES:
 
 function Generator({ embedded }) {
   const { groups, catalog } = useAssets();
+  const [mode, setMode] = useState("app"); // "app" (mobile 375px) | "web" (desktop)
   const [prompt, setPrompt] = useState("");
   const [editText, setEditText] = useState("");
   const [spec, setSpec] = useState(null);
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState(false);
   const [err, setErr] = useState(null);
-  const suggestions = [
+  const suggestions = mode === "web" ? [
+    "An admin dashboard with bookings stats, a revenue chart and recent bookings table",
+    "A landing page with hero, services grid and a contact form",
+    "An operations dashboard for professionals performance",
+    "A services website page with pricing cards and footer",
+  ] : [
     "A home screen with a banner, services grid and bottom nav",
     "A salon services list with filters, ratings and service cards",
     "A booking screen with frequency, add-ons and a continue bar",
@@ -857,20 +1180,36 @@ function Generator({ embedded }) {
     setErr(map[m] || ("Failed: " + m));
   }
 
+  function webCatalogText() {
+    const lines = ["COMPONENTS are defined in the RULES. Use DS look & feel: Poppins, brand #00C3FF, warm neutrals."];
+    if (groups) {
+      const ph = (groups.photos || []).map(a => a.id);
+      if (ph.length) lines.push("PHOTO ids (for hero/card images): " + ph.slice(0, 40).join(", "));
+    }
+    return lines.join("\n");
+  }
+
   async function run(text) {
     text = (text || "").trim(); if (!text) return;
     setLoading(true); setErr(null); setSpec(null);
-    const system = `You generate Justlife mobile app screens (375px) by composing live DS components from the CATALOG. Fill props with realistic, specific content — these render live, so detail matters.\n${SCREEN_RULES}`;
-    const user = `CATALOG:\n${catalogText(groups, catalog)}\n\nUSER REQUEST: "${text}"\n\nReturn ONLY the JSON.`;
-    try { setSpec(await callAI(system, user)); } catch (e) { showErr(e); } finally { setLoading(false); }
+    const web = mode === "web";
+    const system = web
+      ? `You generate Justlife WEB pages (desktop, wide layout) — dashboards and marketing/website pages — using the Justlife design system look (Poppins, brand colors). Fill props with realistic, specific content.\n${WEB_RULES}`
+      : `You generate Justlife mobile app screens (375px) by composing live DS components from the CATALOG. Fill props with realistic, specific content — these render live, so detail matters.\n${SCREEN_RULES}`;
+    const user = web
+      ? `${webCatalogText()}\n\nUSER REQUEST: "${text}"\n\nReturn ONLY the JSON.`
+      : `CATALOG:\n${catalogText(groups, catalog)}\n\nUSER REQUEST: "${text}"\n\nReturn ONLY the JSON.`;
+    try { const s = await callAI(system, user); s.platform = web ? "web" : "app"; setSpec(s); } catch (e) { showErr(e); } finally { setLoading(false); }
   }
 
   async function refine() {
     const instr = editText.trim(); if (!instr || !spec || loading || editing) return;
     setEditing(true); setErr(null);
-    const system = `You EDIT an existing Justlife screen. Apply ONLY the requested change to the given JSON and return the FULL updated screen JSON in the same shape {"title","nodes":[{component,props}]}. Keep all other nodes and props unchanged. Same component/prop/price rules apply.\n${SCREEN_RULES}`;
-    const user = `CATALOG:\n${catalogText(groups, catalog, true)}\n\nCURRENT SCREEN JSON:\n${JSON.stringify(spec)}\n\nCHANGE REQUESTED: "${instr}"\n\nReturn ONLY the full updated JSON.`;
-    try { setSpec(await callAI(system, user)); setEditText(""); } catch (e) { showErr(e); } finally { setEditing(false); }
+    const web = (spec && spec.platform === "web") || mode === "web";
+    const rules = web ? WEB_RULES : SCREEN_RULES;
+    const system = `You EDIT an existing Justlife ${web ? "web page" : "screen"}. Apply ONLY the requested change to the given JSON and return the FULL updated JSON in the same shape {"title",${web ? '"platform":"web",' : ""}"nodes":[{component,props}]}. Keep all other nodes and props unchanged. Same component/prop/price rules apply.\n${rules}`;
+    const user = `${web ? webCatalogText() : "CATALOG:\n" + catalogText(groups, catalog, true)}\n\nCURRENT JSON:\n${JSON.stringify(spec)}\n\nCHANGE REQUESTED: "${instr}"\n\nReturn ONLY the full updated JSON.`;
+    try { const s = await callAI(system, user); s.platform = web ? "web" : "app"; setSpec(s); setEditText(""); } catch (e) { showErr(e); } finally { setEditing(false); }
   }
 
   return (
@@ -881,8 +1220,14 @@ function Generator({ embedded }) {
           <h2 className="s-display" style={{ fontSize: 34, fontWeight: 600, margin: "12px 0 0", letterSpacing: "-0.02em", lineHeight: 1.05, color: "var(--s-ink)" }}>Describe a screen.<br />Watch it build itself.</h2>
           <p style={{ color: "var(--s-muted)", fontSize: 15, marginTop: 16, maxWidth: 520 }}>Built from <b style={{ color: "var(--s-ink)" }}>live</b> Justlife DS components with real content — and your uploaded photos and icons.</p>
         </>}
-        <textarea className="s-input" value={prompt} onChange={e => setPrompt(e.target.value)} placeholder="e.g. A checkout summary with booking details, price breakdown and payment method"
-          style={{ width: "100%", minHeight: 100, padding: 14, fontSize: 14, resize: "vertical", marginTop: embedded ? 0 : 20, boxSizing: "border-box" }} />
+        <div style={{ display: "flex", gap: 8, marginTop: embedded ? 0 : 20, marginBottom: 10 }}>
+          {[{ k: "app", l: "📱 App Screen" }, { k: "web", l: "🖥️ Web / Dashboard" }].map(m => (
+            <button key={m.k} className={mode === m.k ? "s-btn-dark" : "s-btn-ghost"} onClick={() => { setMode(m.k); setSpec(null); setErr(null); }}
+              style={{ fontSize: 12.5, padding: "8px 16px" }}>{m.l}</button>
+          ))}
+        </div>
+        <textarea className="s-input" value={prompt} onChange={e => setPrompt(e.target.value)} placeholder={mode === "web" ? "e.g. An admin dashboard with bookings stats, revenue chart and a recent bookings table" : "e.g. A checkout summary with booking details, price breakdown and payment method"}
+          style={{ width: "100%", minHeight: 100, padding: 14, fontSize: 14, resize: "vertical", boxSizing: "border-box" }} />
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8, margin: "14px 0" }}>
           {suggestions.map((s, i) => <button key={i} className="s-chip" onClick={() => { setPrompt(s); run(s); }}>{s}</button>)}
         </div>
@@ -904,7 +1249,9 @@ function Generator({ embedded }) {
         )}
         {err && <div style={{ marginTop: 14, color: C.danger, fontSize: 13, maxWidth: 560 }}>{err}</div>}
       </div>
-      <PhoneFrame><Screen spec={spec} /></PhoneFrame>
+      {(mode === "web" || (spec && spec.platform === "web"))
+        ? <BrowserFrame><WebScreen spec={spec && spec.platform === "web" ? spec : null} /></BrowserFrame>
+        : <PhoneFrame><Screen spec={spec && spec.platform !== "web" ? spec : null} /></PhoneFrame>}
     </div>
   );
 }
