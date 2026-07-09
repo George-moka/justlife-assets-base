@@ -2,6 +2,10 @@
 // (multi-screen flows) don't hit Netlify's ~10s synchronous function timeout.
 // API key comes from the ANTHROPIC_API_KEY env var set in Netlify (never in the page).
 export default async (req) => {
+  // Health check: open /api/generate in a browser — {"ok":true,"version":"stream-v1"} means the NEW streaming function is live.
+  if (req.method === "GET") {
+    return jsonRes(200, { ok: true, version: "stream-v1", streaming: true });
+  }
   if (req.method !== "POST") {
     return jsonRes(405, { error: { message: "POST only" } });
   }
