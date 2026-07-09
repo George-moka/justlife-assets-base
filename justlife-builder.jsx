@@ -1,6 +1,14 @@
 import React, { useState, useEffect, useMemo, createContext, useContext } from "react";
 import { Search, Star, Plus, Minus, ChevronRight, Check, Clock, ArrowRight, Sparkles, Copy, Loader2, AlertCircle } from "lucide-react";
 
+// Global animation CSS — injected by the bundle so spinners/skeletons work on ANY host page
+if (typeof document !== "undefined" && !document.getElementById("jl-anim")) {
+  const st = document.createElement("style");
+  st.id = "jl-anim";
+  st.textContent = "@keyframes jlspin{to{transform:rotate(360deg)}}.spin{animation:jlspin .9s linear infinite;display:inline-block;transform-origin:center}@keyframes jlpulse{0%,100%{opacity:.4}50%{opacity:.9}}.jl-skel{animation:jlpulse 1.3s ease-in-out infinite}";
+  document.head.appendChild(st);
+}
+
 /* Justlife DS — Live Screen Builder (components matched to Figma DS) */
 
 const ASSET_BASE =
@@ -1029,6 +1037,37 @@ const WEB_RULES = `RULES (WEB):
    - WEBSITE/LANDING -> "Web Header" FIRST, then "Web Hero", "Card Grid", optional "Form", "Footer" LAST. NO Sidebar on websites.
 5. Use each component AT MOST once. 3-6 nodes. Rich, realistic Justlife content (real service names, believable numbers). Table status values: Confirmed | In progress | Completed | Cancelled.`;
 
+// Loading skeletons — pulsing DS-toned placeholders while the AI generates
+function SkeletonScreen() {
+  const blk = (h, r, w) => <div className="jl-skel" style={{ height: h, width: w || "100%", background: C.bg3, borderRadius: r || R.lg }} />;
+  return (
+    <div style={{ display: "flex", flexDirection: "column", height: "100%", padding: "22px 20px", gap: 14 }}>
+      {blk(40, R.pill)}
+      {blk(130)}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>{blk(74)}{blk(74)}{blk(74)}</div>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>{blk(74)}{blk(74)}{blk(74)}</div>
+      {blk(84)}
+      {blk(84)}
+      <div style={{ marginTop: "auto" }}>{blk(54, R.pill)}</div>
+    </div>
+  );
+}
+function WebSkeleton() {
+  const blk = (h, w) => <div className="jl-skel" style={{ height: h, width: w || "100%", background: C.bg3, borderRadius: R.lg }} />;
+  return (
+    <div style={{ display: "flex", flex: 1, minHeight: 0 }}>
+      <div style={{ width: 190, flex: "0 0 190px", borderRight: `1px solid ${C.border}`, padding: 16, display: "flex", flexDirection: "column", gap: 10 }}>
+        {[...Array(6)].map((_, i) => <div key={i} className="jl-skel" style={{ height: 30, background: C.bg3, borderRadius: R.md }} />)}
+      </div>
+      <div style={{ flex: 1, padding: 22, display: "flex", flexDirection: "column", gap: 16 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 14 }}>{blk(78)}{blk(78)}{blk(78)}{blk(78)}</div>
+        {blk(180)}
+        {blk(200)}
+      </div>
+    </div>
+  );
+}
+
 // ============================================================
 function PhoneFrame({ children }) {
   return (
@@ -1136,7 +1175,7 @@ const SCREEN_RULES = `RULES:
 
 const FLOW_RULES = `FLOW MODE — output a CLICKABLE MULTI-SCREEN JOURNEY:
 1. Output STRICT JSON ONLY: {"title":string,"start":<screen-id>,"screens":[{"id":kebab-case,"title":string,"nodes":[{"component":...,"props":{...},"link":<screen-id optional>}]}]}.
-2. 3-5 screens forming ONE user journey, e.g. home -> services -> booking -> checkout -> confirmation. Every screen must be reachable from "start" via links.
+2. 3-4 screens forming ONE user journey (4 max — keep it fast), e.g. home -> services -> booking -> checkout -> confirmation. Every screen must be reachable from "start" via links.
 3. "link" makes the WHOLE component tappable and navigates to that screen id:
    - "Homepage Section" -> link to the services/list screen
    - "Service Card" / "Product Card" -> link to booking/details screen
@@ -1186,30 +1225,67 @@ function Generator({ embedded }) {
     const body = JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: maxTokens || 2200, system, messages: [{ role: "user", content: user }] });
     if (typeof location !== "undefined" && location.protocol === "file:") throw new Error("FILE");
     const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 60000);
+    let timer = setTimeout(() => ctrl.abort(), 30000); // 30s to first byte
+    const bump = (ms) => { clearTimeout(timer); timer = setTimeout(() => ctrl.abort(), ms); };
     let res;
     try { res = await fetch("/api/generate", { method: "POST", headers: { "Content-Type": "application/json" }, body, signal: ctrl.signal }); }
-    catch (e) { throw new Error(e && e.name === "AbortError" ? "TIMEOUT" : "NETWORK"); }
-    finally { clearTimeout(timer); }
+    catch (e) { clearTimeout(timer); throw new Error(e && e.name === "AbortError" ? "TIMEOUT" : "NETWORK"); }
     if (!res.ok) {
+      clearTimeout(timer);
       let msg = "HTTP " + res.status;
       const t = await res.json().catch(() => null);
       if (t && t.error) msg = t.error.message;
       if (res.status === 404) msg = "MISSING_FN";
+      if (res.status === 504) msg = "TIMEOUT";
       throw new Error(msg);
     }
-    const data = await res.json();
+    const ct = (res.headers && res.headers.get && res.headers.get("content-type")) || "";
+    const parseOut = (raw) => JSON.parse(raw.replace(/```json/gi, "").replace(/```/g, "").trim());
+    // STREAMING PATH (SSE) — bytes arrive continuously; reset idle timeout on every chunk
+    if (ct.includes("event-stream") && res.body && res.body.getReader) {
+      const reader = res.body.getReader();
+      const dec = new TextDecoder();
+      let buf = "", text = "", errMsg = null;
+      try {
+        while (true) {
+          bump(45000); // 45s of stream silence = abort
+          const { done, value } = await reader.read();
+          if (done) break;
+          buf += dec.decode(value, { stream: true });
+          let i;
+          while ((i = buf.indexOf("\n\n")) !== -1) {
+            const evt = buf.slice(0, i); buf = buf.slice(i + 2);
+            for (const line of evt.split("\n")) {
+              if (!line.startsWith("data:")) continue;
+              const d = line.slice(5).trim();
+              if (!d || d === "[DONE]") continue;
+              let j = null; try { j = JSON.parse(d); } catch (x) { continue; }
+              if (j.type === "content_block_delta" && j.delta && typeof j.delta.text === "string") text += j.delta.text;
+              else if (j.type === "error" && j.error) errMsg = j.error.message || "stream error";
+            }
+          }
+        }
+      } catch (e) { clearTimeout(timer); throw new Error(e && e.name === "AbortError" ? "TIMEOUT" : "NETWORK"); }
+      clearTimeout(timer);
+      if (errMsg) throw new Error(errMsg);
+      if (!text.trim()) throw new Error("EMPTY");
+      return parseOut(text);
+    }
+    // FALLBACK: plain JSON (non-streaming function / tests)
+    bump(120000);
+    const data = await res.json().finally(() => clearTimeout(timer));
     if (data.error) throw new Error(data.error.message);
     const raw = (data.content || []).filter(b => b.type === "text").map(b => b.text).join("\n");
-    return JSON.parse(raw.replace(/```json/gi, "").replace(/```/g, "").trim());
+    return parseOut(raw);
   }
   function showErr(e) {
     const m = String((e && e.message) || "");
     const map = {
+      EMPTY: "The model returned an empty response — try again.",
       FILE: "The generator needs the deployed Netlify site (or local server) — it can't run from a double-clicked file.",
       NETWORK: "Couldn't reach /api/generate. You must be on the deployed Netlify site (with Functions), not a static host.",
       MISSING_FN: "The /api/generate function isn't deployed. Deploy from Git so netlify/functions/generate.js ships.",
-      TIMEOUT: "That took too long and was stopped. The Netlify function may have timed out — try again, or make the request a bit smaller.",
+      TIMEOUT: "The generation took too long (gateway timeout). Make sure the LATEST site version is deployed (it streams responses to avoid this), then try again.",
     };
     setErr(map[m] || ("Failed: " + m));
   }
@@ -1234,7 +1310,7 @@ function Generator({ embedded }) {
     const user = web
       ? `${webCatalogText()}\n\nUSER REQUEST: "${text}"\n\nReturn ONLY the JSON.`
       : `CATALOG:\n${catalogText(groups, catalog)}\n\nUSER REQUEST: "${text}"\n\nReturn ONLY the ${flow ? "flow" : "screen"} JSON.`;
-    try { const s = await callAI(system, user, flow ? 6000 : 2200); s.platform = web ? "web" : "app"; adopt(s); } catch (e) { showErr(e); } finally { setLoading(false); }
+    try { const s = await callAI(system, user, flow ? 5000 : 2200); s.platform = web ? "web" : "app"; adopt(s); } catch (e) { showErr(e); } finally { setLoading(false); }
   }
 
   async function refine() {
@@ -1248,7 +1324,7 @@ function Generator({ embedded }) {
     const user = `${web ? webCatalogText() : "CATALOG:\n" + catalogText(groups, catalog, true)}\n\nCURRENT JSON:\n${JSON.stringify(spec)}\n\nCHANGE REQUESTED: "${instr}"\n\nReturn ONLY the full updated JSON.`;
     try {
       const keep = cur;
-      const s = await callAI(system, user, fl ? 6000 : 2200); s.platform = web ? "web" : "app";
+      const s = await callAI(system, user, fl ? 5000 : 2200); s.platform = web ? "web" : "app";
       if (fl && s.screens && keep && s.screens.some(x => x.id === keep)) { setSpec(s); setCur(keep); } else adopt(s);
       setEditText("");
     } catch (e) { showErr(e); } finally { setEditing(false); }
@@ -1296,7 +1372,7 @@ function Generator({ embedded }) {
         {err && <div style={{ marginTop: 14, color: C.danger, fontSize: 13, maxWidth: 560 }}>{err}</div>}
       </div>
       {(mode === "web" || (spec && spec.platform === "web"))
-        ? <BrowserFrame><WebScreen spec={spec && spec.platform === "web" ? spec : null} /></BrowserFrame>
+        ? <BrowserFrame>{loading ? <WebSkeleton /> : <WebScreen spec={spec && spec.platform === "web" ? spec : null} />}</BrowserFrame>
         : <div style={{ display: "flex", flexDirection: "column", gap: 12, alignItems: "center", flex: "0 0 auto" }}>
             {isFlow && (
               <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center", maxWidth: 380 }}>
@@ -1305,7 +1381,7 @@ function Generator({ embedded }) {
                 ))}
               </div>
             )}
-            <PhoneFrame><Screen spec={spec && spec.platform !== "web" ? curScreen : null} go={go} back={back} canBack={hist.length > 0} /></PhoneFrame>
+            <PhoneFrame>{loading ? <SkeletonScreen /> : <Screen spec={spec && spec.platform !== "web" ? curScreen : null} go={go} back={back} canBack={hist.length > 0} />}</PhoneFrame>
             {isFlow && <div style={{ fontSize: 11.5, color: "var(--s-faint)" }}>▶ Tap linked cards to navigate · tap the header to go back</div>}
           </div>}
     </div>
@@ -1335,7 +1411,8 @@ export default function App() {
   useEffect(() => {
     fetch(ASSET_BASE + "manifest.json").then(r => r.ok ? r.json() : null).then(j => {
       if (!j || !j.groups) return;
-      const map = {};
+      const map = {
+      EMPTY: "The model returned an empty response — try again.",};
       for (const g of Object.values(j.groups)) for (const a of g) map[a.id] = ASSET_BASE + a.path;
       setAssets(a => ({ ...a, map, groups: j.groups }));
     }).catch(() => {});
@@ -1374,7 +1451,8 @@ export function EmbeddedBuilder() {
   useEffect(() => {
     fetch(ASSET_BASE + "manifest.json").then(r => r.ok ? r.json() : null).then(j => {
       if (!j || !j.groups) return;
-      const map = {};
+      const map = {
+      EMPTY: "The model returned an empty response — try again.",};
       for (const g of Object.values(j.groups)) for (const a of g) map[a.id] = ASSET_BASE + a.path;
       setAssets(a => ({ ...a, map, groups: j.groups }));
     }).catch(() => {});
