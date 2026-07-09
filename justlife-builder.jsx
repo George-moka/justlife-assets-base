@@ -1040,7 +1040,7 @@ function PhoneFrame({ children }) {
     </div>
   );
 }
-function Screen({ spec }) {
+function Screen({ spec, go, back, canBack }) {
   const nodes = (spec && spec.nodes) || [];
   const seen = new Set(); const top = [], flow = [], bottom = [];
   for (const n of nodes) {
@@ -1049,14 +1049,21 @@ function Screen({ spec }) {
     seen.add(n.component);
     ((r && r.top) ? top : (r && r.bottom) ? bottom : flow).push({ n, r });
   }
+  // click behavior: node.link navigates; App Header (top) goes back when possible
+  const clickFor = (n, isTop) => {
+    if (n.link && go) return () => go(n.link);
+    if (isTop && canBack && back) return () => back();
+    return null;
+  };
+  const wrapStyle = (onClick, extra) => onClick ? { cursor: "pointer", ...extra } : extra;
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%", fontFamily: FONT }}>
-      {top.map(({ n, r }, i) => { const Comp = r.c; return <Comp key={i} {...(n.props || {})} />; })}
+      {top.map(({ n, r }, i) => { const Comp = r.c; const oc = clickFor(n, true); return <div key={i} onClick={oc} style={wrapStyle(oc)}><Comp {...(n.props || {})} /></div>; })}
       <div style={{ flex: 1, overflowY: "auto", padding: `${S.x2}px ${S.xl}px`, paddingTop: top.length ? 14 : 26, display: "flex", flexDirection: "column", gap: S.lg }}>
         {flow.length === 0 && <div style={{ margin: "auto", textAlign: "center", color: C.text3 }}><ArrowRight size={26} /><div style={{ marginTop: 8, fontSize: 13 }}>Your generated screen appears here</div></div>}
-        {flow.map(({ n, r }, i) => { const Comp = r ? r.c : GenericDSCard; const ex = r ? {} : { __name: n.component }; return <div key={i} style={r && r.sticky ? { position: "sticky", bottom: 0 } : null}><Comp {...(n.props || {})} {...ex} /></div>; })}
+        {flow.map(({ n, r }, i) => { const Comp = r ? r.c : GenericDSCard; const ex = r ? {} : { __name: n.component }; const oc = clickFor(n, false); return <div key={i} onClick={oc} style={wrapStyle(oc, r && r.sticky ? { position: "sticky", bottom: 0 } : undefined)}><Comp {...(n.props || {})} {...ex} /></div>; })}
       </div>
-      {bottom.map(({ n, r }, i) => { const Comp = r.c; return <Comp key={i} {...(n.props || {})} />; })}
+      {bottom.map(({ n, r }, i) => { const Comp = r.c; const oc = clickFor(n, false); return <div key={i} onClick={oc} style={wrapStyle(oc)}><Comp {...(n.props || {})} /></div>; })}
     </div>
   );
 }
@@ -1127,29 +1134,56 @@ const SCREEN_RULES = `RULES:
 6. Prefer the detailed CATALOG components (faithful renderers). OTHER DS COMPONENTS are valid too but render as labeled placeholder cards — use them only when clearly relevant.
 7. EVERY "Homepage Section" item 'icon' MUST be a 3D SERVICE ICON id. Card/banner/add-on/avatar images use PHOTO ids. Never use 2D ids for the grid.`;
 
+const FLOW_RULES = `FLOW MODE — output a CLICKABLE MULTI-SCREEN JOURNEY:
+1. Output STRICT JSON ONLY: {"title":string,"start":<screen-id>,"screens":[{"id":kebab-case,"title":string,"nodes":[{"component":...,"props":{...},"link":<screen-id optional>}]}]}.
+2. 3-5 screens forming ONE user journey, e.g. home -> services -> booking -> checkout -> confirmation. Every screen must be reachable from "start" via links.
+3. "link" makes the WHOLE component tappable and navigates to that screen id:
+   - "Homepage Section" -> link to the services/list screen
+   - "Service Card" / "Product Card" -> link to booking/details screen
+   - "Navbar / App" (Continue/Next bar) -> link to the NEXT step (checkout, confirmation)
+   - "Payment Method" stays unlinked; the Navbar/App advances.
+   - Final confirmation screen: "Booking Status" first (after App Header), optionally a "Button" linking back to home.
+4. NEVER put "link" on "App Header" — tapping it automatically goes BACK (built in).
+5. Each screen must individually follow ALL the screen-type rules above (home layout, inner-page layout, one component name per screen, prices as numbers).
+6. Keep ids short and stable: "home", "services", "booking", "checkout", "confirmation".`;
+
 function Generator({ embedded }) {
   const { groups, catalog } = useAssets();
   const [mode, setMode] = useState("app"); // "app" (mobile 375px) | "web" (desktop)
+  const [flowOn, setFlowOn] = useState(true); // clickable multi-screen journey (app mode)
   const [prompt, setPrompt] = useState("");
   const [editText, setEditText] = useState("");
   const [spec, setSpec] = useState(null);
+  const [cur, setCur] = useState(null);      // current screen id (flow)
+  const [hist, setHist] = useState([]);      // back stack
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState(false);
   const [err, setErr] = useState(null);
+
+  const isFlow = spec && Array.isArray(spec.screens);
+  const screens = isFlow ? spec.screens : null;
+  const curScreen = isFlow ? (screens.find(s => s.id === cur) || screens[0]) : spec;
+  const go = (id) => { if (!isFlow) return; if (!screens.some(s => s.id === id)) return; setHist(h => [...h, curScreen.id]); setCur(id); };
+  const back = () => setHist(h => { if (!h.length) return h; const p = h[h.length - 1]; setCur(p); return h.slice(0, -1); });
+  const jump = (id) => { setCur(id); setHist([]); };
+  function adopt(s) {
+    if (s && Array.isArray(s.screens) && s.screens.length) { setSpec(s); setCur(s.start && s.screens.some(x => x.id === s.start) ? s.start : s.screens[0].id); setHist([]); }
+    else { setSpec(s); setCur(null); setHist([]); }
+  }
   const suggestions = mode === "web" ? [
     "An admin dashboard with bookings stats, a revenue chart and recent bookings table",
     "A landing page with hero, services grid and a contact form",
     "An operations dashboard for professionals performance",
     "A services website page with pricing cards and footer",
   ] : [
+    "A full home-cleaning booking flow from home to confirmation",
+    "A salon journey: services list, booking and checkout",
     "A home screen with a banner, services grid and bottom nav",
-    "A salon services list with filters, ratings and service cards",
-    "A booking screen with frequency, add-ons and a continue bar",
     "A checkout summary with booking details, price and payment",
   ];
 
-  async function callAI(system, user) {
-    const body = JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 2200, system, messages: [{ role: "user", content: user }] });
+  async function callAI(system, user, maxTokens) {
+    const body = JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: maxTokens || 2200, system, messages: [{ role: "user", content: user }] });
     if (typeof location !== "undefined" && location.protocol === "file:") throw new Error("FILE");
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), 60000);
@@ -1191,25 +1225,33 @@ function Generator({ embedded }) {
 
   async function run(text) {
     text = (text || "").trim(); if (!text) return;
-    setLoading(true); setErr(null); setSpec(null);
+    setLoading(true); setErr(null); setSpec(null); setCur(null); setHist([]);
     const web = mode === "web";
+    const flow = !web && flowOn;
     const system = web
       ? `You generate Justlife WEB pages (desktop, wide layout) — dashboards and marketing/website pages — using the Justlife design system look (Poppins, brand colors). Fill props with realistic, specific content.\n${WEB_RULES}`
-      : `You generate Justlife mobile app screens (375px) by composing live DS components from the CATALOG. Fill props with realistic, specific content — these render live, so detail matters.\n${SCREEN_RULES}`;
+      : `You generate Justlife mobile app ${flow ? "FLOWS (multi-screen clickable journeys)" : "screens"} (375px) by composing live DS components from the CATALOG. Fill props with realistic, specific content — these render live, so detail matters.\n${SCREEN_RULES}${flow ? "\n\n" + FLOW_RULES : ""}`;
     const user = web
       ? `${webCatalogText()}\n\nUSER REQUEST: "${text}"\n\nReturn ONLY the JSON.`
-      : `CATALOG:\n${catalogText(groups, catalog)}\n\nUSER REQUEST: "${text}"\n\nReturn ONLY the JSON.`;
-    try { const s = await callAI(system, user); s.platform = web ? "web" : "app"; setSpec(s); } catch (e) { showErr(e); } finally { setLoading(false); }
+      : `CATALOG:\n${catalogText(groups, catalog)}\n\nUSER REQUEST: "${text}"\n\nReturn ONLY the ${flow ? "flow" : "screen"} JSON.`;
+    try { const s = await callAI(system, user, flow ? 6000 : 2200); s.platform = web ? "web" : "app"; adopt(s); } catch (e) { showErr(e); } finally { setLoading(false); }
   }
 
   async function refine() {
     const instr = editText.trim(); if (!instr || !spec || loading || editing) return;
     setEditing(true); setErr(null);
     const web = (spec && spec.platform === "web") || mode === "web";
-    const rules = web ? WEB_RULES : SCREEN_RULES;
-    const system = `You EDIT an existing Justlife ${web ? "web page" : "screen"}. Apply ONLY the requested change to the given JSON and return the FULL updated JSON in the same shape {"title",${web ? '"platform":"web",' : ""}"nodes":[{component,props}]}. Keep all other nodes and props unchanged. Same component/prop/price rules apply.\n${rules}`;
+    const fl = !web && isFlow;
+    const rules = web ? WEB_RULES : (SCREEN_RULES + (fl ? "\n\n" + FLOW_RULES : ""));
+    const shape = web ? '{"title","platform":"web","nodes":[{component,props}]}' : fl ? '{"title","start","screens":[{id,title,nodes:[{component,props,link}]}]}' : '{"title","nodes":[{component,props}]}';
+    const system = `You EDIT an existing Justlife ${web ? "web page" : fl ? "multi-screen flow" : "screen"}. Apply ONLY the requested change to the given JSON and return the FULL updated JSON in the same shape ${shape}. Keep all other ${fl ? "screens, " : ""}nodes and props unchanged. Same component/prop/price/link rules apply.${fl ? ` The user is currently viewing screen "${curScreen && curScreen.id}" — changes without an explicit screen mention apply to that screen.` : ""}\n${rules}`;
     const user = `${web ? webCatalogText() : "CATALOG:\n" + catalogText(groups, catalog, true)}\n\nCURRENT JSON:\n${JSON.stringify(spec)}\n\nCHANGE REQUESTED: "${instr}"\n\nReturn ONLY the full updated JSON.`;
-    try { const s = await callAI(system, user); s.platform = web ? "web" : "app"; setSpec(s); setEditText(""); } catch (e) { showErr(e); } finally { setEditing(false); }
+    try {
+      const keep = cur;
+      const s = await callAI(system, user, fl ? 6000 : 2200); s.platform = web ? "web" : "app";
+      if (fl && s.screens && keep && s.screens.some(x => x.id === keep)) { setSpec(s); setCur(keep); } else adopt(s);
+      setEditText("");
+    } catch (e) { showErr(e); } finally { setEditing(false); }
   }
 
   return (
@@ -1222,9 +1264,13 @@ function Generator({ embedded }) {
         </>}
         <div style={{ display: "flex", gap: 8, marginTop: embedded ? 0 : 20, marginBottom: 10 }}>
           {[{ k: "app", l: "📱 App Screen" }, { k: "web", l: "🖥️ Web / Dashboard" }].map(m => (
-            <button key={m.k} className={mode === m.k ? "s-btn-dark" : "s-btn-ghost"} onClick={() => { setMode(m.k); setSpec(null); setErr(null); }}
+            <button key={m.k} className={mode === m.k ? "s-btn-dark" : "s-btn-ghost"} onClick={() => { setMode(m.k); setSpec(null); setErr(null); setCur(null); setHist([]); }}
               style={{ fontSize: 12.5, padding: "8px 16px" }}>{m.l}</button>
           ))}
+          {mode === "app" && (
+            <button className={flowOn ? "s-btn-dark" : "s-btn-ghost"} onClick={() => setFlowOn(f => !f)} title="Generate a clickable multi-screen journey"
+              style={{ fontSize: 12.5, padding: "8px 16px", marginLeft: "auto" }}>🔗 Flow {flowOn ? "ON" : "OFF"}</button>
+          )}
         </div>
         <textarea className="s-input" value={prompt} onChange={e => setPrompt(e.target.value)} placeholder={mode === "web" ? "e.g. An admin dashboard with bookings stats, revenue chart and a recent bookings table" : "e.g. A checkout summary with booking details, price breakdown and payment method"}
           style={{ width: "100%", minHeight: 100, padding: 14, fontSize: 14, resize: "vertical", boxSizing: "border-box" }} />
@@ -1251,7 +1297,17 @@ function Generator({ embedded }) {
       </div>
       {(mode === "web" || (spec && spec.platform === "web"))
         ? <BrowserFrame><WebScreen spec={spec && spec.platform === "web" ? spec : null} /></BrowserFrame>
-        : <PhoneFrame><Screen spec={spec && spec.platform !== "web" ? spec : null} /></PhoneFrame>}
+        : <div style={{ display: "flex", flexDirection: "column", gap: 12, alignItems: "center", flex: "0 0 auto" }}>
+            {isFlow && (
+              <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center", maxWidth: 380 }}>
+                {screens.map(sc => (
+                  <button key={sc.id} className={curScreen && curScreen.id === sc.id ? "s-btn-dark" : "s-chip"} onClick={() => jump(sc.id)} style={{ fontSize: 11, padding: "5px 12px" }}>{sc.title || sc.id}</button>
+                ))}
+              </div>
+            )}
+            <PhoneFrame><Screen spec={spec && spec.platform !== "web" ? curScreen : null} go={go} back={back} canBack={hist.length > 0} /></PhoneFrame>
+            {isFlow && <div style={{ fontSize: 11.5, color: "var(--s-faint)" }}>▶ Tap linked cards to navigate · tap the header to go back</div>}
+          </div>}
     </div>
   );
 }
