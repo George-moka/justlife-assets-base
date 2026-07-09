@@ -3,7 +3,7 @@
   "fileKey": "WOvsdFSWN9e0xwDB9u55Tn",
   "generated": "2026-06-23",
   "count": 101,
-  "live_count": 24,
+  "live_count": 28,
   "components": [
     {
       "name": "Notification Permission",
@@ -1722,7 +1722,7 @@
         "Number"
       ],
       "desc": "Small number-box selector (count/quantity pick). 3 states.",
-      "live": false
+      "live": true
     },
     {
       "name": "Selectable Item / Date",
@@ -1736,7 +1736,7 @@
       },
       "props": [],
       "desc": "Date selector tile (day + date) for booking calendars. 3 states.",
-      "live": false
+      "live": true
     },
     {
       "name": "Selectable Item / Rectangular",
@@ -1789,7 +1789,7 @@
         "Show Tag"
       ],
       "desc": "Time-slot selector with optional tag (Extra fee / Off-peak). 3 states.",
-      "live": false
+      "live": true
     },
     {
       "name": "Disclaimer",
@@ -1808,7 +1808,7 @@
         "Show Icon"
       ],
       "desc": "Tonal disclaimer/callout banner: icon + message + optional button. 4 tones.",
-      "live": false
+      "live": true
     },
     {
       "name": "Professional Chooser",
