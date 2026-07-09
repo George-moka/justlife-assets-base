@@ -3,7 +3,7 @@
   "fileKey": "WOvsdFSWN9e0xwDB9u55Tn",
   "generated": "2026-06-23",
   "count": 101,
-  "live_count": 28,
+  "live_count": 30,
   "components": [
     {
       "name": "Notification Permission",
@@ -410,7 +410,7 @@
         "Show Actions Container"
       ],
       "desc": "Booking confirmation/status header (was Thank You Card). 8 states.",
-      "live": false
+      "live": true
     },
     {
       "name": "Hero Banner",
@@ -991,7 +991,7 @@
         "Show Icon"
       ],
       "desc": "Tip/callout: icon + message on tonal bg.",
-      "live": false
+      "live": true
     },
     {
       "name": "List Item",
@@ -1537,9 +1537,10 @@
           "web"
         ],
         "state": [
-          "Responsive",
+          "Default",
           "extended",
-          "Default"
+          "Responsive",
+          "Responsive Savings"
         ]
       },
       "props": [
@@ -1558,7 +1559,7 @@
         "Show Items",
         "Show Payment Summary"
       ],
-      "desc": "Mobile bottom checkout & CTA bar (price + Continue + plus banner + items/payment summary).",
+      "desc": "Mobile bottom checkout & CTA bar (price + Continue + plus banner). NEW: Responsive Savings state = web bar with Savings Banner + Apple Pay + toolbar.",
       "live": true
     },
     {
