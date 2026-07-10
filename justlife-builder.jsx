@@ -5,7 +5,7 @@ import { Search, Star, Plus, Minus, ChevronRight, Check, Clock, ArrowRight, Spar
 if (typeof document !== "undefined" && !document.getElementById("jl-anim")) {
   const st = document.createElement("style");
   st.id = "jl-anim";
-  st.textContent = "@keyframes jlspin{to{transform:rotate(360deg)}}.spin{animation:jlspin .9s linear infinite;display:inline-block;transform-origin:center}@keyframes jlpulse{0%,100%{opacity:.4}50%{opacity:.9}}.jl-skel{animation:jlpulse 1.3s ease-in-out infinite}";
+  st.textContent = "@keyframes jlspin{to{transform:rotate(360deg)}}.spin{animation:jlspin .9s linear infinite;display:inline-block;transform-origin:center}@keyframes jlpulse{0%,100%{opacity:.4}50%{opacity:.9}}.jl-skel{animation:jlpulse 1.3s ease-in-out infinite}@keyframes jlF{from{opacity:.3;transform:translateX(18px)}to{opacity:1;transform:none}}@keyframes jlB{from{opacity:.3;transform:translateX(-18px)}to{opacity:1;transform:none}}@keyframes jlA{from{opacity:.35}to{opacity:1}}.jl-in-fwd{animation:jlF .22s ease-out}.jl-in-back{animation:jlB .22s ease-out}.jl-in-fade{animation:jlA .2s ease-out}";
   document.head.appendChild(st);
 }
 
@@ -742,6 +742,49 @@ function BottomNav({ active = 0 }) {
 }
 
 // Generic DS fallback — renders any DS component (not yet hand-built) as a labeled DS-styled card
+// ============================================================
+//  CUSTOM COMPONENT ENGINE — the AI composes any missing component
+//  from a constrained element tree that only uses DS tokens.
+// ============================================================
+const TOKEN_BG = { white: "#FFFFFF", primary: "#FFFFFF", secondary: C.bg2, tertiary: C.bg3, selected: C.selected, brand: C.brand, "brand-subtle": DS.bg.brandSubtle, navy: DS.bg.tertiaryAction, inverse: DS.bg.inverse, success: C.successBg, warning: "#FFF8EE", danger: C.dangerBg, yellow: C.yellow, transparent: "transparent" };
+const TOKEN_TX = { primary: C.text, secondary: C.text2, tertiary: C.text3, brand: C.brand, link: C.link, inverse: "#FFFFFF", white: "#FFFFFF", success: C.success, danger: C.danger, "yellow-ink": C.yellowInk, navy: DS.blue.b900 };
+const tokBg = (v) => v == null ? undefined : (TOKEN_BG[v] !== undefined ? TOKEN_BG[v] : (String(v).startsWith("#") ? v : undefined));
+const tokTx = (v) => v == null ? C.text : (TOKEN_TX[v] !== undefined ? TOKEN_TX[v] : (String(v).startsWith("#") ? v : C.text));
+
+function CustomNode({ n, depth = 0, web = false }) {
+  if (!n || depth > 8) return null;
+  const t = n.t || n.type;
+  if (t === "text") {
+    const size = web ? Math.min(32, Number(n.size) || 14) : ((n.size === 9 || n.size === 11) ? n.size : (Number(n.size) >= 12 ? 11 : 9));
+    return <div style={{ fontSize: size, fontWeight: (n.w === 600 || n.bold) ? 600 : (n.w === 500 ? 500 : 400), color: tokTx(n.color || "primary"), textAlign: n.align, lineHeight: 1.45 }}>{n.v}</div>;
+  }
+  if (t === "price") return <Price value={cleanNum(String(n.v ?? "0"))} size={web ? 14 : (n.size === 9 ? 9 : 11)} color={tokTx(n.color || "primary")} />;
+  if (t === "image") return <Img id={n.id} radius={n.r ?? R.md} ph={C.bg3} style={{ width: n.w || "100%", height: n.h || (web ? 140 : 96), objectFit: "cover", flex: n.w ? `0 0 ${n.w}px` : undefined }} />;
+  if (t === "icon3d") return <Img id={n.id} ph={C.bg3} style={{ width: n.w || 40, height: n.h || 40, objectFit: "contain", transform: "rotate(-10deg)", flex: "0 0 auto" }} />;
+  if (t === "pill") {
+    const tone = { brand: { bg: C.brandBg, fg: DS.blue.b900 }, success: { bg: DS.success.chip, fg: C.success }, warning: { bg: "#FFF8EE", fg: C.yellowInk }, neutral: { bg: C.bg3, fg: C.text2 }, danger: { bg: C.dangerBg, fg: C.danger } }[n.tone || "brand"] || { bg: C.brandBg, fg: DS.blue.b900 };
+    return <span style={{ alignSelf: "flex-start", background: tone.bg, color: tone.fg, fontSize: web ? 11 : 9, fontWeight: 600, padding: "2px 8px", borderRadius: R.xs, whiteSpace: "nowrap" }}>{n.v}</span>;
+  }
+  if (t === "button") return <PrimaryButton label={n.v || "Continue"} variant={n.variant || "primary"} size={n.sz || (web ? "medium" : "large")} outline={!!n.outline} />;
+  if (t === "divider") return <div style={{ height: 1, background: C.border, alignSelf: "stretch" }} />;
+  if (t === "stars") { const k = Math.round(Math.min(5, Number(n.v) || 5)); return <div style={{ display: "flex", gap: 2 }}>{[...Array(5)].map((_, i) => <Star key={i} size={web ? 14 : 11} color={i < k ? "#FFB800" : C.border} />)}</div>; }
+  if (t === "control") return <ControlDot type={n.kind || "radio"} selected={n.selected !== false} />;
+  if (t === "spacer") return <div style={{ flex: 1 }} />;
+  // containers: col / row
+  const isRow = t === "row";
+  const kids = Array.isArray(n.children) ? n.children : [];
+  return (
+    <div style={{ display: "flex", flexDirection: isRow ? "row" : "column", gap: n.gap ?? (web ? 10 : 8), padding: n.pad, background: tokBg(n.bg), borderRadius: n.r, border: n.border ? `1px solid ${C.border}` : undefined, alignItems: n.align || (isRow ? "center" : "stretch"), justifyContent: n.justify, flexWrap: n.wrap ? "wrap" : undefined, flex: n.flex, minWidth: 0, overflow: n.r ? "hidden" : undefined }}>
+      {kids.map((k, i) => <CustomNode key={i} n={k} depth={depth + 1} web={web} />)}
+    </div>
+  );
+}
+function CustomBlock({ layout, web = false, __name }) {
+  if (!layout) return <GenericDSCard __name={__name || "Custom"} />;
+  return <CustomNode n={layout} web={web} />;
+}
+const CustomBlockWeb = (p) => <CustomBlock {...p} web />;
+
 function GenericDSCard({ __name = "Component", ...props }) {
   const title = props.Title || props.title || props.headerText || __name;
   const rows = Object.entries(props).filter(([k, v]) => v != null && typeof v !== "object" && k !== "Title" && k !== "title").slice(0, 5);
@@ -776,6 +819,7 @@ const LIVE = {
   "Disclaimer": { c: Disclaimer },
   "Booking Status": { c: BookingStatus }, "Thank You Card": { c: BookingStatus },
   "Info Card": { c: InfoCard },
+  "Custom": { c: CustomBlock },
   "Booking Details — Variants": { c: BookingDetails }, "Booking Details": { c: BookingDetails },
   "Price Details — Variants": { c: PriceDetails }, "Price Details": { c: PriceDetails }, "Payment Summary": { c: PriceDetails },
   "Payment Method": { c: PaymentMethod }, "Button": { c: PrimaryButton, sticky: true },
@@ -791,15 +835,19 @@ const resolveLive = (name) => LIVE[name] || LIVE_BY_NORM[norm(name)] || null;
 // ============================================================
 const WF = { h1: 32, h2: 22, h3: 16, body: 14, small: 12, tiny: 11 };
 
-function WebHeader({ brand = "Justlife", links, cta = "Book Now", user }) {
-  const L = links && links.length ? links : ["Services", "Pricing", "About", "Contact"];
+function WebHeader({ brand = "Justlife", links, cta = "Book Now", user, nav, curId }) {
+  const L = (links && links.length ? links : ["Services", "Pricing", "About", "Contact"]).map(l => typeof l === "string" ? { label: l } : l);
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 28, padding: "16px 36px", background: C.bg, borderBottom: `1px solid ${C.border}`, flex: "0 0 auto" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <JustlifeMark size={22} /><span style={{ fontWeight: 600, fontSize: WF.h3, color: C.text }}>{brand}</span>
       </div>
       <div style={{ display: "flex", gap: 22, marginLeft: 12 }}>
-        {L.map((l, i) => <span key={i} style={{ fontSize: WF.small, color: i === 0 ? C.text : C.text2, fontWeight: i === 0 ? 600 : 400 }}>{l}</span>)}
+        {L.map((l, i) => {
+          const on = l.to ? l.to === curId : i === 0;
+          const click = l.to && nav ? () => nav(l.to) : null;
+          return <span key={i} onClick={click} style={{ fontSize: WF.small, color: on ? C.text : C.text2, fontWeight: on ? 600 : 400, cursor: click ? "pointer" : "default", borderBottom: on && l.to ? `2px solid ${C.brand}` : "2px solid transparent", paddingBottom: 2 }}>{l.label}</span>;
+        })}
       </div>
       <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 14 }}>
         {user && <span style={{ fontSize: WF.small, color: C.text2 }}>{user}</span>}
@@ -924,16 +972,19 @@ function WebCardGrid({ title = "Our services", items, columns = 3 }) {
   );
 }
 
-function WebSidebar({ items, active = 0 }) {
-  const its = items && items.length ? items : ["Dashboard", "Bookings", "Professionals", "Customers", "Payments", "Reports", "Settings"];
+function WebSidebar({ items, active = 0, nav, curId }) {
+  const its = (items && items.length ? items : ["Dashboard", "Bookings", "Professionals", "Customers", "Payments", "Reports", "Settings"]).map(it => typeof it === "string" ? { label: it } : it);
+  const byId = its.findIndex(it => it.to && it.to === curId);
+  const act = byId !== -1 ? byId : active;
   return (
     <div style={{ width: 190, flex: "0 0 190px", background: C.bg2, borderRight: `1px solid ${C.border}`, padding: "18px 10px", display: "flex", flexDirection: "column", gap: 4, overflowY: "auto" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "4px 12px 16px" }}>
         <JustlifeMark size={20} /><span style={{ fontWeight: 600, fontSize: WF.small, color: C.text }}>Admin</span>
       </div>
-      {its.map((l, i) => (
-        <div key={i} style={{ fontSize: WF.tiny, fontWeight: i === active ? 600 : 400, color: i === active ? DS.blue.b900 : C.text2, background: i === active ? C.brandBg : "transparent", padding: "9px 12px", borderRadius: R.md }}>{l}</div>
-      ))}
+      {its.map((l, i) => {
+        const click = l.to && nav ? () => nav(l.to) : null;
+        return <div key={i} onClick={click} style={{ fontSize: WF.tiny, fontWeight: i === act ? 600 : 400, color: i === act ? DS.blue.b900 : C.text2, background: i === act ? C.brandBg : "transparent", padding: "9px 12px", borderRadius: R.md, cursor: click ? "pointer" : "default" }}>{l.label}</div>;
+      })}
     </div>
   );
 }
@@ -982,14 +1033,14 @@ const WEB_LIVE = {
   "Web Header": { c: WebHeader, top: true }, "Web Hero": { c: WebHero }, "Stat Cards": { c: StatCards },
   "Chart": { c: ChartCard }, "Chart Card": { c: ChartCard }, "Data Table": { c: DataTable }, "Table": { c: DataTable },
   "Card Grid": { c: WebCardGrid }, "Services Grid": { c: WebCardGrid }, "Sidebar": { c: WebSidebar, side: true },
-  "Footer": { c: WebFooter }, "Form": { c: WebForm }, "Contact Form": { c: WebForm },
+  "Footer": { c: WebFooter }, "Form": { c: WebForm }, "Contact Form": { c: WebForm }, "Custom": { c: CustomBlockWeb },
 };
 const WEB_BY_NORM = Object.fromEntries(Object.entries(WEB_LIVE).map(([k, v]) => [norm(k), v]));
 const resolveWeb = (name) => WEB_LIVE[name] || WEB_BY_NORM[norm(name)] || null;
 
 function BrowserFrame({ children }) {
   return (
-    <div style={{ flex: "1 1 640px", minWidth: 340, maxWidth: 1000, background: "#0b0b0b", borderRadius: 18, padding: 8, boxShadow: "0 30px 60px rgba(0,0,0,.18)" }}>
+    <div style={{ width: "100%", maxWidth: 1000, background: "#0b0b0b", borderRadius: 18, padding: 8, boxShadow: "0 30px 60px rgba(0,0,0,.18)" }}>
       <div style={{ background: C.bg, borderRadius: 12, overflow: "hidden", display: "flex", flexDirection: "column", height: 620 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "9px 14px", background: C.bg2, borderBottom: `1px solid ${C.border}`, flex: "0 0 auto" }}>
           <span style={{ display: "flex", gap: 5 }}>{["#FF5F57", "#FEBC2E", "#28C840"].map(c => <span key={c} style={{ width: 10, height: 10, borderRadius: "50%", background: c }} />)}</span>
@@ -1002,7 +1053,7 @@ function BrowserFrame({ children }) {
   );
 }
 
-function WebScreen({ spec }) {
+function WebScreen({ spec, go, curId }) {
   const nodes = (spec && spec.nodes) || [];
   const top = [], side = [], flow = [];
   const seen = new Set();
@@ -1012,30 +1063,38 @@ function WebScreen({ spec }) {
     if (!r) { flow.push({ n, r: null }); continue; }
     (r.top ? top : r.side ? side : flow).push({ n, r });
   }
+  const clickFor = (n) => (n.link && go) ? () => go(n.link) : null;
   const body = (
     <div style={{ flex: 1, overflowY: "auto", padding: 22, display: "flex", flexDirection: "column", gap: 20, minWidth: 0 }}>
       {flow.length === 0 && <div style={{ margin: "auto", textAlign: "center", color: C.text3 }}><ArrowRight size={26} /><div style={{ marginTop: 8, fontSize: 13 }}>Your generated page appears here</div></div>}
-      {flow.map(({ n, r }, i) => { const Comp = r ? r.c : GenericDSCard; const ex = r ? {} : { __name: n.component }; return <Comp key={i} {...(n.props || {})} {...ex} />; })}
+      {flow.map(({ n, r }, i) => { const Comp = r ? r.c : GenericDSCard; const ex = r ? {} : { __name: n.component }; const oc = clickFor(n); return <div key={i} onClick={oc} style={oc ? { cursor: "pointer" } : null}><Comp {...(n.props || {})} {...ex} /></div>; })}
     </div>
   );
   return (
     <div style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0, fontFamily: FONT }}>
-      {top.map(({ n, r }, i) => { const Comp = r.c; return <Comp key={i} {...(n.props || {})} />; })}
+      {top.map(({ n, r }, i) => { const Comp = r.c; return <Comp key={i} {...(n.props || {})} nav={go} curId={curId} />; })}
       {side.length
-        ? <div style={{ display: "flex", flex: 1, minHeight: 0 }}>{side.map(({ n, r }, i) => { const Comp = r.c; return <Comp key={i} {...(n.props || {})} />; })}{body}</div>
+        ? <div style={{ display: "flex", flex: 1, minHeight: 0 }}>{side.map(({ n, r }, i) => { const Comp = r.c; return <Comp key={i} {...(n.props || {})} nav={go} curId={curId} />; })}{body}</div>
         : body}
     </div>
   );
 }
 
 const WEB_RULES = `RULES (WEB):
-1. Use ONLY these component names: "Web Header" {brand,links:[string],cta,user} · "Sidebar" {items:[string],active} · "Web Hero" {title,subtitle,cta,cta2,image(photo id),stat} · "Stat Cards" {items:[{label,value,delta,currency:bool}]} · "Chart" {title,bars:[12 numbers],labels:[12 short strings]} · "Data Table" {title,columns:[5 strings],rows:[[name,service,date,amount-number,status]]} · "Card Grid" {title,items:[{title,desc,price,image(photo id)}],columns} · "Form" {title,fields:[string],cta} · "Footer" {brand,columns:[{title,links:[string]}]}.
+1. Use ONLY these component names: "Web Header" {brand,links:[{label,to?}],cta,user} · "Sidebar" {items:[{label,to?}],active} · "Web Hero" {title,subtitle,cta,cta2,image(photo id),stat} · "Stat Cards" {items:[{label,value,delta,currency:bool}]} · "Chart" {title,bars:[12 numbers],labels:[12 short strings]} · "Data Table" {title,columns:[5 strings],rows:[[name,service,date,amount-number,status]]} · "Card Grid" {title,items:[{title,desc,price,image(photo id)}],columns} · "Form" {title,fields:[string],cta} · "Footer" {brand,columns:[{title,links:[string]}]}.
 2. Output STRICT JSON ONLY: {"title":string,"platform":"web","nodes":[{"component":<name>,"props":{...}}]}. No markdown.
 3. Prices/amounts are NUMBERS ONLY (no currency words) — the Dirham symbol renders automatically.
 4. MATCH PAGE TYPE:
    - DASHBOARD/ADMIN -> "Sidebar" FIRST, then "Stat Cards", "Chart", "Data Table". NO Web Hero / Web Header / Footer on dashboards.
    - WEBSITE/LANDING -> "Web Header" FIRST, then "Web Hero", "Card Grid", optional "Form", "Footer" LAST. NO Sidebar on websites.
-5. Use each component AT MOST once. 3-6 nodes. Rich, realistic Justlife content (real service names, believable numbers). Table status values: Confirmed | In progress | Completed | Cancelled.`;
+5. Use each component AT MOST once. 3-6 nodes. Rich, realistic Justlife content (real service names, believable numbers). Table status values: Confirmed | In progress | Completed | Cancelled.
+6. FLOW MODE (multi-page): "to" on Sidebar items / Web Header links = page id to navigate to. Any other node may add a top-level "link":<page id> to be clickable.
+CUSTOM COMPONENTS — if the request needs ANYTHING not in the catalog, DO NOT skip or approximate it with a wrong component. Build it exactly as {"component":"Custom","props":{"layout":{...}}} with this element tree (DS tokens only):
+- containers: {"t":"col"|"row","gap"?,"pad"?,"bg"?,"r"?,"border"?:true,"align"?,"justify"?,"wrap"?:true,"flex"?,"children":[...]}
+- leaves: {"t":"text","v",size,"w":400|500|600,"color"?} · {"t":"price","v"} · {"t":"image","id":<SERVICE PHOTO id>,"h"?,"w"?,"r"?} · {"t":"icon3d","id":<3D icon id>} · {"t":"pill","v","tone":"brand"|"success"|"warning"|"danger"|"neutral"} · {"t":"button","v","variant"?,"outline"?} · {"t":"divider"} · {"t":"stars","v":1-5} · {"t":"control","kind":"radio"|"checkbox","selected"} · {"t":"spacer"}
+- bg tokens ONLY: white|secondary|tertiary|selected|brand|brand-subtle|navy|inverse|success|warning|danger|yellow. text color tokens ONLY: primary|secondary|tertiary|brand|link|inverse|success|danger|yellow-ink|navy.
+CONTENT RULES — output MUST be tailored to THIS request: every title, service name, price, count and label derives from the user's words (their service type, city, offer, audience). Set EVERY prop explicitly with fresh specific copy — never rely on component defaults, never repeat example values.
+Custom text sizes on web: 11-32.`;
 
 // Loading skeletons — pulsing DS-toned placeholders while the AI generates
 function SkeletonScreen() {
@@ -1110,6 +1169,13 @@ function Screen({ spec, go, back, canBack }) {
 // ============================================================
 //  GENERATOR
 // ============================================================
+function photoLists(groups) {
+  const all = ((groups && groups.photos) || []).map(a => a.id);
+  const isAvatar = (x) => /avatar|portrait|person|professional|pro-/i.test(x);
+  const svc = all.filter(x => !isAvatar(x));
+  const ava = all.filter(isAvatar);
+  return { svc, ava };
+}
 function catalogText(groups, catalog, lite) {
   const lines = [
     'COMPONENTS (use these EXACT names; each renders a real live DS component):',
@@ -1142,9 +1208,10 @@ function catalogText(groups, catalog, lite) {
     '- "Navigation Bar" {active}  (BOTTOM tab bar; home screens only; always last)',
   ];
   if (groups) {
-    const ph = (groups.photos || []).map(a => a.id);
+    const { svc, ava } = photoLists(groups);
     const ic3d = (groups.icons3d || []).map(a => a.id);
-    if (ph.length) lines.push("", "PHOTO ids (image props on cards/banners/avatars/add-ons): " + ph.slice(0, 60).join(", "));
+    if (svc.length) lines.push("", "SERVICE PHOTO ids — use these for card/banner/hero/add-on images: " + svc.slice(0, 22).join(", "));
+    if (ava.length) lines.push("AVATAR PHOTO ids — ONLY for people (professional/reviewer avatars), NEVER for service cards or heroes: " + ava.slice(0, 8).join(", "));
     if (ic3d.length) lines.push("", "3D SERVICE ICON ids — USE ONE for EVERY Homepage Section item 'icon': " + ic3d.join(", "));
   } else {
     lines.push("", "(No asset library loaded — omit image/icon props; placeholders show.)");
@@ -1171,7 +1238,13 @@ const SCREEN_RULES = `RULES:
    - HOME screen = search bar + Hero Banner + Homepage Section grid + "Navigation Bar" (tab bar) LAST. NEVER put "App Header" or "Navbar / App" on Home — keep it exactly as is.
    - INNER pages (services list, booking, checkout, details, address) = start with "App Header", and on booking/checkout end with "Navbar / App". These two are INNER-PAGE ONLY and must never appear on Home.
 6. Prefer the detailed CATALOG components (faithful renderers). OTHER DS COMPONENTS are valid too but render as labeled placeholder cards — use them only when clearly relevant.
-7. EVERY "Homepage Section" item 'icon' MUST be a 3D SERVICE ICON id. Card/banner/add-on/avatar images use PHOTO ids. Never use 2D ids for the grid.`;
+7. EVERY "Homepage Section" item 'icon' MUST be a 3D SERVICE ICON id. Card/banner/add-on/avatar images use PHOTO ids. Never use 2D ids for the grid.
+CUSTOM COMPONENTS — if the request needs ANYTHING not in the catalog, DO NOT skip or approximate it with a wrong component. Build it exactly as {"component":"Custom","props":{"layout":{...}}} with this element tree (DS tokens only):
+- containers: {"t":"col"|"row","gap"?,"pad"?,"bg"?,"r"?,"border"?:true,"align"?,"justify"?,"wrap"?:true,"flex"?,"children":[...]}
+- leaves: {"t":"text","v",size,"w":400|500|600,"color"?} · {"t":"price","v"} · {"t":"image","id":<SERVICE PHOTO id>,"h"?,"w"?,"r"?} · {"t":"icon3d","id":<3D icon id>} · {"t":"pill","v","tone":"brand"|"success"|"warning"|"danger"|"neutral"} · {"t":"button","v","variant"?,"outline"?} · {"t":"divider"} · {"t":"stars","v":1-5} · {"t":"control","kind":"radio"|"checkbox","selected"} · {"t":"spacer"}
+- bg tokens ONLY: white|secondary|tertiary|selected|brand|brand-subtle|navy|inverse|success|warning|danger|yellow. text color tokens ONLY: primary|secondary|tertiary|brand|link|inverse|success|danger|yellow-ink|navy.
+CONTENT RULES — output MUST be tailored to THIS request: every title, service name, price, count and label derives from the user's words (their service type, city, offer, audience). Set EVERY prop explicitly with fresh specific copy — never rely on component defaults, never repeat example values.
+Custom text sizes: ONLY 9 or 11 (phone scale).`;
 
 const FLOW_RULES = `FLOW MODE — output a CLICKABLE MULTI-SCREEN JOURNEY:
 1. Output STRICT JSON ONLY: {"title":string,"start":<screen-id>,"screens":[{"id":kebab-case,"title":string,"nodes":[{"component":...,"props":{...},"link":<screen-id optional>}]}]}.
@@ -1195,6 +1268,7 @@ function Generator({ embedded }) {
   const [spec, setSpec] = useState(null);
   const [cur, setCur] = useState(null);      // current screen id (flow)
   const [hist, setHist] = useState([]);      // back stack
+  const [navDir, setNavDir] = useState("fade"); // transition direction: fwd | back | fade
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState(false);
   const [err, setErr] = useState(null);
@@ -1202,27 +1276,32 @@ function Generator({ embedded }) {
   const isFlow = spec && Array.isArray(spec.screens);
   const screens = isFlow ? spec.screens : null;
   const curScreen = isFlow ? (screens.find(s => s.id === cur) || screens[0]) : spec;
-  const go = (id) => { if (!isFlow) return; if (!screens.some(s => s.id === id)) return; setHist(h => [...h, curScreen.id]); setCur(id); };
-  const back = () => setHist(h => { if (!h.length) return h; const p = h[h.length - 1]; setCur(p); return h.slice(0, -1); });
-  const jump = (id) => { setCur(id); setHist([]); };
+  const go = (id) => { if (!isFlow) return; if (!screens.some(s => s.id === id)) return; setNavDir("fwd"); setHist(h => [...h, curScreen.id]); setCur(id); };
+  const back = () => setHist(h => { if (!h.length) return h; const p = h[h.length - 1]; setNavDir("back"); setCur(p); return h.slice(0, -1); });
+  const jump = (id) => { setNavDir("fade"); setCur(id); setHist([]); };
   function adopt(s) {
     if (s && Array.isArray(s.screens) && s.screens.length) { setSpec(s); setCur(s.start && s.screens.some(x => x.id === s.start) ? s.start : s.screens[0].id); setHist([]); }
     else { setSpec(s); setCur(null); setHist([]); }
   }
-  const suggestions = mode === "web" ? [
+  const suggestions = mode === "web" ? (flowOn ? [
+    "A clickable admin dashboard: overview, bookings and reports pages",
+    "A website flow: home, services and contact pages",
+    "An admin dashboard with bookings stats, a revenue chart and recent bookings table",
+    "A landing page with hero, services grid and a contact form",
+  ] : [
     "An admin dashboard with bookings stats, a revenue chart and recent bookings table",
     "A landing page with hero, services grid and a contact form",
     "An operations dashboard for professionals performance",
     "A services website page with pricing cards and footer",
-  ] : [
+  ]) : [
     "A full home-cleaning booking flow from home to confirmation",
     "A salon journey: services list, booking and checkout",
     "A home screen with a banner, services grid and bottom nav",
     "A checkout summary with booking details, price and payment",
   ];
 
-  async function callAI(system, user, maxTokens) {
-    const body = JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: maxTokens || 2200, system, messages: [{ role: "user", content: user }] });
+  async function callAIOnce(system, user, maxTokens) {
+    const body = JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: maxTokens || 2200, system, messages: [{ role: "user", content: user + "\n\nCRITICAL: Your ENTIRE reply must be the JSON object only. Start with { as the very first character. No preamble, no explanation, no markdown fences." }] });
     if (typeof location !== "undefined" && location.protocol === "file:") throw new Error("FILE");
     const ctrl = new AbortController();
     let timer = setTimeout(() => ctrl.abort(), 30000); // 30s to first byte
@@ -1240,7 +1319,46 @@ function Generator({ embedded }) {
       throw new Error(msg);
     }
     const ct = (res.headers && res.headers.get && res.headers.get("content-type")) || "";
-    const parseOut = (raw) => JSON.parse(raw.replace(/```json/gi, "").replace(/```/g, "").trim());
+    const repair = (t) => { // close truncated JSON: balance braces/brackets outside strings
+      let out = "", inStr = false, esc = false; const stack = [];
+      for (const ch of t) {
+        out += ch;
+        if (esc) { esc = false; continue; }
+        if (ch === "\\") { esc = true; continue; }
+        if (ch === '"') { inStr = !inStr; continue; }
+        if (inStr) continue;
+        if (ch === "{") stack.push("}"); else if (ch === "[") stack.push("]");
+        else if (ch === "}" || ch === "]") stack.pop();
+      }
+      if (inStr) out += '"';
+      out = out.replace(/,\s*$/, "");
+      while (stack.length) out += stack.pop();
+      return out;
+    };
+    const tryJson = (x) => { try { return JSON.parse(x); } catch (e) { return undefined; } };
+    const parseOut = (raw) => {
+      raw = String(raw).replace(/```json/gi, "").replace(/```/g, "").trim();
+      const cands = [raw, "{" + raw];
+      // pass 1: direct parse of the outermost {...} in each candidate
+      for (const t of cands) {
+        const a = t.indexOf("{"); if (a === -1) continue;
+        const b = t.lastIndexOf("}");
+        if (b > a) { const r = tryJson(t.slice(a, b + 1)); if (r !== undefined) return r; }
+      }
+      // pass 2: truncated output — repair, walking back to the last structurally-safe point
+      for (const t of cands) {
+        const a = t.indexOf("{"); if (a === -1) continue;
+        let t2 = t.slice(a);
+        for (let k = 0; k < 80 && t2.length > 1; k++) {
+          const r = tryJson(repair(t2));
+          if (r !== undefined) return r;
+          const cut = Math.max(t2.lastIndexOf(","), t2.lastIndexOf("{"), t2.lastIndexOf("["), t2.lastIndexOf(":"));
+          if (cut <= 0) break;
+          t2 = t2.slice(0, cut);
+        }
+      }
+      throw new Error("BAD_JSON");
+    };
     // STREAMING PATH (SSE) — bytes arrive continuously; reset idle timeout on every chunk
     if (ct.includes("event-stream") && res.body && res.body.getReader) {
       const reader = res.body.getReader();
@@ -1278,10 +1396,30 @@ function Generator({ embedded }) {
     const raw = (data.content || []).filter(b => b.type === "text").map(b => b.text).join("\n");
     return parseOut(raw);
   }
+
+  const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+  // Auto-retry: bad/empty JSON retries immediately; rate limits wait and retry automatically
+  async function callAI(system, user, maxTokens) {
+    for (let attempt = 0; ; attempt++) {
+      try { return await callAIOnce(system, user, maxTokens); }
+      catch (e) {
+        const m = String((e && e.message) || "");
+        if (/rate limit/i.test(m) && attempt < 2) {
+          setErr("\u23F3 Anthropic rate limit reached \u2014 waiting 35s and retrying automatically\u2026");
+          await sleep(35000); setErr(null); continue;
+        }
+        if ((m === "BAD_JSON" || m === "EMPTY") && attempt < 1) continue;
+        if (/rate limit/i.test(m)) throw new Error("RATE_LIMIT");
+        throw e;
+      }
+    }
+  }
   function showErr(e) {
     const m = String((e && e.message) || "");
     const map = {
       EMPTY: "The model returned an empty response — try again.",
+      RATE_LIMIT: "Your Anthropic plan\u2019s rate limit (10k input tokens/min) is exhausted — wait ~1 minute and try again. Tip: adding credits in console.anthropic.com raises the limit tier.",
+      BAD_JSON: "The model reply wasn\u2019t valid JSON this time — just press Generate again.",
       FILE: "The generator needs the deployed Netlify site (or local server) — it can't run from a double-clicked file.",
       NETWORK: "Couldn't reach /api/generate. You must be on the deployed Netlify site (with Functions), not a static host.",
       MISSING_FN: "The /api/generate function isn't deployed. Deploy from Git so netlify/functions/generate.js ships.",
@@ -1293,8 +1431,9 @@ function Generator({ embedded }) {
   function webCatalogText() {
     const lines = ["COMPONENTS are defined in the RULES. Use DS look & feel: Poppins, brand #00C3FF, warm neutrals."];
     if (groups) {
-      const ph = (groups.photos || []).map(a => a.id);
-      if (ph.length) lines.push("PHOTO ids (for hero/card images): " + ph.slice(0, 40).join(", "));
+      const { svc, ava } = photoLists(groups);
+      if (svc.length) lines.push("SERVICE PHOTO ids — use for hero/card images: " + svc.slice(0, 20).join(", "));
+      if (ava.length) lines.push("AVATAR ids — ONLY for people/testimonials, never heroes or service cards: " + ava.slice(0, 6).join(", "));
     }
     return lines.join("\n");
   }
@@ -1303,32 +1442,116 @@ function Generator({ embedded }) {
     text = (text || "").trim(); if (!text) return;
     setLoading(true); setErr(null); setSpec(null); setCur(null); setHist([]);
     const web = mode === "web";
-    const flow = !web && flowOn;
-    const system = web
-      ? `You generate Justlife WEB pages (desktop, wide layout) — dashboards and marketing/website pages — using the Justlife design system look (Poppins, brand colors). Fill props with realistic, specific content.\n${WEB_RULES}`
-      : `You generate Justlife mobile app ${flow ? "FLOWS (multi-screen clickable journeys)" : "screens"} (375px) by composing live DS components from the CATALOG. Fill props with realistic, specific content — these render live, so detail matters.\n${SCREEN_RULES}${flow ? "\n\n" + FLOW_RULES : ""}`;
-    const user = web
-      ? `${webCatalogText()}\n\nUSER REQUEST: "${text}"\n\nReturn ONLY the JSON.`
-      : `CATALOG:\n${catalogText(groups, catalog)}\n\nUSER REQUEST: "${text}"\n\nReturn ONLY the ${flow ? "flow" : "screen"} JSON.`;
-    try { const s = await callAI(system, user, flow ? 5000 : 2200); s.platform = web ? "web" : "app"; adopt(s); } catch (e) { showErr(e); } finally { setLoading(false); }
+    const flow = flowOn;
+    try {
+      if (flow && web) { await runWebFlow(text); }
+      else if (flow) { await runFlow(text); }
+      else {
+        const system = web
+          ? `You generate Justlife WEB pages (desktop, wide layout) — dashboards and marketing/website pages — using the Justlife design system look (Poppins, brand colors). Fill props with realistic, specific content.\n${WEB_RULES}`
+          : `You generate Justlife mobile app screens (375px) by composing live DS components from the CATALOG. Fill props with realistic, specific content — these render live, so detail matters.\n${SCREEN_RULES}`;
+        const user = web
+          ? `${webCatalogText()}\n\nUSER REQUEST: "${text}"\n\nReturn ONLY the JSON.`
+          : `CATALOG:\n${catalogText(groups, catalog)}\n\nUSER REQUEST: "${text}"\n\nReturn ONLY the screen JSON.`;
+        const s = await callAI(system, user, 2200); s.platform = web ? "web" : "app"; adopt(s);
+      }
+    } catch (e) { showErr(e); } finally { setLoading(false); }
+  }
+
+  // FLOW = one small PLAN request + one small request PER SCREEN, in parallel.
+  // Every request stays the size of a single-screen generation, so no gateway timeout is possible.
+  async function runFlow(text) {
+    // 1) Plan the journey (fast, ~few hundred tokens)
+    const planSys = `You PLAN a Justlife mobile app flow (a clickable multi-screen journey). Output STRICT JSON ONLY:
+{"title":string,"start":<id>,"screens":[{"id":kebab-case,"title":short,"goal":one sentence of what's on it,"links":[{"component":<catalog name>,"to":<screen id>}]}]}
+Rules: 3-4 screens forming ONE journey (e.g. home -> services -> booking/checkout -> confirmation). Every screen reachable from start via links. Links use ONLY component names from the list. Typical links: "Homepage Section"->services, "Service Card"->booking, "Navbar / App"->next step, final screen may have "Button"->home. NEVER link "App Header". ids: home, services, booking, checkout, confirmation.`;
+    const names = 'COMPONENT NAMES: Input/SearchMobile, Hero Banner, Homepage Section, Service Card, Product Card, Combo Selection, Selectable Item, Selectable Item / Date, Selectable Item / Time Slot with Tag, Selectable Item / Number Box, Disclaimer, Booking Status, Info Card, Plan Booking Card, Cashback Card, Rating Summary, Tag, Add-ons Card, Frequency Option, Subscription Schedule, Quantity Stepper, Special Instructions, Booking Details — Variants, Price Details — Variants, Payment Method, Button, App Header, Navbar / App, Navigation Bar';
+    const plan = await callAI(planSys, `${names}\n\nUSER REQUEST: "${text}"\n\nReturn ONLY the JSON.`, 1400);
+    const screens = (plan.screens || []).slice(0, 5).map(sc => ({ id: String(sc.id || "").trim() || "screen", title: sc.title || sc.id, nodes: [], pending: true }));
+    if (!screens.length) throw new Error("EMPTY");
+    const ids = screens.map(s => s.id);
+    adopt({ title: plan.title || "Flow", platform: "app", start: plan.start, screens });
+
+    // 2) Generate screens SEQUENTIALLY with a compact catalog — stays inside low rate-limit tiers (10k input tokens/min)
+    let failed = 0;
+    for (const sc of (plan.screens || []).slice(0, 5)) {
+      const sys = `You generate ONE Justlife mobile app screen (375px) that is part of the flow "${plan.title}" by composing live DS components from the CATALOG. Fill props with realistic, specific content.\n${SCREEN_RULES}\nFLOW LINKS for THIS screen — add a top-level "link" field on exactly these components: ${JSON.stringify(sc.links || [])}. Valid screen ids: ${ids.join(", ")}. NEVER link "App Header" (tapping it goes back automatically). Output STRICT JSON ONLY: {"title":string,"nodes":[{"component":...,"props":{...},"link":<id optional>}]}.`;
+      const user = `CATALOG:\n${catalogText(groups, catalog, true)}\n\nSCREEN TO BUILD: id "${sc.id}" — "${sc.title}". Goal: ${sc.goal || sc.title}\n\nReturn ONLY the screen JSON.`;
+      try {
+        const scr = await callAI(sys, user, 2200);
+        setSpec(prev => {
+          if (!prev || !Array.isArray(prev.screens)) return prev;
+          return { ...prev, screens: prev.screens.map(s0 => s0.id === sc.id ? { ...s0, title: scr.title || s0.title, nodes: scr.nodes || [], pending: false } : s0) };
+        });
+      } catch (e) {
+        failed++;
+        setSpec(prev => prev && Array.isArray(prev.screens) ? { ...prev, screens: prev.screens.map(s0 => s0.id === sc.id ? { ...s0, pending: false } : s0) } : prev);
+        if (String(e && e.message) === "RATE_LIMIT") { showErr(e); break; }
+      }
+    }
+    setSpec(prev => prev && Array.isArray(prev.screens) ? { ...prev, screens: prev.screens.map(s0 => s0.pending ? { ...s0, pending: false, nodes: s0.nodes || [] } : s0) } : prev);
+    if (failed) setErr(`${failed} screen(s) didn't generate — press Generate to retry.`);
+  }
+
+  // WEB FLOW = plan (pages + shared nav) + one small request per page, sequential.
+  async function runWebFlow(text) {
+    const planSys = `You PLAN a Justlife WEB flow (a clickable multi-page web experience). Output STRICT JSON ONLY:
+{"title":string,"kind":"dashboard"|"website","start":<id>,"nav":[{"label":string,"to":<page id>}],"screens":[{"id":kebab-case,"title":short,"goal":one sentence}]}
+Rules: 2-4 pages sharing ONE nav (every nav entry maps to a page id). kind "dashboard" = admin/analytics (nav renders as a left Sidebar); kind "website" = marketing site (nav renders as header links). ids kebab-case.`;
+    const plan = await callAI(planSys, `USER REQUEST: "${text}"\n\nReturn ONLY the JSON.`, 900);
+    const screens = (plan.screens || []).slice(0, 4).map(sc => ({ id: String(sc.id || "").trim() || "page", title: sc.title || sc.id, nodes: [], pending: true }));
+    if (!screens.length) throw new Error("EMPTY");
+    const ids = screens.map(x => x.id);
+    adopt({ title: plan.title || "Web Flow", platform: "web", start: plan.start, screens });
+    const dash = String(plan.kind || "dashboard") === "dashboard";
+    let failed = 0;
+    for (const sc of (plan.screens || []).slice(0, 4)) {
+      const navRule = dash
+        ? `Include "Sidebar" FIRST with items EXACTLY ${JSON.stringify(plan.nav || [])} (the item whose to="${sc.id}" is this page). Do NOT use "Web Header", "Web Hero" or "Footer".`
+        : `Include "Web Header" FIRST with links EXACTLY ${JSON.stringify(plan.nav || [])}. Do NOT use "Sidebar".`;
+      const sys = `You generate ONE Justlife WEB page (desktop, wide) that is part of the ${dash ? "dashboard" : "website"} flow "${plan.title}", using the Justlife DS look (Poppins, brand colors). Fill props with realistic content.\n${WEB_RULES}\nFLOW NAV: ${navRule} Valid page ids: ${ids.join(", ")}. Cards/heroes may add top-level "link":<page id>. Output STRICT JSON ONLY {"title":string,"nodes":[{"component":...,"props":{...},"link"?}]}.`;
+      const user = `${webCatalogText()}\n\nPAGE TO BUILD: id "${sc.id}" — "${sc.title}". Goal: ${sc.goal || sc.title}\n\nReturn ONLY the page JSON.`;
+      try {
+        const scr = await callAI(sys, user, 2200);
+        setSpec(prev => {
+          if (!prev || !Array.isArray(prev.screens)) return prev;
+          return { ...prev, screens: prev.screens.map(s0 => s0.id === sc.id ? { ...s0, title: scr.title || s0.title, nodes: scr.nodes || [], pending: false } : s0) };
+        });
+      } catch (e) {
+        failed++;
+        setSpec(prev => prev && Array.isArray(prev.screens) ? { ...prev, screens: prev.screens.map(s0 => s0.id === sc.id ? { ...s0, pending: false } : s0) } : prev);
+        if (String(e && e.message) === "RATE_LIMIT") { showErr(e); break; }
+      }
+    }
+    setSpec(prev => prev && Array.isArray(prev.screens) ? { ...prev, screens: prev.screens.map(s0 => s0.pending ? { ...s0, pending: false, nodes: s0.nodes || [] } : s0) } : prev);
+    if (failed) setErr(`${failed} page(s) didn't generate — press Generate to retry.`);
   }
 
   async function refine() {
     const instr = editText.trim(); if (!instr || !spec || loading || editing) return;
     setEditing(true); setErr(null);
     const web = (spec && spec.platform === "web") || mode === "web";
-    const fl = !web && isFlow;
-    const rules = web ? WEB_RULES : (SCREEN_RULES + (fl ? "\n\n" + FLOW_RULES : ""));
-    const shape = web ? '{"title","platform":"web","nodes":[{component,props}]}' : fl ? '{"title","start","screens":[{id,title,nodes:[{component,props,link}]}]}' : '{"title","nodes":[{component,props}]}';
-    const system = `You EDIT an existing Justlife ${web ? "web page" : fl ? "multi-screen flow" : "screen"}. Apply ONLY the requested change to the given JSON and return the FULL updated JSON in the same shape ${shape}. Keep all other ${fl ? "screens, " : ""}nodes and props unchanged. Same component/prop/price/link rules apply.${fl ? ` The user is currently viewing screen "${curScreen && curScreen.id}" — changes without an explicit screen mention apply to that screen.` : ""}\n${rules}`;
-    const user = `${web ? webCatalogText() : "CATALOG:\n" + catalogText(groups, catalog, true)}\n\nCURRENT JSON:\n${JSON.stringify(spec)}\n\nCHANGE REQUESTED: "${instr}"\n\nReturn ONLY the full updated JSON.`;
+    const fl = isFlow;
     try {
-      const keep = cur;
-      const s = await callAI(system, user, fl ? 5000 : 2200); s.platform = web ? "web" : "app";
-      if (fl && s.screens && keep && s.screens.some(x => x.id === keep)) { setSpec(s); setCur(keep); } else adopt(s);
+      if (fl) {
+        // Edit ONLY the current screen/page — keeps the request small (no gateway timeout)
+        const ids = screens.map(x => x.id).join(", ");
+        const rules = web ? WEB_RULES : SCREEN_RULES;
+        const sys = `You EDIT one ${web ? "page" : "screen"} of the Justlife flow "${spec.title}". Apply ONLY the requested change to the given JSON and return the FULL updated ${web ? "page" : "screen"} in the same shape {"title":string,"nodes":[{"component","props","link"?}]}. Keep all other nodes, props and links unchanged. Valid link ids: ${ids}.${web ? "" : ' NEVER link "App Header".'}\n${rules}`;
+        const user = `${web ? webCatalogText() : "CATALOG:\n" + catalogText(groups, catalog, true)}\n\nCURRENT ${web ? "PAGE" : "SCREEN"} (id "${curScreen.id}"):\n${JSON.stringify({ title: curScreen.title, nodes: curScreen.nodes })}\n\nCHANGE REQUESTED: "${instr}"\n\nReturn ONLY the full updated JSON.`;
+        const scr = await callAI(sys, user, 2200);
+        setSpec(prev => prev && Array.isArray(prev.screens) ? { ...prev, screens: prev.screens.map(s0 => s0.id === curScreen.id ? { ...s0, title: scr.title || s0.title, nodes: scr.nodes || s0.nodes } : s0) } : prev);
+      } else {
+        const rules = web ? WEB_RULES : SCREEN_RULES;
+        const shape = web ? '{"title","platform":"web","nodes":[{component,props}]}' : '{"title","nodes":[{component,props}]}';
+        const system = `You EDIT an existing Justlife ${web ? "web page" : "screen"}. Apply ONLY the requested change to the given JSON and return the FULL updated JSON in the same shape ${shape}. Keep all other nodes and props unchanged. Same component/prop/price rules apply.\n${rules}`;
+        const user = `${web ? webCatalogText() : "CATALOG:\n" + catalogText(groups, catalog, true)}\n\nCURRENT JSON:\n${JSON.stringify(spec)}\n\nCHANGE REQUESTED: "${instr}"\n\nReturn ONLY the full updated JSON.`;
+        const s2 = await callAI(system, user, 2200); s2.platform = web ? "web" : "app"; adopt(s2);
+      }
       setEditText("");
     } catch (e) { showErr(e); } finally { setEditing(false); }
   }
+
 
   return (
     <div style={{ display: "flex", gap: 44, alignItems: "flex-start", flexWrap: "wrap" }}>
@@ -1343,10 +1566,8 @@ function Generator({ embedded }) {
             <button key={m.k} className={mode === m.k ? "s-btn-dark" : "s-btn-ghost"} onClick={() => { setMode(m.k); setSpec(null); setErr(null); setCur(null); setHist([]); }}
               style={{ fontSize: 12.5, padding: "8px 16px" }}>{m.l}</button>
           ))}
-          {mode === "app" && (
-            <button className={flowOn ? "s-btn-dark" : "s-btn-ghost"} onClick={() => setFlowOn(f => !f)} title="Generate a clickable multi-screen journey"
-              style={{ fontSize: 12.5, padding: "8px 16px", marginLeft: "auto" }}>🔗 Flow {flowOn ? "ON" : "OFF"}</button>
-          )}
+          <button className={flowOn ? "s-btn-dark" : "s-btn-ghost"} onClick={() => setFlowOn(f => !f)} title="Generate a clickable multi-screen journey"
+            style={{ fontSize: 12.5, padding: "8px 16px", marginLeft: "auto" }}>🔗 Flow {flowOn ? "ON" : "OFF"}</button>
         </div>
         <textarea className="s-input" value={prompt} onChange={e => setPrompt(e.target.value)} placeholder={mode === "web" ? "e.g. An admin dashboard with bookings stats, revenue chart and a recent bookings table" : "e.g. A checkout summary with booking details, price breakdown and payment method"}
           style={{ width: "100%", minHeight: 100, padding: 14, fontSize: 14, resize: "vertical", boxSizing: "border-box" }} />
@@ -1362,7 +1583,7 @@ function Generator({ embedded }) {
             <div style={{ fontSize: 12.5, fontWeight: 600, color: "var(--s-ink)", marginBottom: 10 }}>✎ Edit this design <span style={{ fontWeight: 400, color: "var(--s-faint)" }}>— tweak it instead of starting over</span></div>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
               <input className="s-input" value={editText} onChange={e => setEditText(e.target.value)} onKeyDown={e => { if (e.key === "Enter") refine(); }}
-                placeholder="e.g. change the banner title to 'Eid Offers', add a service card"
+                placeholder={isFlow ? `e.g. add a Disclaimer — edits apply to the screen you\u2019re viewing (${curScreen ? curScreen.title || curScreen.id : ""})` : "e.g. change the banner title to 'Eid Offers', add a service card"}
                 style={{ flex: "1 1 240px", padding: "10px 13px", fontSize: 13 }} />
               <button className="s-btn-ghost" onClick={refine} disabled={loading || editing} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>{editing ? <Loader2 size={14} className="spin" /> : null}{editing ? "Applying…" : "Apply edit"}</button>
             </div>
@@ -1372,7 +1593,17 @@ function Generator({ embedded }) {
         {err && <div style={{ marginTop: 14, color: C.danger, fontSize: 13, maxWidth: 560 }}>{err}</div>}
       </div>
       {(mode === "web" || (spec && spec.platform === "web"))
-        ? <BrowserFrame>{loading ? <WebSkeleton /> : <WebScreen spec={spec && spec.platform === "web" ? spec : null} />}</BrowserFrame>
+        ? <div style={{ display: "flex", flexDirection: "column", gap: 12, flex: "1 1 640px", minWidth: 340 }}>
+            {isFlow && (
+              <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                {screens.map(sc => (
+                  <button key={sc.id} className={curScreen && curScreen.id === sc.id ? "s-btn-dark" : "s-chip"} onClick={() => jump(sc.id)} style={{ fontSize: 11, padding: "5px 12px" }}>{sc.title || sc.id}</button>
+                ))}
+              </div>
+            )}
+            <BrowserFrame>{(loading && !isFlow) || (curScreen && curScreen.pending) ? <WebSkeleton /> : <div key={curScreen ? curScreen.id : "single"} className={navDir === "fwd" ? "jl-in-fwd" : navDir === "back" ? "jl-in-back" : "jl-in-fade"} style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}><WebScreen spec={spec && spec.platform === "web" ? curScreen : null} go={go} curId={curScreen && curScreen.id} /></div>}</BrowserFrame>
+            {isFlow && <div style={{ fontSize: 11.5, color: "var(--s-faint)" }}>▶ Click sidebar / header links and linked cards to navigate</div>}
+          </div>
         : <div style={{ display: "flex", flexDirection: "column", gap: 12, alignItems: "center", flex: "0 0 auto" }}>
             {isFlow && (
               <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center", maxWidth: 380 }}>
@@ -1381,7 +1612,7 @@ function Generator({ embedded }) {
                 ))}
               </div>
             )}
-            <PhoneFrame>{loading ? <SkeletonScreen /> : <Screen spec={spec && spec.platform !== "web" ? curScreen : null} go={go} back={back} canBack={hist.length > 0} />}</PhoneFrame>
+            <PhoneFrame>{(loading && !isFlow) || (curScreen && curScreen.pending) ? <SkeletonScreen /> : <div key={curScreen ? curScreen.id : "single"} className={navDir === "fwd" ? "jl-in-fwd" : navDir === "back" ? "jl-in-back" : "jl-in-fade"} style={{ height: "100%" }}><Screen spec={spec && spec.platform !== "web" ? curScreen : null} go={go} back={back} canBack={hist.length > 0} /></div>}</PhoneFrame>
             {isFlow && <div style={{ fontSize: 11.5, color: "var(--s-faint)" }}>▶ Tap linked cards to navigate · tap the header to go back</div>}
           </div>}
     </div>
@@ -1412,7 +1643,9 @@ export default function App() {
     fetch(ASSET_BASE + "manifest.json").then(r => r.ok ? r.json() : null).then(j => {
       if (!j || !j.groups) return;
       const map = {
-      EMPTY: "The model returned an empty response — try again.",};
+      EMPTY: "The model returned an empty response — try again.",
+      RATE_LIMIT: "Your Anthropic plan\u2019s rate limit (10k input tokens/min) is exhausted — wait ~1 minute and try again. Tip: adding credits in console.anthropic.com raises the limit tier.",
+      BAD_JSON: "The model reply wasn\u2019t valid JSON this time — just press Generate again.",};
       for (const g of Object.values(j.groups)) for (const a of g) map[a.id] = ASSET_BASE + a.path;
       setAssets(a => ({ ...a, map, groups: j.groups }));
     }).catch(() => {});
@@ -1452,7 +1685,9 @@ export function EmbeddedBuilder() {
     fetch(ASSET_BASE + "manifest.json").then(r => r.ok ? r.json() : null).then(j => {
       if (!j || !j.groups) return;
       const map = {
-      EMPTY: "The model returned an empty response — try again.",};
+      EMPTY: "The model returned an empty response — try again.",
+      RATE_LIMIT: "Your Anthropic plan\u2019s rate limit (10k input tokens/min) is exhausted — wait ~1 minute and try again. Tip: adding credits in console.anthropic.com raises the limit tier.",
+      BAD_JSON: "The model reply wasn\u2019t valid JSON this time — just press Generate again.",};
       for (const g of Object.values(j.groups)) for (const a of g) map[a.id] = ASSET_BASE + a.path;
       setAssets(a => ({ ...a, map, groups: j.groups }));
     }).catch(() => {});
