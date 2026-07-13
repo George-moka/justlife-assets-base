@@ -702,6 +702,60 @@
           "male",
           "01"
         ]
+      },
+      {
+        "id": "addon-balcony",
+        "name": "Balcony Cleaning",
+        "path": "Photos%20%28export%20PNG%29/add-on-balcony.png",
+        "tags": [
+          "addon",
+          "balcony"
+        ]
+      },
+      {
+        "id": "addon-cupboard",
+        "name": "Cupboard Cleaning",
+        "path": "Photos%20%28export%20PNG%29/add-on-cupboard.png",
+        "tags": [
+          "addon",
+          "cupboard"
+        ]
+      },
+      {
+        "id": "addon-fridge",
+        "name": "Fridge Cleaning",
+        "path": "Photos%20%28export%20PNG%29/add-on-fridge.png",
+        "tags": [
+          "addon",
+          "fridge"
+        ]
+      },
+      {
+        "id": "addon-ironing",
+        "name": "Ironing & Folding",
+        "path": "Photos%20%28export%20PNG%29/add-on-ironing-folding.png",
+        "tags": [
+          "addon",
+          "ironing"
+        ]
+      },
+      {
+        "id": "addon-party",
+        "name": "Party Cleaning",
+        "path": "Photos%20%28export%20PNG%29/add-on-party-cleaning.png",
+        "tags": [
+          "addon",
+          "party"
+        ]
+      },
+      {
+        "id": "addon-wardrobe",
+        "name": "Wardrobe Organizing",
+        "path": "Photos%20%28export%20PNG%29/add-on-wardrobe.png",
+        "tags": [
+          "addon",
+          "wardrobe"
+        ]
       }
     ],
     "icons": [

@@ -2,8 +2,8 @@
   "source": "Justlife DS 2026 v0.5 — Component/cards (node 11714:1003)",
   "fileKey": "WOvsdFSWN9e0xwDB9u55Tn",
   "generated": "2026-06-23",
-  "count": 101,
-  "live_count": 36,
+  "count": 106,
+  "live_count": 41,
   "components": [
     {
       "name": "Notification Permission",
@@ -1844,6 +1844,46 @@
       },
       "props": [],
       "desc": "DS professional card (auto-assign on/off; default/selected).",
+      "live": true
+    },
+    {
+      "name": "BNPL Card",
+      "kind": "cmp",
+      "variants": {},
+      "props": [],
+      "desc": "BNPL / installments banner (Tabby, Tamara)",
+      "live": true
+    },
+    {
+      "name": "Confirmation Hero",
+      "kind": "cmp",
+      "variants": {},
+      "props": [],
+      "desc": "Promo image hero for confirmation screen",
+      "live": true
+    },
+    {
+      "name": "Assigned Professional",
+      "kind": "cmp",
+      "variants": {},
+      "props": [],
+      "desc": "Assigned pro card with Chat/Call",
+      "live": true
+    },
+    {
+      "name": "Kind Banner",
+      "kind": "cmp",
+      "variants": {},
+      "props": [],
+      "desc": "Warm reminder banner",
+      "live": true
+    },
+    {
+      "name": "Booking Details Full",
+      "kind": "cmp",
+      "variants": {},
+      "props": [],
+      "desc": "Full booking summary table",
       "live": true
     }
   ]
