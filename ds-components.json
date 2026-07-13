@@ -3,7 +3,7 @@
   "fileKey": "WOvsdFSWN9e0xwDB9u55Tn",
   "generated": "2026-06-23",
   "count": 101,
-  "live_count": 30,
+  "live_count": 36,
   "components": [
     {
       "name": "Notification Permission",
@@ -1067,7 +1067,7 @@
         "Show Change"
       ],
       "desc": "Title + Change link + frequency pill. 2 types (Plain / Card Note).",
-      "live": false
+      "live": true
     },
     {
       "name": "Frequency Option",
@@ -1239,7 +1239,7 @@
         "Amount"
       ],
       "desc": "Wallet/credit selectable card.",
-      "live": false
+      "live": true
     },
     {
       "name": "Voucher Code Card",
@@ -1255,7 +1255,7 @@
         "Code"
       ],
       "desc": "Promo code entry/applied card.",
-      "live": false
+      "live": true
     },
     {
       "name": "Credit List Item",
@@ -1707,7 +1707,7 @@
         "Label"
       ],
       "desc": "Pill-shaped selectable chip (e.g. compact option). 3 states.",
-      "live": false
+      "live": true
     },
     {
       "name": "Selectable Item / Number Box",
@@ -1827,7 +1827,7 @@
       },
       "props": [],
       "desc": "Professional selection row with auto-assign toggle. default/selected/hover.",
-      "live": false
+      "live": true
     },
     {
       "name": "Professional Card · DS",
@@ -1844,7 +1844,7 @@
       },
       "props": [],
       "desc": "DS professional card (auto-assign on/off; default/selected).",
-      "live": false
+      "live": true
     }
   ]
 }
