@@ -1965,16 +1965,18 @@ Rules: 2-4 pages sharing ONE nav (every nav entry maps to a page id). kind "dash
           <button className={flowOn ? "s-btn-dark" : "s-btn-ghost"} onClick={() => setFlowOn(f => !f)} title="Generate a clickable multi-screen journey"
             style={{ fontSize: 12.5, padding: "8px 16px", marginLeft: "auto" }}>🔗 Flow {flowOn ? "ON" : "OFF"}</button>
         </div>
-        <textarea className="s-input" value={prompt} onChange={e => setPrompt(e.target.value)} placeholder={mode === "web" ? "e.g. An admin dashboard with bookings stats, revenue chart and a recent bookings table" : "e.g. A checkout summary with booking details, price breakdown and payment method"}
-          style={{ width: "100%", minHeight: 100, padding: 14, fontSize: 14, resize: "vertical", boxSizing: "border-box" }} />
+        <div style={{ position: "relative" }}>
+          <textarea className="s-input" value={prompt} onChange={e => setPrompt(e.target.value)} placeholder={mode === "web" ? "e.g. An admin dashboard with bookings stats, revenue chart and a recent bookings table" : "e.g. A checkout summary with booking details, price breakdown and payment method"}
+            style={{ width: "100%", minHeight: 100, padding: 14, paddingBottom: 48, fontSize: 14, resize: "vertical", boxSizing: "border-box" }} />
+          <label className="s-btn-ghost" style={{ position: "absolute", left: 10, bottom: 10, display: "inline-flex", alignItems: "center", gap: 6, cursor: "pointer", fontSize: 12.5, padding: "6px 12px" }}>
+            <Image size={15} /> Upload image
+            <input type="file" accept="image/png,image/jpeg,image/webp" style={{ display: "none" }} onChange={onPickImage} />
+          </label>
+        </div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8, margin: "14px 0" }}>
           {suggestions.map((s, i) => <button key={i} className="s-chip" onClick={() => { setPrompt(s); run(s); }}>{s}</button>)}
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12, flexWrap: "wrap" }}>
-          <label className="s-btn-ghost" style={{ display: "inline-flex", alignItems: "center", gap: 6, cursor: "pointer", fontSize: 12.5, padding: "8px 14px" }}>
-            <Image size={15} /> Upload image
-            <input type="file" accept="image/png,image/jpeg,image/webp" style={{ display: "none" }} onChange={onPickImage} />
-          </label>
           {img && (
             <span style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "var(--s-chip-bg, #ffffff10)", border: "1px solid var(--s-line, #ffffff22)", borderRadius: 10, padding: "5px 8px 5px 5px" }}>
               <img src={img.preview} alt="" style={{ width: 30, height: 30, objectFit: "cover", borderRadius: 6 }} />
