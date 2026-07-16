@@ -1,16 +1,17 @@
-import React, { useState, useEffect, useMemo, createContext, useContext } from "react";
-import { Search, Star, Plus, Minus, ChevronRight, Check, Clock, ArrowRight, Sparkles, Copy, Loader2, AlertCircle } from "lucide-react";
+import React, { useState, useEffect, useMemo, useRef, createContext, useContext } from "react";
+import { Search, Star, Plus, Minus, ChevronRight, Check, Clock, ArrowRight, Sparkles, Copy, Loader2, AlertCircle, Wallet, Trash2, RefreshCw, Image, X } from "lucide-react";
 
 // Global animation CSS — injected by the bundle so spinners/skeletons work on ANY host page
 if (typeof document !== "undefined" && !document.getElementById("jl-anim")) {
   const st = document.createElement("style");
   st.id = "jl-anim";
-  st.textContent = "@keyframes jlspin{to{transform:rotate(360deg)}}.spin{animation:jlspin .9s linear infinite;display:inline-block;transform-origin:center}@keyframes jlpulse{0%,100%{opacity:.4}50%{opacity:.9}}.jl-skel{animation:jlpulse 1.3s ease-in-out infinite}@keyframes jlF{from{opacity:.3;transform:translateX(18px)}to{opacity:1;transform:none}}@keyframes jlB{from{opacity:.3;transform:translateX(-18px)}to{opacity:1;transform:none}}@keyframes jlA{from{opacity:.35}to{opacity:1}}.jl-in-fwd{animation:jlF .22s ease-out}.jl-in-back{animation:jlB .22s ease-out}.jl-in-fade{animation:jlA .2s ease-out}";
+  st.textContent = "@keyframes jlspin{to{transform:rotate(360deg)}}.spin{animation:jlspin .9s linear infinite;display:inline-block;transform-origin:center}@keyframes jlpulse{0%,100%{opacity:.4}50%{opacity:.9}}.jl-skel{animation:jlpulse 1.3s ease-in-out infinite}@keyframes jlF{from{opacity:.3;transform:translateX(18px)}to{opacity:1;transform:none}}@keyframes jlB{from{opacity:.3;transform:translateX(-18px)}to{opacity:1;transform:none}}@keyframes jlA{from{opacity:.35}to{opacity:1}}.jl-in-fwd{animation:jlF .22s ease-out}.jl-in-back{animation:jlB .22s ease-out}.jl-in-fade{animation:jlA .2s ease-out}.jl-noscroll{scrollbar-width:none;-ms-overflow-style:none}.jl-noscroll::-webkit-scrollbar{display:none}.jl-noscroll *{scrollbar-width:none;-ms-overflow-style:none}.jl-noscroll *::-webkit-scrollbar{display:none}";
   document.head.appendChild(st);
 }
 
 /* Justlife DS — Live Screen Builder (components matched to Figma DS) */
 
+let ADDON_IDS = ["addon-balcony", "addon-cupboard", "addon-fridge", "addon-ironing", "addon-party", "addon-wardrobe"];
 const ASSET_BASE =
   (typeof window !== "undefined" && window.JUSTLIFE_ASSET_BASE) ||
   "https://cdn.jsdelivr.net/gh/George-moka/justlife-assets-base@main/";
@@ -76,11 +77,12 @@ function Price({ value, old, color = C.text, size = 11 }) {
 }
 
 // Justlife brand mark (recreated hook + wordmark, brand blue)
-function JustlifeMark({ size = 26 }) {
+function JustlifeMark({ size = 26, light = false }) {
+  const col = light ? "#FFFFFF" : C.brand;
   return (
     <svg width={size * 0.82} height={size} viewBox="0 0 26 30" fill="none" style={{ display: "block" }}>
-      <path d="M17 4 L17 17.5 A8 8 0 1 1 9 9.5" fill="none" stroke={C.brand} strokeWidth="5.5" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M16.5 3 l5.4 3.3 -5.4 3.3 z" fill={C.brand} />
+      <path d="M17 4 L17 17.5 A8 8 0 1 1 9 9.5" fill="none" stroke={col} strokeWidth="5.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M16.5 3 l5.4 3.3 -5.4 3.3 z" fill={col} />
     </svg>
   );
 }
@@ -251,13 +253,15 @@ const selState = (state) => state === "selected"
   : { bg: C.bg2, border: C.border, text: C.text, bold: false };
 
 // Selectable Item / Date — 55x53 tile (day 9 + date 11 SemiBold), horizontal strip
-function DateSelector({ items, active = 1 }) {
+function DateSelector({ items, active = 1, label }) {
   const days = items && items.length ? items : [
     { day: "Wed", date: "10 Feb" }, { day: "Thu", date: "11 Feb" }, { day: "Fri", date: "12 Feb" },
     { day: "Sat", date: "13 Feb" }, { day: "Sun", date: "14 Feb", disabled: true },
   ];
   return (
-    <div style={{ display: "flex", gap: S.md, overflowX: "auto", margin: "0 -16px", padding: "0 16px" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: S.md }}>
+      {label && <div style={{ fontSize: 11, fontWeight: 600, color: C.text }}>{label}</div>}
+      <div className="jl-noscroll" style={{ display: "flex", gap: S.md, overflowX: "auto", margin: "0 -16px", padding: "0 16px" }}>
       {days.map((d, i) => {
         const st = selState(d.disabled ? "disabled" : i === active ? "selected" : "default");
         return (
@@ -267,18 +271,21 @@ function DateSelector({ items, active = 1 }) {
           </div>
         );
       })}
+      </div>
     </div>
   );
 }
 
 // Selectable Item / Time Slot with Tag — 91x43 card + floating tag (Extra=brand / Off=green)
-function TimeSlotPicker({ items, active = 0 }) {
+function TimeSlotPicker({ items, active = 0, label }) {
   const slots = items && items.length ? items : [
     { time: "08:00-08:30" }, { time: "08:30-09:00", tag: "5 EXTRA", tagType: "extra" },
     { time: "09:00-09:30", tag: "5 OFF", tagType: "off" }, { time: "09:30-10:00", disabled: true },
   ];
   return (
-    <div style={{ display: "flex", gap: S.md, overflowX: "auto", margin: "0 -16px", padding: "8px 16px 0" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: S.md }}>
+      {label && <div style={{ fontSize: 11, fontWeight: 600, color: C.text }}>{label}</div>}
+      <div className="jl-noscroll" style={{ display: "flex", gap: S.md, overflowX: "auto", margin: "0 -16px", padding: "14px 16px 2px" }}>
       {slots.map((s, i) => {
         const st = selState(s.disabled ? "disabled" : i === active ? "selected" : "default");
         const off = s.tagType === "off";
@@ -287,14 +294,18 @@ function TimeSlotPicker({ items, active = 0 }) {
             <div style={{ height: 35, padding: "0 10px", borderRadius: R.md, background: st.bg, border: `1px solid ${st.border}`, display: "flex", alignItems: "center" }}>
               <span style={{ fontSize: 11, fontWeight: st.bold ? 600 : 400, color: st.text, whiteSpace: "nowrap" }}>{s.time}</span>
             </div>
-            {s.tag && (
-              <span style={{ position: "absolute", top: -8, right: -4, display: "inline-flex", alignItems: "center", gap: 2, background: off ? DS.success.chip : C.brand, color: off ? DS.yellow.y800 : "#fff", fontSize: 9, fontWeight: 600, padding: "1px 5px", borderRadius: R.xs, whiteSpace: "nowrap" }}>
-                {!off && <Dh size={7} color="#fff" />}{off && <Dh size={7} color={DS.yellow.y800} />}{s.tag}
-              </span>
-            )}
+            {s.tag && (() => {
+              const money = /^\d/.test(String(s.tag).trim());
+              return (
+                <span style={{ position: "absolute", top: -9, right: -4, display: "inline-flex", alignItems: "center", gap: 2, background: off ? DS.success.chip : C.brand, color: off ? DS.yellow.y800 : "#fff", fontSize: 9, fontWeight: 600, padding: "1px 6px", borderRadius: R.xs, whiteSpace: "nowrap" }}>
+                  {money && <Dh size={7} color={off ? DS.yellow.y800 : "#fff"} />}{s.tag}
+                </span>
+              );
+            })()}
           </div>
         );
       })}
+      </div>
     </div>
   );
 }
@@ -303,13 +314,13 @@ function TimeSlotPicker({ items, active = 0 }) {
 function NumberBoxRow({ label, count = 5, active = 0, items }) {
   const nums = items && items.length ? items : Array.from({ length: count }, (_, i) => ({ n: i + 1 }));
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: S.md }}>
-      {label && <div style={{ fontSize: 11, fontWeight: 600, color: C.text }}>{label}</div>}
-      <div style={{ display: "flex", gap: S.md, flexWrap: "wrap" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      {label && <div style={{ fontSize: 13, fontWeight: 600, color: C.text, lineHeight: 1.35 }}>{label}</div>}
+      <div className="jl-noscroll" style={{ display: "flex", gap: 10, overflowX: "auto", flexWrap: nums.length > 7 ? "nowrap" : "wrap" }}>
         {nums.map((x, i) => {
           const st = selState(x.disabled ? "disabled" : i === active ? "selected" : "default");
           return (
-            <div key={i} style={{ width: 40, height: 40, borderRadius: R.md, background: st.bg, border: `1px solid ${st.border}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: st.bold ? 600 : 400, color: st.text }}>{x.n}</div>
+            <div key={i} style={{ flex: "0 0 44px", width: 44, height: 44, borderRadius: R.md, background: st.bg, border: `1px solid ${st.border}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: st.bold ? 600 : 400, color: st.text }}>{x.n}</div>
           );
         })}
       </div>
@@ -396,6 +407,116 @@ function InfoCard({ text = "Tip: our professionals bring their own supplies.", t
   );
 }
 
+// BNPL banner (Tabby / Tamara) — "Pay in 4 interest-free payments" (QA: Checkout top)
+function BnplCard({ provider = "Tabby", subtitle = "Pay in 4 interest-free payments" }) {
+  const isTamara = /tamara/i.test(provider);
+  const logoBg = isTamara ? "#FF6699" : "#3EE5AC";
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 12, padding: 12, borderRadius: R.lg, border: `1px solid ${C.border}`, background: C.bg2 }}>
+      <span style={{ background: logoBg, borderRadius: 6, padding: "5px 10px", fontSize: 11, fontWeight: 700, color: "#000", fontStyle: "italic" }}>{provider.toLowerCase()}</span>
+      <div style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 0 }}>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 11, fontWeight: 600, color: C.text }}>{provider} <AlertCircle size={11} color={C.text3} /></span>
+        <span style={{ fontSize: 9, color: C.text2 }}>{subtitle}</span>
+      </div>
+    </div>
+  );
+}
+
+// Confirmation Hero — promo image banner (QA: Thank You top)
+function ConfirmationHero({ image, badge = "30% off up to ﷼100", title = "Solo or duo Massages & facials right at home.", cta = "Book Now", cta2 = "Save for Later" }) {
+  return (
+    <div style={{ position: "relative", borderRadius: R.lg, overflow: "hidden", minHeight: 200 }}>
+      <Img id={image} ph={DS.blue.b900} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,.1), rgba(0,0,0,.45))" }} />
+      <div style={{ position: "relative", padding: 16, display: "flex", flexDirection: "column", alignItems: "center", gap: 10, minHeight: 200, justifyContent: "flex-end", textAlign: "center" }}>
+        {badge && <span style={{ background: C.yellow, color: C.yellowInk, fontSize: 11, fontWeight: 600, padding: "5px 12px", borderRadius: 100 }}>{badge}</span>}
+        <span style={{ fontSize: 15, fontWeight: 600, color: "#fff", lineHeight: 1.3, maxWidth: 260 }}>{title}</span>
+        <div style={{ display: "flex", gap: 10 }}>
+          <span style={{ background: C.brand, color: "#fff", fontSize: 11, fontWeight: 600, padding: "9px 18px", borderRadius: R.md }}>{cta}</span>
+          <span style={{ background: "rgba(255,255,255,.15)", border: "1px solid #ffffff88", color: "#fff", fontSize: 11, fontWeight: 600, padding: "9px 18px", borderRadius: R.md }}>{cta2}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Assigned Professional card — arrival window + Chat/Call (QA: Thank You)
+function AssignedPro({ name = "Leila Mary", image = "avatar-3", rating = "4.7", window = "13:00-14:00", status = "Professional assigned" }) {
+  return (
+    <div style={{ background: C.bg2, borderRadius: R.lg, padding: 14, display: "flex", flexDirection: "column", gap: 12 }}>
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 4, minWidth: 0 }}>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 13, fontWeight: 600, color: C.link }}>{status} <ChevronRight size={14} color={C.link} /></span>
+          <span style={{ fontSize: 11, color: C.text2 }}>We'll arrive between {window}.</span>
+        </div>
+        <div style={{ position: "relative", flex: "0 0 auto" }}>
+          <Img id={image} radius={24} ph={C.bg3} style={{ width: 48, height: 48, objectFit: "cover" }} />
+          {rating && <span style={{ position: "absolute", top: -4, right: -4, display: "inline-flex", alignItems: "center", gap: 2, background: "#fff", borderRadius: 100, padding: "1px 4px", fontSize: 8, fontWeight: 600, color: C.text, boxShadow: "0 1px 3px rgba(0,0,0,.2)" }}><Star size={8} color="#FFB800" />{rating}</span>}
+          <span style={{ display: "block", textAlign: "center", fontSize: 9, fontWeight: 600, color: C.link, marginTop: 2 }}>{name}</span>
+        </div>
+      </div>
+      <div style={{ display: "flex", gap: 10 }}>
+        {[{ l: "Chat" }, { l: "Call" }].map(a => (
+          <span key={a.l} style={{ flex: 1, textAlign: "center", background: C.bg, borderRadius: 100, padding: "9px 0", fontSize: 11, fontWeight: 600, color: C.success, border: `1px solid ${C.border}` }}>{a.l}</span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Kind-gesture banner (QA: Thank You)
+function KindBanner({ text = "Show kind gestures, they go a long way" }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 10, background: "#FFF4EC", borderRadius: R.md, padding: "12px 14px" }}>
+      <span style={{ fontSize: 15 }}>❤️</span>
+      <span style={{ fontSize: 11, fontWeight: 600, color: C.text }}>{text}</span>
+    </div>
+  );
+}
+
+// Full booking details table (QA: Thank You) — label/value rows + action rows
+function BookingDetailsFull({ title = "Booking Details", instructionsAction = "Add", rows, professional, actions }) {
+  const R2 = rows && rows.length ? rows : [
+    { label: "Status", value: "Confirmed", tone: "success" },
+    { label: "Reference code", value: "043DD43" },
+    { label: "Service", value: "Women's Salon" },
+    { label: "Frequency", value: "One time" },
+    { label: "Date & Time", value: "7 Jul 2026, 09:00-09:30" },
+    { label: "Duration", value: "2 Hours, 3 Cleaners" },
+    { label: "Material", value: "No" },
+    { label: "Total (Inc VAT)", value: "600", price: true, bold: true },
+    { label: "Payment Method", value: "Visa **** 0021", payLogo: "visa" },
+  ];
+  const acts = actions && actions.length ? actions : [{ label: "Edit this booking only" }, { label: "Manage subscription" }];
+  return (
+    <div style={{ background: C.bg2, borderRadius: R.lg, padding: 16, display: "flex", flexDirection: "column", gap: 14 }}>
+      <div style={{ fontSize: 15, fontWeight: 600, color: DS.blue.b900 }}>{title}</div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: C.bg, borderRadius: R.md, padding: 12 }}>
+        <span style={{ fontSize: 11, fontWeight: 600, color: C.text }}>Any specific instructions?</span>
+        <span style={{ fontSize: 11, fontWeight: 600, color: C.link }}>{instructionsAction}</span>
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
+        {R2.map((r, i) => (
+          <div key={i} style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "center" }}>
+            <span style={{ fontSize: 11, color: C.text2, flex: "0 0 auto" }}>{r.label}</span>
+            <span style={{ fontSize: 11, fontWeight: r.bold ? 600 : 400, color: r.tone === "success" ? C.success : C.text, textAlign: "right", display: "inline-flex", alignItems: "center", gap: 4 }}>
+              {r.payLogo && payLogoId(r.value.split(" ")[0]) ? <Img id={payLogoId(r.value.split(" ")[0])} style={{ width: 26, height: 16, objectFit: "contain" }} /> : null}
+              {r.price ? <><Dh size={10} color={C.text} />{cleanNum(r.value)}</> : r.value}
+            </span>
+          </div>
+        ))}
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        {acts.map((a, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: C.bg, borderRadius: R.md, padding: "12px 14px" }}>
+            <span style={{ fontSize: 11, fontWeight: 500, color: C.text }}>{a.label}</span><ChevronRight size={16} color={C.text3} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // Plan Booking Card — booking/subscription summary
 function PlanBookingCard({ title = "Cleaning Subscription", status = "Active", rows, pro = "Hussein", proAvatar, rating = "4.7", cta = "View Schedule" }) {
   const r = rows && rows.length ? rows : [
@@ -474,46 +595,217 @@ function QuantityStepper({ value = 1 }) {
 }
 
 // Add-ons Card — horizontal scroll of 116px add-on tiles
-function AddonTile({ image, name = "Balcony Cleaning", price = "15", oldPrice }) {
+function AddonTile({ image, name = "Balcony Cleaning", price = "15", oldPrice, qty, fluid, selected }) {
+  const q = qty || (selected ? 1 : 0);
   return (
-    <div style={{ position: "relative", background: C.bg2, borderRadius: R.lg, width: 116, flex: "0 0 116px", paddingBottom: 8, display: "flex", flexDirection: "column", gap: 8, overflow: "hidden" }}>
-      <Img id={image} radius={R.lg} ph={C.bg3} style={{ width: "100%", height: 100 }} />
+    <div style={{ position: "relative", background: C.bg2, borderRadius: R.lg, width: fluid ? "auto" : 116, flex: fluid ? "1 1 auto" : "0 0 116px", paddingBottom: 8, display: "flex", flexDirection: "column", gap: 8, overflow: "hidden", border: selected ? `1.5px solid ${C.brand}` : "1.5px solid transparent" }}>
+      <div style={{ position: "relative" }}>
+        <Img id={image} radius={R.lg} ph={C.bg3} style={{ width: "100%", height: 100 }} />
+        {q > 0
+          ? <span style={{ position: "absolute", bottom: 8, right: 8, display: "inline-flex", alignItems: "center", background: "#fff", borderRadius: R.md, boxShadow: "0 2px 6px rgba(0,0,0,.12)", overflow: "hidden" }}>
+              <span style={{ padding: "6px 7px", display: "flex" }}><Trash2 size={13} color={C.text2} /></span>
+              <span style={{ minWidth: 18, textAlign: "center", fontSize: 11, fontWeight: 600, color: C.text }}>{q}</span>
+              <span style={{ background: C.brand, padding: "7px 7px", display: "flex" }}><Plus size={13} color="#fff" /></span>
+            </span>
+          : <span style={{ position: "absolute", bottom: 8, right: 8, background: C.brand, borderRadius: R.md, padding: 7, display: "flex", boxShadow: "0 2px 6px rgba(0,0,0,.12)" }}><Plus size={15} color="#fff" /></span>}
+      </div>
       <div style={{ padding: "0 8px", display: "flex", flexDirection: "column", gap: 4 }}>
         <div style={{ fontSize: 11, fontWeight: 600, color: C.text, lineHeight: "14px" }}>{name}</div>
         <div style={{ fontSize: 11, fontWeight: 600, color: C.link }}>Learn More</div>
         <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-          {oldPrice && <span style={{ fontSize: 11, color: C.text2, display: "inline-flex", alignItems: "center" }}><Dh size={9} color={C.text2} />{cleanNum(oldPrice)}</span>}
           <Price value={price} size={11} />
+          {oldPrice && <span style={{ fontSize: 11, color: C.text3, textDecoration: "line-through", display: "inline-flex", alignItems: "center" }}><Dh size={9} color={C.text3} />{cleanNum(oldPrice)}</span>}
         </div>
       </div>
-      <span style={{ position: "absolute", top: 62, right: 8, background: C.brand, borderRadius: R.md, padding: 8, display: "flex" }}><Plus size={16} color="#fff" /></span>
     </div>
   );
 }
-function AddonsCard({ title = "Add-ons", items }) {
+function AddonsCard({ title = "Add-ons", items, layout = "row" }) {
   const its = items && items.length ? items : [{ name: "Balcony Cleaning", price: "15", oldPrice: "10" }, { name: "Fridge Cleaning", price: "30" }, { name: "Oven Cleaning", price: "25" }];
+  const grid = String(layout).toLowerCase() === "grid";
+  // Auto-assign a DISTINCT add-on image to each tile (round-robin) so every card differs,
+  // regardless of whether the AI supplied images. An explicit item.image always wins.
+  const pool = (ADDON_IDS && ADDON_IDS.length) ? ADDON_IDS : [];
+  const withImg = its.map((a, i) => ({ ...a, image: a.image || (pool.length ? pool[i % pool.length] : undefined) }));
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: S.lg }}>
-      <div style={{ fontWeight: 600, fontSize: 11 }}>{title}</div>
-      <div style={{ display: "flex", gap: S.md, overflowX: "auto", margin: "0 -16px", padding: "0 16px" }}>
-        {its.map((a, i) => <AddonTile key={i} {...a} />)}
+      {title && <div style={{ fontWeight: 600, fontSize: 13, color: C.text }}>{title}</div>}
+      {grid
+        ? <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: S.md }}>{withImg.map((a, i) => <AddonTile key={i} {...a} fluid selected={a.selected} />)}</div>
+        : <div className="jl-noscroll" style={{ display: "flex", gap: S.md, overflowX: "auto", margin: "0 -16px", padding: "0 16px" }}>{withImg.map((a, i) => <AddonTile key={i} {...a} />)}</div>}
+    </div>
+  );
+}
+
+function FrequencyOptions({ title = "How often would you like your home cleaned?", options, active = 1 }) {
+  const opts = options && options.length ? options : [
+    { label: "One Time", discount: "10% OFF", bullets: ["Perfect pick for an uncertain schedule.", "Pay once, with no commitment."] },
+    { label: "Recurring", discount: "25% OFF", bullets: ["Flexible, ongoing cleaning.", "Pay after each service, no upfront cost."], tabs: ["Weekly", "Every Two Weeks"], days: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], banner: "Yaay! You've earned 10% discount. Unlock up to 25% by booking more days!" },
+    { label: "Monthly Subscription", discount: "40% OFF", bullets: ["Get the same professional every week.", "Pause or cancel anytime you want."] },
+  ];
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+      {title && <div style={{ fontSize: 13, fontWeight: 600, color: C.text }}>{title}</div>}
+      {opts.map((o, i) => {
+        const sel = i === active;
+        const expanded = sel && (o.tabs || o.days || o.banner);
+        return (
+          <div key={i} style={{ borderRadius: R.lg, border: `1.5px solid ${sel ? C.brand : C.border}`, background: sel ? C.selected : C.bg2, overflow: "hidden" }}>
+            <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 10 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+                <span style={{ fontSize: 13, fontWeight: 600, color: C.text }}>{o.label}</span>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, flex: "0 0 auto" }}>
+                  {o.discount && <span style={{ background: DS.success.chip, color: C.yellowInk, fontSize: 9, fontWeight: 600, padding: "3px 8px", borderRadius: R.xs, whiteSpace: "nowrap" }}>{o.discount}</span>}
+                  <ControlDot type="radio" selected={sel} />
+                </div>
+              </div>
+              {o.bullets && o.bullets.length > 0 && <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 10, display: "flex", flexDirection: "column", gap: 5 }}>
+                {o.bullets.map((b, j) => <div key={j} style={{ fontSize: 11, color: C.text2, lineHeight: 1.4, display: "flex", gap: 6 }}><span>•</span><span>{b}</span></div>)}
+              </div>}
+              {expanded && o.tabs && (
+                <div style={{ display: "flex", gap: 8 }}>
+                  {o.tabs.map((t, j) => (
+                    <span key={j} style={{ padding: "9px 16px", borderRadius: R.md, border: `1px solid ${j === 0 ? C.brand : C.border}`, background: C.bg, fontSize: 9, fontWeight: j === 0 ? 600 : 400, color: j === 0 ? C.link : C.text, whiteSpace: "nowrap" }}>{t}</span>
+                  ))}
+                </div>
+              )}
+              {expanded && o.days && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: C.text }}>Which days do you prefer?</span>
+                  <div className="jl-noscroll" style={{ display: "flex", gap: 6, overflowX: "auto" }}>
+                    {o.days.map((d, j) => (
+                      <span key={j} style={{ flex: "0 0 auto", minWidth: 40, textAlign: "center", padding: "10px 8px", borderRadius: R.md, border: `1px solid ${C.border}`, background: C.bg, fontSize: 9, color: C.text }}>{d}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {expanded && o.banner && (
+                <div style={{ display: "flex", gap: 8, background: DS.success.bg, borderRadius: R.md, padding: "10px 12px" }}>
+                  <span style={{ flex: "0 0 auto", fontSize: 12 }}>🏷️</span>
+                  <span style={{ fontSize: 11, fontWeight: 600, color: "#2E4400", lineHeight: 1.4 }}>{o.banner}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// Justlife Promise — marketing reassurance block (QA: Frequency screen)
+function JustlifePromise({ title = "justlife Promise", items }) {
+  const its = items && items.length ? items : [
+    { title: "More Days, More Savings!", desc: "Save up to 40% based on your plan" },
+    { title: "Reschedule or Cancel Anytime", desc: "Total flexibility at your fingertips!" },
+  ];
+  return (
+    <div style={{ padding: "18px 14px", display: "flex", flexDirection: "column", gap: 12, alignItems: "center" }}>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+        <svg width="26" height="30" viewBox="0 0 26 30" fill="none"><path d="M13 2 L23 6 V14 C23 21 18 26 13 28 C8 26 3 21 3 14 V6 Z" fill="none" stroke={C.text3} strokeWidth="1.6" /></svg>
+        <span style={{ fontSize: 13, fontWeight: 600, color: C.text3 }}>{title}</span>
+      </div>
+      {its.map((it, i) => (
+        <div key={i} style={{ display: "flex", flexDirection: "column", gap: 2, alignItems: "center", textAlign: "center" }}>
+          <span style={{ fontSize: 13, fontWeight: 600, color: C.text }}>{it.title}</span>
+          {it.desc && <span style={{ fontSize: 11, color: C.text2 }}>{it.desc}</span>}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// Selectable Item / Pill — pill choice row (QA: materials Yes/No), optional "Powered by justlife"
+function PillSelector({ label, options, active = 0, poweredBy, info }) {
+  const opts = (options && options.length ? options : ["Yes, please", "No, thanks"]).map(o => typeof o === "string" ? { label: o } : o);
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: S.md }}>
+      {label && (
+        <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+          <span style={{ fontSize: 13, fontWeight: 600, color: C.text }}>{label}</span>
+          {info && <AlertCircle size={12} color={C.text3} />}
+          {poweredBy && <span style={{ display: "inline-flex", alignItems: "center", gap: 4, marginLeft: "auto", fontSize: 9, color: C.text3 }}>Powered by <JustlifeMark size={13} /><span style={{ fontWeight: 600, color: C.brand }}>justlife</span></span>}
+        </div>
+      )}
+      <div style={{ display: "flex", gap: S.md, flexWrap: "wrap" }}>
+        {opts.map((o, i) => {
+          const st = selState(o.disabled ? "disabled" : i === active ? "selected" : "default");
+          return <div key={i} style={{ padding: "9px 16px", borderRadius: 100, background: st.bg, border: `1px solid ${st.border}`, fontSize: 11, fontWeight: st.bold ? 600 : 400, color: st.text, whiteSpace: "nowrap" }}>{o.label}</div>;
+        })}
       </div>
     </div>
   );
 }
 
-function FrequencyOptions({ title = "How often?", options, active = 0 }) {
-  const opts = options && options.length ? options : [{ label: "One time" }, { label: "Weekly", note: "Save 10%" }, { label: "Bi-weekly", note: "Save 5%" }];
+// Frequency Summary — chosen plan row + Change link (QA: Date & Time screen)
+function FrequencySummary({ title = "Frequency", value = "Weekly", note, change = "Change" }) {
   return (
-    <div style={{ background: C.bg2, borderRadius: R.lg, padding: 12 }}>
-      <div style={{ fontWeight: 600, fontSize: 11, marginBottom: S.md }}>{title}</div>
-      <div style={{ display: "flex", flexDirection: "column", gap: S.md }}>
-        {opts.map((o, i) => (
-          <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: S.md, borderRadius: R.md, border: `1.5px solid ${i === active ? C.brand : C.border}`, background: i === active ? C.selected : C.bg }}>
-            <div style={{ display: "flex", alignItems: "center", gap: S.md }}><ControlDot type="radio" selected={i === active} /><span style={{ fontSize: 11, fontWeight: 500, color: C.text }}>{o.label}</span></div>
-            {o.note && <span style={{ fontSize: 11, fontWeight: 600, color: C.success }}>{o.note}</span>}
-          </div>
-        ))}
+    <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 10, rowGap: 10, padding: 14, borderRadius: R.lg, border: `1.5px solid ${C.brand}`, background: C.selected }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10, minWidth: 0, flex: 1 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, rowGap: 4, minWidth: 0, flexWrap: "wrap" }}>
+        <span style={{ fontSize: 13, fontWeight: 600, color: C.text, whiteSpace: "nowrap" }}>{title}</span>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 5, background: C.brand, color: "#fff", fontSize: 11, fontWeight: 600, padding: "6px 12px", borderRadius: 100, whiteSpace: "nowrap" }}><RefreshCw size={12} color="#fff" />{value}</span>
+        {note && <span style={{ fontSize: 9, color: C.text2, whiteSpace: "nowrap" }}>{note}</span>}
+      </div>
+      </div>
+      {change && <span style={{ fontSize: 13, fontWeight: 600, color: C.link, whiteSpace: "nowrap", flex: "0 0 auto", alignSelf: "flex-start" }}>{change}</span>}
+    </div>
+  );
+}
+
+// Professional Chooser — auto-assign + professional cards strip (QA: Date & Time screen)
+function ProfessionalChooser({ title = "Which professional do you prefer?", pros, active = 1 }) {
+  const items = pros && pros.length ? pros : [
+    { autoassign: true, name: "Auto-Assign", desc: "We'll assign the best professional" },
+    { name: "Leila Mary", image: "avatar-3", rating: "4.7", desc: "Recommended in your area" },
+    { name: "Sara M.", image: "avatar-7", rating: "4.8", desc: "Recommended in your area" },
+    { name: "Nour A.", image: "avatar-12", rating: "4.9", desc: "Recommended in your area" },
+  ];
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      {title && <div style={{ fontSize: 13, fontWeight: 600, color: C.text }}>{title}</div>}
+      <div className="jl-noscroll" style={{ display: "flex", gap: 10, overflowX: "auto", margin: "0 -16px", padding: "2px 16px" }}>
+        {items.map((p, i) => {
+          const sel = i === active && !p.disabled;
+          return (
+            <div key={i} style={{ flex: "0 0 120px", width: 120, borderRadius: R.lg, border: `1.5px solid ${sel ? C.brand : C.border}`, background: sel ? C.selected : C.bg2, padding: 10, display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
+              {p.autoassign
+                ? <>
+                    <span style={{ width: 66, height: 66, borderRadius: "50%", background: C.brand, display: "flex", alignItems: "center", justifyContent: "center" }}><JustlifeMark size={30} light /></span>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: C.text }}>{p.name || "Auto-Assign"}</span>
+                    <span style={{ fontSize: 10, color: C.text2, textAlign: "center", lineHeight: 1.35 }}>{p.desc || "We'll assign the best professional"}</span>
+                  </>
+                : <>
+                    <div style={{ position: "relative", width: 66, height: 66 }}>
+                      <span style={{ position: "absolute", inset: 0, borderRadius: "50%", background: DS.bg.brandSubtle }} />
+                      <Img id={p.image || "avatar-1"} radius={33} ph={C.bg3} style={{ position: "relative", width: 66, height: 66, objectFit: "cover" }} />
+                      {p.rating && <span style={{ position: "absolute", top: -2, right: -2, display: "inline-flex", alignItems: "center", gap: 2, background: "#fff", borderRadius: 100, padding: "1px 5px", fontSize: 9, fontWeight: 600, color: C.text, boxShadow: "0 1px 4px rgba(0,0,0,.15)" }}><Star size={9} color="#FFB800" />{p.rating}</span>}
+                    </div>
+                    <span style={{ fontSize: 11, fontWeight: 600, color: C.link, background: C.bg, borderRadius: 100, padding: "3px 12px", boxShadow: "0 1px 4px rgba(0,0,0,.08)" }}>{p.name}</span>
+                    <span style={{ fontSize: 10, color: C.text2, textAlign: "center", lineHeight: 1.35 }}>{p.desc || "Recommended in your area"}</span>
+                  </>}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// Voucher + Wallet — two side-by-side cards (QA: Checkout screen)
+function VoucherWallet({ title = "Apply Voucher or Wallet Balance", voucher = "Apply Voucher Code", wallet = "No wallet balance", walletDisabled = true }) {
+  const cell = (label, disabled, icon) => (
+    <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 8, padding: "11px 12px", borderRadius: R.md, border: `1px dashed ${disabled ? C.border : C.brand}`, background: disabled ? C.bg3 : C.bg, minWidth: 0 }}>
+      {icon}
+      <span style={{ fontSize: 9, fontWeight: 600, color: disabled ? C.disabled : C.link, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{label}</span>
+    </div>
+  );
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: S.md }}>
+      {title && <div style={{ fontSize: 11, fontWeight: 600, color: C.text }}>{title}</div>}
+      <div style={{ display: "flex", gap: S.md }}>
+        {cell(voucher, false, <Plus size={12} color={C.link} style={{ flex: "0 0 12px" }} />)}
+        {cell(wallet, walletDisabled, <Wallet size={12} color={walletDisabled ? C.disabled : C.link} style={{ flex: "0 0 12px" }} />)}
       </div>
     </div>
   );
@@ -523,8 +815,8 @@ function SubscriptionSchedule(p) { return <FrequencyOptions title="Subscription 
 function SpecialInstructions({ label = "Any specific instructions?", action = "Add" }) {
   return (
     <div style={{ background: C.bg2, borderRadius: R.lg, padding: 12, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: S.md, color: C.text2 }}><AlertCircle size={16} color={C.text3} /><span style={{ fontSize: 11 }}>{label}</span></div>
-      <span style={{ color: C.link, fontWeight: 600, fontSize: 11 }}>{action}</span>
+      <div style={{ display: "flex", alignItems: "center", gap: S.md, color: C.text2, minWidth: 0 }}><AlertCircle size={16} color={C.text3} style={{ flex: "0 0 16px" }} /><span style={{ fontSize: 11 }}>{label}</span></div>
+      <span style={{ color: C.link, fontWeight: 600, fontSize: 11, whiteSpace: "nowrap", flex: "0 0 auto", marginLeft: 8 }}>{action}</span>
     </div>
   );
 }
@@ -820,6 +1112,16 @@ const LIVE = {
   "Booking Status": { c: BookingStatus }, "Thank You Card": { c: BookingStatus },
   "Info Card": { c: InfoCard },
   "Custom": { c: CustomBlock },
+  "Justlife Promise": { c: JustlifePromise },
+  "Selectable Item / Pill": { c: PillSelector }, "Pill Selector": { c: PillSelector },
+  "Frequency Summary": { c: FrequencySummary },
+  "Professional Chooser": { c: ProfessionalChooser }, "Professional Card · DS": { c: ProfessionalChooser },
+  "Voucher Code Card": { c: VoucherWallet }, "Justlife Credit Card": { c: VoucherWallet }, "Voucher Wallet": { c: VoucherWallet },
+  "BNPL": { c: BnplCard }, "Tabby": { c: BnplCard }, "Tamara": { c: BnplCard }, "BNPL Card": { c: BnplCard },
+  "Confirmation Hero": { c: ConfirmationHero }, "Promo Hero": { c: ConfirmationHero },
+  "Assigned Professional": { c: AssignedPro }, "Assigned Pro": { c: AssignedPro },
+  "Kind Banner": { c: KindBanner }, "Kind Gesture": { c: KindBanner },
+  "Booking Details Full": { c: BookingDetailsFull }, "Booking Summary": { c: BookingDetailsFull },
   "Booking Details — Variants": { c: BookingDetails }, "Booking Details": { c: BookingDetails },
   "Price Details — Variants": { c: PriceDetails }, "Price Details": { c: PriceDetails }, "Payment Summary": { c: PriceDetails },
   "Payment Method": { c: PaymentMethod }, "Button": { c: PrimaryButton, sticky: true },
@@ -1041,7 +1343,7 @@ const resolveWeb = (name) => WEB_LIVE[name] || WEB_BY_NORM[norm(name)] || null;
 function BrowserFrame({ children }) {
   return (
     <div style={{ width: "100%", maxWidth: 1000, background: "#0b0b0b", borderRadius: 18, padding: 8, boxShadow: "0 30px 60px rgba(0,0,0,.18)" }}>
-      <div style={{ background: C.bg, borderRadius: 12, overflow: "hidden", display: "flex", flexDirection: "column", height: 620 }}>
+      <div className="jl-noscroll" style={{ background: C.bg, borderRadius: 12, overflow: "hidden", color: C.text, display: "flex", flexDirection: "column", height: 620 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "9px 14px", background: C.bg2, borderBottom: `1px solid ${C.border}`, flex: "0 0 auto" }}>
           <span style={{ display: "flex", gap: 5 }}>{["#FF5F57", "#FEBC2E", "#28C840"].map(c => <span key={c} style={{ width: 10, height: 10, borderRadius: "50%", background: c }} />)}</span>
           <span style={{ flex: 1, maxWidth: 340, margin: "0 auto", background: C.bg, border: `1px solid ${C.border}`, borderRadius: 7, fontSize: 10.5, color: C.text2, textAlign: "center", padding: "4px 12px" }}>justlife.com</span>
@@ -1080,8 +1382,13 @@ function WebScreen({ spec, go, curId }) {
   );
 }
 
-const WEB_RULES = `RULES (WEB):
-1. Use ONLY these component names: "Web Header" {brand,links:[{label,to?}],cta,user} · "Sidebar" {items:[{label,to?}],active} · "Web Hero" {title,subtitle,cta,cta2,image(photo id),stat} · "Stat Cards" {items:[{label,value,delta,currency:bool}]} · "Chart" {title,bars:[12 numbers],labels:[12 short strings]} · "Data Table" {title,columns:[5 strings],rows:[[name,service,date,amount-number,status]]} · "Card Grid" {title,items:[{title,desc,price,image(photo id)}],columns} · "Form" {title,fields:[string],cta} · "Footer" {brand,columns:[{title,links:[string]}]}.
+const WEB_RULES = `GENERATION PROTOCOL — think in these steps first:
+STEP 1 — DECOMPOSE the request into UI pieces (nav, hero, stats, chart, table, cards, form, footer…).
+STEP 2 — MATCH each piece to a component in the list below and fill it with realistic content.
+STEP 3 — SYNTHESIZE anything not covered with a "Custom" element tree using DS tokens ONLY (brand color, Poppins, spacing, radii) so it matches the Justlife look. Never skip a requested piece.
+
+RULES (WEB):
+1. Use these component names when they fit, and "Custom" for anything else: "Web Header" {brand,links:[{label,to?}],cta,user} · "Sidebar" {items:[{label,to?}],active} · "Web Hero" {title,subtitle,cta,cta2,image(photo id),stat} · "Stat Cards" {items:[{label,value,delta,currency:bool}]} · "Chart" {title,bars:[12 numbers],labels:[12 short strings]} · "Data Table" {title,columns:[5 strings],rows:[[name,service,date,amount-number,status]]} · "Card Grid" {title,items:[{title,desc,price,image(photo id)}],columns} · "Form" {title,fields:[string],cta} · "Footer" {brand,columns:[{title,links:[string]}]}.
 2. Output STRICT JSON ONLY: {"title":string,"platform":"web","nodes":[{"component":<name>,"props":{...}}]}. No markdown.
 3. Prices/amounts are NUMBERS ONLY (no currency words) — the Dirham symbol renders automatically.
 4. MATCH PAGE TYPE:
@@ -1093,7 +1400,8 @@ CUSTOM COMPONENTS — if the request needs ANYTHING not in the catalog, DO NOT s
 - containers: {"t":"col"|"row","gap"?,"pad"?,"bg"?,"r"?,"border"?:true,"align"?,"justify"?,"wrap"?:true,"flex"?,"children":[...]}
 - leaves: {"t":"text","v",size,"w":400|500|600,"color"?} · {"t":"price","v"} · {"t":"image","id":<SERVICE PHOTO id>,"h"?,"w"?,"r"?} · {"t":"icon3d","id":<3D icon id>} · {"t":"pill","v","tone":"brand"|"success"|"warning"|"danger"|"neutral"} · {"t":"button","v","variant"?,"outline"?} · {"t":"divider"} · {"t":"stars","v":1-5} · {"t":"control","kind":"radio"|"checkbox","selected"} · {"t":"spacer"}
 - bg tokens ONLY: white|secondary|tertiary|selected|brand|brand-subtle|navy|inverse|success|warning|danger|yellow. text color tokens ONLY: primary|secondary|tertiary|brand|link|inverse|success|danger|yellow-ink|navy.
-CONTENT RULES — output MUST be tailored to THIS request: every title, service name, price, count and label derives from the user's words (their service type, city, offer, audience). Set EVERY prop explicitly with fresh specific copy — never rely on component defaults, never repeat example values.
+MICROCOPY — match native app lengths: option/pill labels 1-2 words ("Weekly", "Bi-weekly", "Yes, please"); savings notes SHORT ("Save 15%", "Most popular" — max ~18 chars); time-slot tags: money tags start with a number ("5 EXTRA", "5 OFF"), word tags plain ("Popular", "Off-peak"); link labels one word ("Change", "Add", "Details").
+CONTENT RULES — output MUST be tailored to THIS request: every title, service name, price, count and label derives from the user's words (their service type, city, offer, audience). Set EVERY prop explicitly with fresh specific copy — never rely on component defaults, never repeat example values.\nOFF-DOMAIN REQUESTS (games, calculators, or anything NOT a Justlife service screen) — DO build it, never refuse. Compose the whole thing from \"Custom\" element trees using DS tokens only, as a STATIC MOCKUP (no real interactivity). Examples: tic-tac-toe = a 3x3 grid of Custom boxes with X/O text (brand color for the active mark); a calculator = a display text row + grid of button leaves; a quiz = question text + option rows. Use \"App Header\" for the title bar, keep phone width, and pick colors from the DS palette (brand=primary/active, secondary/tertiary=surfaces).
 Custom text sizes on web: 11-32.`;
 
 // Loading skeletons — pulsing DS-toned placeholders while the AI generates
@@ -1131,7 +1439,7 @@ function WebSkeleton() {
 function PhoneFrame({ children }) {
   return (
     <div style={{ width: 360, background: "#0b0b0b", borderRadius: 44, padding: 10, boxShadow: "0 30px 60px rgba(0,0,0,.18)", flex: "0 0 auto" }}>
-      <div style={{ background: C.bg, borderRadius: 36, height: 720, overflow: "hidden", position: "relative", display: "flex", flexDirection: "column" }}>
+      <div className="jl-noscroll" style={{ background: C.bg, borderRadius: 36, height: 720, overflow: "hidden", color: C.text, position: "relative", display: "flex", flexDirection: "column" }}>
         <div style={{ position: "absolute", top: 8, left: "50%", transform: "translateX(-50%)", width: 110, height: 5, background: "#00000022", borderRadius: 3, zIndex: 5 }} />
         {children}
       </div>
@@ -1172,12 +1480,15 @@ function Screen({ spec, go, back, canBack }) {
 function photoLists(groups) {
   const all = ((groups && groups.photos) || []).map(a => a.id);
   const isAvatar = (x) => /avatar|portrait|person|professional|pro-/i.test(x);
-  const svc = all.filter(x => !isAvatar(x));
+  const isAddon = (x) => /^addon-/i.test(x);
+  const addon = all.filter(isAddon);
+  const svc = all.filter(x => !isAvatar(x) && !isAddon(x));
   const ava = all.filter(isAvatar);
-  return { svc, ava };
+  return { svc, ava, addon };
 }
 function catalogText(groups, catalog, lite) {
   const lines = [
+    'CATALOG — review this list and MATCH each piece of the request to a component here. Anything not covered → build with "Custom" (DS tokens only).',
     'COMPONENTS (use these EXACT names; each renders a real live DS component):',
     '- "Input/SearchMobile" {placeholder}',
     '- "Hero Banner" {title,subtitle,cta,discount,image(photo id)}',
@@ -1185,18 +1496,28 @@ function catalogText(groups, catalog, lite) {
     '- "Service Card" / "Product Card" {title,duration,desc,price,oldPrice,cta(Add|Select),image(photo id)}',
     '- "Combo Selection" {title,price,oldPrice,control(checkbox|radio),selected,image(photo id)}',
     '- "Selectable Item" {title,line2,line3,tag,selected,control(radio|checkbox)}  address/list row; tag e.g. "Default address" (brand)',
-    '- "Selectable Item / Date" {items:[{day,date,disabled}],active}  horizontal date strip (booking calendar). Use on Date & Time screens.',
-    '- "Selectable Item / Time Slot with Tag" {items:[{time,tag,tagType(extra|off),disabled}],active}  time slots; tag "5 EXTRA" (brand) or "5 OFF" (green). Use after Date.',
+    '- "Selectable Item / Date" {label,items:[{day,date,disabled}],active}  date strip; label e.g. "When would you like your service?"',
+    '- "Selectable Item / Time Slot with Tag" {label,items:[{time,tag,tagType(extra|off),disabled}],active}  time slots; label e.g. "What time would you like us to start?"',
     '- "Selectable Item / Number Box" {label,count,active}  numbered boxes (bedrooms/bathrooms/units count)',
     '- "Disclaimer" {message,type(success|warning|error|neutral),button}  tonal callout e.g. free-cancellation note; button e.g. "Details"',
+    '- "Justlife Promise" {items:[{title,desc}]}  reassurance block (savings + flexibility). Use on Frequency screens.',
+    '- "Selectable Item / Pill" {label,options:[string],active,poweredBy:bool,info:bool}  pill choice row e.g. cleaning materials Yes/No',
+    '- "Frequency Summary" {title,value,note,change}  chosen-plan row with Change link. Use FIRST on Date & Time screens.',
+    '- "Professional Chooser" {title,pros:[{name,image(avatar id),rating,autoassign:bool}],active}  auto-assign + professional cards strip',
+    '- "Voucher Wallet" {title,voucher,wallet,walletDisabled}  voucher code + wallet balance side-by-side. Use on Checkout before Price Details.',
+    '- "BNPL" {provider(Tabby|Tamara),subtitle}  buy-now-pay-later banner. Use at TOP of Checkout.',
+    '- "Confirmation Hero" {image(service photo id),badge,title,cta,cta2}  promo image banner. Use at TOP of the confirmation/thank-you screen.',
+    '- "Assigned Professional" {name,image(avatar id),rating,window,status}  arrival window + Chat/Call. Use on confirmation screen.',
+    '- "Kind Banner" {text}  small warm reminder banner (thank-you screen).',
+    '- "Booking Details Full" {rows:[{label,value,tone,price,bold,payLogo}],actions:[{label}]}  full booking summary table with Status/Reference/Service/Duration/Total + Edit/Manage rows. Use on confirmation screen.',
     '- "Booking Status" {type(confirmed|on-the-way|professional assigned|in-progress|completed|cancelled),title,message,pro}  status header card. Use FIRST on confirmation/tracking screens (after App Header).',
     '- "Info Card" {text,tone(info|warning|success|brand)}  inline tip/callout',
     '- "Plan Booking Card" {title,status(Active|Confirmed|Completed|Cancelled),rows:[{label,value,brand}],pro,rating,cta}',
     '- "Cashback Card" {title,amount,desc,expiry,cta}',
     '- "Rating Summary" {score,count}',
     '- "Tag" / "Category Card" {items:[string],active}  (filter chips)',
-    '- "Add-ons Card" {title,items:[{name,price,oldPrice,image(photo id)}]}  (horizontal add-on tiles)',
-    '- "Frequency Option" / "Subscription Schedule" {title,options:[{label,note}],active}',
+    '- "Add-ons Card" {title,layout(grid|row),items:[{name,price,oldPrice,image(a DIFFERENT ADD-ON PHOTO id per item),selected}]}  layout:\"grid\" (2-col) on the Add-ons step; give each item a distinct matching add-on image; a selected item shows a qty stepper (set selected:true, qty:1)',
+    '- "Frequency Option" {title,options:[{label,discount:"25% OFF",bullets:[2 short lines],tabs?:["Weekly","Every Two Weeks"],days?:["Mon".."Sun"],banner?:short}],active}  the SELECTED option expands to show tabs+days+banner. discount badge is green. Use as the Frequency screen main block.',
     '- "Quantity Stepper" {value}',
     '- "Special Instructions" {label,action}',
     '- "Booking Details — Variants" {title,status,reference,service,datetime}',
@@ -1208,9 +1529,10 @@ function catalogText(groups, catalog, lite) {
     '- "Navigation Bar" {active}  (BOTTOM tab bar; home screens only; always last)',
   ];
   if (groups) {
-    const { svc, ava } = photoLists(groups);
+    const { svc, ava, addon } = photoLists(groups);
     const ic3d = (groups.icons3d || []).map(a => a.id);
-    if (svc.length) lines.push("", "SERVICE PHOTO ids — use these for card/banner/hero/add-on images: " + svc.slice(0, 22).join(", "));
+    if (svc.length) lines.push("", "SERVICE PHOTO ids — use these for card/banner/hero images: " + svc.slice(0, 22).join(", "));
+    if (addon.length) lines.push("ADD-ON PHOTO ids — use ONLY as the 'image' on Add-ons Card items (each add-on gets its OWN matching image): " + addon.join(", "));
     if (ava.length) lines.push("AVATAR PHOTO ids — ONLY for people (professional/reviewer avatars), NEVER for service cards or heroes: " + ava.slice(0, 8).join(", "));
     if (ic3d.length) lines.push("", "3D SERVICE ICON ids — USE ONE for EVERY Homepage Section item 'icon': " + ic3d.join(", "));
   } else {
@@ -1223,8 +1545,14 @@ function catalogText(groups, catalog, lite) {
   return lines.join("\n");
 }
 
-const SCREEN_RULES = `RULES:
-1. Use ONLY component names from the CATALOG, with their listed props. Set rich, realistic props.
+const SCREEN_RULES = `GENERATION PROTOCOL — think in these steps before writing JSON:
+STEP 1 — DECOMPOSE: break the request into the distinct UI pieces it needs (header, inputs, cards, lists, banners, CTA bar…).
+STEP 2 — MATCH: for each piece, scan the CATALOG for a component that fits. Prefer an exact DS component and fill its props with specific, realistic content from the request.
+STEP 3 — SYNTHESIZE: if a needed piece has NO matching catalog component, DO NOT skip it or force a wrong one — build it with a "Custom" element tree using DS tokens ONLY (the DS colors, Poppins text sizes 9/11, spacing, radii defined below). The result must look like it belongs in the Justlife design system.
+Then assemble the pieces top-to-bottom into one screen. Every screen should combine matched catalog components + custom pieces as needed to fully satisfy the request.
+
+RULES:
+1. Use component names from the CATALOG with their listed props whenever one fits; use "Custom" for anything the catalog doesn't cover. Set rich, realistic props.
 2. Output STRICT JSON ONLY: {"title":string,"nodes":[{"component":<name>,"props":{...}}]}. No markdown.
 3. Prices are NUMBERS ONLY (e.g. "149" or "149.00") — never include "AED"/"Dh"; the Dirham mark is added automatically.
 4. MATCH SCREEN TYPE — include only what fits:
@@ -1238,12 +1566,14 @@ const SCREEN_RULES = `RULES:
    - HOME screen = search bar + Hero Banner + Homepage Section grid + "Navigation Bar" (tab bar) LAST. NEVER put "App Header" or "Navbar / App" on Home — keep it exactly as is.
    - INNER pages (services list, booking, checkout, details, address) = start with "App Header", and on booking/checkout end with "Navbar / App". These two are INNER-PAGE ONLY and must never appear on Home.
 6. Prefer the detailed CATALOG components (faithful renderers). OTHER DS COMPONENTS are valid too but render as labeled placeholder cards — use them only when clearly relevant.
-7. EVERY "Homepage Section" item 'icon' MUST be a 3D SERVICE ICON id. Card/banner/add-on/avatar images use PHOTO ids. Never use 2D ids for the grid.
+7. SEPARATION (native Justlife funnel): "Frequency Option", "Add-ons Card" and Date/Time pickers are SEPARATE steps — never put more than ONE of these three on the same screen unless the user explicitly asks for a combined screen.
+8. EVERY "Homepage Section" item 'icon' MUST be a 3D SERVICE ICON id. Card/banner/add-on/avatar images use PHOTO ids. Never use 2D ids for the grid.
 CUSTOM COMPONENTS — if the request needs ANYTHING not in the catalog, DO NOT skip or approximate it with a wrong component. Build it exactly as {"component":"Custom","props":{"layout":{...}}} with this element tree (DS tokens only):
 - containers: {"t":"col"|"row","gap"?,"pad"?,"bg"?,"r"?,"border"?:true,"align"?,"justify"?,"wrap"?:true,"flex"?,"children":[...]}
 - leaves: {"t":"text","v",size,"w":400|500|600,"color"?} · {"t":"price","v"} · {"t":"image","id":<SERVICE PHOTO id>,"h"?,"w"?,"r"?} · {"t":"icon3d","id":<3D icon id>} · {"t":"pill","v","tone":"brand"|"success"|"warning"|"danger"|"neutral"} · {"t":"button","v","variant"?,"outline"?} · {"t":"divider"} · {"t":"stars","v":1-5} · {"t":"control","kind":"radio"|"checkbox","selected"} · {"t":"spacer"}
 - bg tokens ONLY: white|secondary|tertiary|selected|brand|brand-subtle|navy|inverse|success|warning|danger|yellow. text color tokens ONLY: primary|secondary|tertiary|brand|link|inverse|success|danger|yellow-ink|navy.
-CONTENT RULES — output MUST be tailored to THIS request: every title, service name, price, count and label derives from the user's words (their service type, city, offer, audience). Set EVERY prop explicitly with fresh specific copy — never rely on component defaults, never repeat example values.
+MICROCOPY — match native app lengths: option/pill labels 1-2 words ("Weekly", "Bi-weekly", "Yes, please"); savings notes SHORT ("Save 15%", "Most popular" — max ~18 chars); time-slot tags: money tags start with a number ("5 EXTRA", "5 OFF"), word tags plain ("Popular", "Off-peak"); link labels one word ("Change", "Add", "Details").
+CONTENT RULES — output MUST be tailored to THIS request: every title, service name, price, count and label derives from the user's words (their service type, city, offer, audience). Set EVERY prop explicitly with fresh specific copy — never rely on component defaults, never repeat example values.\nOFF-DOMAIN REQUESTS (games, calculators, or anything NOT a Justlife service screen) — DO build it, never refuse. Compose the whole thing from \"Custom\" element trees using DS tokens only, as a STATIC MOCKUP (no real interactivity). Examples: tic-tac-toe = a 3x3 grid of Custom boxes with X/O text (brand color for the active mark); a calculator = a display text row + grid of button leaves; a quiz = question text + option rows. Use \"App Header\" for the title bar, keep phone width, and pick colors from the DS palette (brand=primary/active, secondary/tertiary=surfaces).
 Custom text sizes: ONLY 9 or 11 (phone scale).`;
 
 const FLOW_RULES = `FLOW MODE — output a CLICKABLE MULTI-SCREEN JOURNEY:
@@ -1264,6 +1594,9 @@ function Generator({ embedded }) {
   const [mode, setMode] = useState("app"); // "app" (mobile 375px) | "web" (desktop)
   const [flowOn, setFlowOn] = useState(true); // clickable multi-screen journey (app mode)
   const [prompt, setPrompt] = useState("");
+  const [img, setImg] = useState(null);       // { data (base64), mime, name, preview }
+  const imgRef = useRef(null);
+  useEffect(() => { imgRef.current = img; }, [img]);
   const [editText, setEditText] = useState("");
   const [spec, setSpec] = useState(null);
   const [cur, setCur] = useState(null);      // current screen id (flow)
@@ -1300,8 +1633,12 @@ function Generator({ embedded }) {
     "A checkout summary with booking details, price and payment",
   ];
 
-  async function callAIOnce(system, user, maxTokens) {
-    const body = JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: maxTokens || 2200, system, messages: [{ role: "user", content: user + "\n\nCRITICAL: Your ENTIRE reply must be the JSON object only. Start with { as the very first character. No preamble, no explanation, no markdown fences." }] });
+  async function callAIOnce(system, user, maxTokens, image) {
+    const userText = user + "\n\nCRITICAL: Your ENTIRE reply must be the JSON object only. Start with { as the very first character. No preamble, no explanation, no markdown fences.";
+    const content = image && image.data
+      ? [{ type: "image", source: { type: "base64", media_type: image.mime || "image/png", data: image.data } }, { type: "text", text: userText }]
+      : userText;
+    const body = JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: maxTokens || 2200, system, messages: [{ role: "user", content }] });
     if (typeof location !== "undefined" && location.protocol === "file:") throw new Error("FILE");
     const ctrl = new AbortController();
     let timer = setTimeout(() => ctrl.abort(), 30000); // 30s to first byte
@@ -1399,9 +1736,9 @@ function Generator({ embedded }) {
 
   const sleep = (ms) => new Promise(r => setTimeout(r, ms));
   // Auto-retry: bad/empty JSON retries immediately; rate limits wait and retry automatically
-  async function callAI(system, user, maxTokens) {
+  async function callAI(system, user, maxTokens, image) {
     for (let attempt = 0; ; attempt++) {
-      try { return await callAIOnce(system, user, maxTokens); }
+      try { return await callAIOnce(system, user, maxTokens, image); }
       catch (e) {
         const m = String((e && e.message) || "");
         if (/rate limit/i.test(m) && attempt < 2) {
@@ -1438,22 +1775,46 @@ function Generator({ embedded }) {
     return lines.join("\n");
   }
 
+  function onPickImage(e) {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = ""; // allow re-picking same file
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { setErr("Image is larger than 5MB — please use a smaller screenshot."); return; }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const res = String(reader.result || "");
+      const comma = res.indexOf(",");
+      const data = comma >= 0 ? res.slice(comma + 1) : res;
+      const mime = /^data:([^;]+);/.exec(res);
+      setImg({ data, mime: mime ? mime[1] : (file.type || "image/png"), name: file.name || "image", preview: res });
+    };
+    reader.onerror = () => setErr("Couldn't read that image — try another file.");
+    reader.readAsDataURL(file);
+  }
   async function run(text) {
-    text = (text || "").trim(); if (!text) return;
+    text = (text || "").trim();
+    const img = imgRef.current;
+    if (!text && !img) return;
     setLoading(true); setErr(null); setSpec(null); setCur(null); setHist([]);
     const web = mode === "web";
     const flow = flowOn;
     try {
-      if (flow && web) { await runWebFlow(text); }
-      else if (flow) { await runFlow(text); }
+      if (!img && flow && web) { await runWebFlow(text); }
+      else if (!img && flow) { await runFlow(text); }
       else {
+        // Single screen (image uploads always take this path — one screen from the screenshot)
+        const imgInstr = img
+          ? (text
+              ? `\n\nAN IMAGE IS ATTACHED. Use it as the visual reference. ${text}`
+              : `\n\nAN IMAGE IS ATTACHED (a screenshot/design). REBUILD its layout as faithfully as possible using the CATALOG components — match the same sections, order, text, and structure you see, but rendered with Justlife DS components. For any part with no matching component, build it with "Custom" using DS tokens. Reproduce the visible text/labels/numbers from the image.`)
+          : "";
         const system = web
           ? `You generate Justlife WEB pages (desktop, wide layout) — dashboards and marketing/website pages — using the Justlife design system look (Poppins, brand colors). Fill props with realistic, specific content.\n${WEB_RULES}`
           : `You generate Justlife mobile app screens (375px) by composing live DS components from the CATALOG. Fill props with realistic, specific content — these render live, so detail matters.\n${SCREEN_RULES}`;
         const user = web
-          ? `${webCatalogText()}\n\nUSER REQUEST: "${text}"\n\nReturn ONLY the JSON.`
-          : `CATALOG:\n${catalogText(groups, catalog)}\n\nUSER REQUEST: "${text}"\n\nReturn ONLY the screen JSON.`;
-        const s = await callAI(system, user, 2200); s.platform = web ? "web" : "app"; adopt(s);
+          ? `${webCatalogText()}\n\nUSER REQUEST: "${text || "(rebuild the attached image)"}"${imgInstr}\n\nReturn ONLY the JSON.`
+          : `CATALOG:\n${catalogText(groups, catalog)}\n\nUSER REQUEST: "${text || "(rebuild the attached image)"}"${imgInstr}\n\nReturn ONLY the screen JSON.`;
+        const s = await callAI(system, user, 2600, img); s.platform = web ? "web" : "app"; adopt(s);
       }
     } catch (e) { showErr(e); } finally { setLoading(false); }
   }
@@ -1464,7 +1825,15 @@ function Generator({ embedded }) {
     // 1) Plan the journey (fast, ~few hundred tokens)
     const planSys = `You PLAN a Justlife mobile app flow (a clickable multi-screen journey). Output STRICT JSON ONLY:
 {"title":string,"start":<id>,"screens":[{"id":kebab-case,"title":short,"goal":one sentence of what's on it,"links":[{"component":<catalog name>,"to":<screen id>}]}]}
-Rules: 3-4 screens forming ONE journey (e.g. home -> services -> booking/checkout -> confirmation). Every screen reachable from start via links. Links use ONLY component names from the list. Typical links: "Homepage Section"->services, "Service Card"->booking, "Navbar / App"->next step, final screen may have "Button"->home. NEVER link "App Header". ids: home, services, booking, checkout, confirmation.`;
+Rules: 3-5 screens forming ONE journey. Every screen reachable from start via links.
+JUSTLIFE FUNNEL STRUCTURE (match the native app QA exactly) — one concern per screen, composed as:
+ "frequency": App Header + "Frequency Option" (3-4 options, savings notes, desc on selected) + "Justlife Promise" + Navbar/App
+ "details": App Header + "Selectable Item / Number Box" (hours) + "Selectable Item / Number Box" (professionals) + "Selectable Item / Pill" (materials Yes/No, poweredBy) + "Special Instructions" + Navbar/App
+ "addons": App Header + "Add-ons Card" {layout:"grid", 4-6 items, first item selected:true with qty} + "Disclaimer" {message:"The duration of the session may change based on your selection.", type:"neutral", button:"Details"} + Navbar/App
+ "date-time": App Header + "Frequency Summary" + "Professional Chooser" + "Selectable Item / Date" {label} + "Selectable Item / Time Slot with Tag" {label} + "Disclaimer" + Navbar/App
+ "checkout": App Header + "BNPL" (Tabby) + "Payment Method" (selected, with Details disclaimer) + "Voucher Wallet" + "Price Details — Variants" (named discount rows) + Navbar/App (button "Complete")
+ "confirmation": "Confirmation Hero" + "Assigned Professional" + "Kind Banner" + "Booking Details Full" + "Price Details — Variants" (with "Show Receipt")
+NEVER combine frequency + date/time + add-ons on one screen. Pick the 3-5 most relevant steps for the request. Links use ONLY component names from the list. Typical links: "Homepage Section"->services, "Service Card"->booking, "Navbar / App"->next step, final screen may have "Button"->home. NEVER link "App Header". ids: home, services, booking, checkout, confirmation.`;
     const names = 'COMPONENT NAMES: Input/SearchMobile, Hero Banner, Homepage Section, Service Card, Product Card, Combo Selection, Selectable Item, Selectable Item / Date, Selectable Item / Time Slot with Tag, Selectable Item / Number Box, Disclaimer, Booking Status, Info Card, Plan Booking Card, Cashback Card, Rating Summary, Tag, Add-ons Card, Frequency Option, Subscription Schedule, Quantity Stepper, Special Instructions, Booking Details — Variants, Price Details — Variants, Payment Method, Button, App Header, Navbar / App, Navigation Bar';
     const plan = await callAI(planSys, `${names}\n\nUSER REQUEST: "${text}"\n\nReturn ONLY the JSON.`, 1400);
     const screens = (plan.screens || []).slice(0, 5).map(sc => ({ id: String(sc.id || "").trim() || "screen", title: sc.title || sc.id, nodes: [], pending: true }));
@@ -1527,8 +1896,9 @@ Rules: 2-4 pages sharing ONE nav (every nav entry maps to a page id). kind "dash
     if (failed) setErr(`${failed} page(s) didn't generate — press Generate to retry.`);
   }
 
-  async function refine() {
-    const instr = editText.trim(); if (!instr || !spec || loading || editing) return;
+  async function refine() { return refineWith(editText.trim()); }
+  async function refineWith(instrArg) {
+    const instr = (instrArg || "").trim(); if (!instr || !spec || loading || editing) return;
     setEditing(true); setErr(null);
     const web = (spec && spec.platform === "web") || mode === "web";
     const fl = isFlow;
@@ -1537,20 +1907,30 @@ Rules: 2-4 pages sharing ONE nav (every nav entry maps to a page id). kind "dash
         // Edit ONLY the current screen/page — keeps the request small (no gateway timeout)
         const ids = screens.map(x => x.id).join(", ");
         const rules = web ? WEB_RULES : SCREEN_RULES;
-        const sys = `You EDIT one ${web ? "page" : "screen"} of the Justlife flow "${spec.title}". Apply ONLY the requested change to the given JSON and return the FULL updated ${web ? "page" : "screen"} in the same shape {"title":string,"nodes":[{"component","props","link"?}]}. Keep all other nodes, props and links unchanged. Valid link ids: ${ids}.${web ? "" : ' NEVER link "App Header".'}\n${rules}`;
+        const sys = `You EDIT one ${web ? "page" : "screen"} of the Justlife flow "${spec.title}". Apply the requested change and return the FULL updated ${web ? "page" : "screen"} in the same shape {"title":string,"nodes":[{"component","props","link"?}]}. Preserve everything the change doesn't mention. If the user asks to add something, APPEND a new node; if they ask to change text/props, edit those props; if they ask to remove, drop that node. Valid link ids: ${ids}.${web ? "" : ' NEVER link "App Header".'}\n${rules}`;
         const user = `${web ? webCatalogText() : "CATALOG:\n" + catalogText(groups, catalog, true)}\n\nCURRENT ${web ? "PAGE" : "SCREEN"} (id "${curScreen.id}"):\n${JSON.stringify({ title: curScreen.title, nodes: curScreen.nodes })}\n\nCHANGE REQUESTED: "${instr}"\n\nReturn ONLY the full updated JSON.`;
         const scr = await callAI(sys, user, 2200);
-        setSpec(prev => prev && Array.isArray(prev.screens) ? { ...prev, screens: prev.screens.map(s0 => s0.id === curScreen.id ? { ...s0, title: scr.title || s0.title, nodes: scr.nodes || s0.nodes } : s0) } : prev);
+        setSpec(prev => prev && Array.isArray(prev.screens) ? { ...prev, _rev: (prev._rev || 0) + 1, screens: prev.screens.map(s0 => s0.id === curScreen.id ? { ...s0, title: scr.title || s0.title, nodes: scr.nodes || s0.nodes } : s0) } : prev);
       } else {
         const rules = web ? WEB_RULES : SCREEN_RULES;
         const shape = web ? '{"title","platform":"web","nodes":[{component,props}]}' : '{"title","nodes":[{component,props}]}';
-        const system = `You EDIT an existing Justlife ${web ? "web page" : "screen"}. Apply ONLY the requested change to the given JSON and return the FULL updated JSON in the same shape ${shape}. Keep all other nodes and props unchanged. Same component/prop/price rules apply.\n${rules}`;
+        const system = `You EDIT an existing Justlife ${web ? "web page" : "screen"}. Apply the requested change and return the FULL updated JSON in the same shape ${shape}. Preserve everything the change doesn't mention. If the user asks to add something, APPEND a new node; to change text/props, edit those props; to remove, drop that node. Same component/prop/price rules apply.\n${rules}`;
         const user = `${web ? webCatalogText() : "CATALOG:\n" + catalogText(groups, catalog, true)}\n\nCURRENT JSON:\n${JSON.stringify(spec)}\n\nCHANGE REQUESTED: "${instr}"\n\nReturn ONLY the full updated JSON.`;
-        const s2 = await callAI(system, user, 2200); s2.platform = web ? "web" : "app"; adopt(s2);
+        const s2 = await callAI(system, user, 2200); s2.platform = web ? "web" : "app"; s2._rev = ((spec && spec._rev) || 0) + 1; adopt(s2);
       }
       setEditText("");
     } catch (e) { showErr(e); } finally { setEditing(false); }
   }
+  // Contextual edit suggestions (like chat quick-replies) — depend on platform + current screen
+  const editIdeas = (() => {
+    if (mode === "web") return ["Add a stats row", "Change the primary color accent", "Add a footer", "Make the hero headline punchier"];
+    const id = (curScreen && curScreen.id) || "";
+    if (/freq/.test(id)) return ["Add a yearly plan option", "Make weekly the selected one", "Change discounts to AED amounts", "Add a promo banner"];
+    if (/addon/.test(id)) return ["Add 2 more add-ons", "Select the first add-on", "Show original prices struck-through", "Change title to 'Enhance your clean'"];
+    if (/date|time/.test(id)) return ["Add more time slots", "Mark a slot as Off-peak", "Add a fourth professional", "Change dates to next week"];
+    if (/checkout|pay/.test(id)) return ["Add a promo code discount row", "Switch payment to Visa", "Add a VAT line", "Change button to 'Pay now'"];
+    return ["Add a discount banner", "Change the header title", "Add a service card", "Make the CTA say 'Book now'"];
+  })();
 
 
   return (
@@ -1574,8 +1954,22 @@ Rules: 2-4 pages sharing ONE nav (every nav entry maps to a page id). kind "dash
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8, margin: "14px 0" }}>
           {suggestions.map((s, i) => <button key={i} className="s-chip" onClick={() => { setPrompt(s); run(s); }}>{s}</button>)}
         </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12, flexWrap: "wrap" }}>
+          <label className="s-btn-ghost" style={{ display: "inline-flex", alignItems: "center", gap: 6, cursor: "pointer", fontSize: 12.5, padding: "8px 14px" }}>
+            <Image size={15} /> Upload image
+            <input type="file" accept="image/png,image/jpeg,image/webp" style={{ display: "none" }} onChange={onPickImage} />
+          </label>
+          {img && (
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "var(--s-chip-bg, #ffffff10)", border: "1px solid var(--s-line, #ffffff22)", borderRadius: 10, padding: "5px 8px 5px 5px" }}>
+              <img src={img.preview} alt="" style={{ width: 30, height: 30, objectFit: "cover", borderRadius: 6 }} />
+              <span style={{ fontSize: 11, color: "var(--s-ink)", maxWidth: 150, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{img.name}</span>
+              <button onClick={() => setImg(null)} title="Remove image" style={{ background: "none", border: "none", cursor: "pointer", color: "var(--s-faint)", display: "flex", padding: 2 }}><X size={14} /></button>
+            </span>
+          )}
+          {img && <span style={{ fontSize: 11, color: "var(--s-faint)" }}>Leave the prompt empty to rebuild the screenshot as-is with DS components.</span>}
+        </div>
         <button className="s-btn-primary" onClick={() => run(prompt)} disabled={loading || editing}>
-          {loading ? <Loader2 size={16} className="spin" /> : <Sparkles size={16} />}{loading ? "Working…" : "Generate"}
+          {loading ? <Loader2 size={16} className="spin" /> : <Sparkles size={16} />}{loading ? "Working…" : (img && !prompt.trim() ? "Rebuild from image" : "Generate")}
         </button>
 
         {spec && (
@@ -1586,6 +1980,11 @@ Rules: 2-4 pages sharing ONE nav (every nav entry maps to a page id). kind "dash
                 placeholder={isFlow ? `e.g. add a Disclaimer — edits apply to the screen you\u2019re viewing (${curScreen ? curScreen.title || curScreen.id : ""})` : "e.g. change the banner title to 'Eid Offers', add a service card"}
                 style={{ flex: "1 1 240px", padding: "10px 13px", fontSize: 13 }} />
               <button className="s-btn-ghost" onClick={refine} disabled={loading || editing} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>{editing ? <Loader2 size={14} className="spin" /> : null}{editing ? "Applying…" : "Apply edit"}</button>
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 10 }}>
+              {editIdeas.map((idea, i) => (
+                <button key={i} className="s-chip" disabled={editing} onClick={() => refineWith(idea)} style={{ fontSize: 11, padding: "5px 11px", opacity: editing ? .5 : 1 }}>+ {idea}</button>
+              ))}
             </div>
             <button className="s-btn-dark" onClick={() => navigator.clipboard && navigator.clipboard.writeText(JSON.stringify(spec, null, 2))} style={{ marginTop: 12 }}><Copy size={13} style={{ verticalAlign: -2, marginRight: 6 }} />Export spec (JSON)</button>
           </div>
@@ -1601,7 +2000,7 @@ Rules: 2-4 pages sharing ONE nav (every nav entry maps to a page id). kind "dash
                 ))}
               </div>
             )}
-            <BrowserFrame>{(loading && !isFlow) || (curScreen && curScreen.pending) ? <WebSkeleton /> : <div key={curScreen ? curScreen.id : "single"} className={navDir === "fwd" ? "jl-in-fwd" : navDir === "back" ? "jl-in-back" : "jl-in-fade"} style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}><WebScreen spec={spec && spec.platform === "web" ? curScreen : null} go={go} curId={curScreen && curScreen.id} /></div>}</BrowserFrame>
+            <BrowserFrame>{(loading && !isFlow) || (curScreen && curScreen.pending) ? <WebSkeleton /> : <div key={(curScreen ? curScreen.id : "single") + ":" + ((spec && spec._rev) || 0)} className={navDir === "fwd" ? "jl-in-fwd" : navDir === "back" ? "jl-in-back" : "jl-in-fade"} style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}><WebScreen spec={spec && spec.platform === "web" ? curScreen : null} go={go} curId={curScreen && curScreen.id} /></div>}</BrowserFrame>
             {isFlow && <div style={{ fontSize: 11.5, color: "var(--s-faint)" }}>▶ Click sidebar / header links and linked cards to navigate</div>}
           </div>
         : <div style={{ display: "flex", flexDirection: "column", gap: 12, alignItems: "center", flex: "0 0 auto" }}>
@@ -1612,7 +2011,7 @@ Rules: 2-4 pages sharing ONE nav (every nav entry maps to a page id). kind "dash
                 ))}
               </div>
             )}
-            <PhoneFrame>{(loading && !isFlow) || (curScreen && curScreen.pending) ? <SkeletonScreen /> : <div key={curScreen ? curScreen.id : "single"} className={navDir === "fwd" ? "jl-in-fwd" : navDir === "back" ? "jl-in-back" : "jl-in-fade"} style={{ height: "100%" }}><Screen spec={spec && spec.platform !== "web" ? curScreen : null} go={go} back={back} canBack={hist.length > 0} /></div>}</PhoneFrame>
+            <PhoneFrame>{(loading && !isFlow) || (curScreen && curScreen.pending) ? <SkeletonScreen /> : <div key={(curScreen ? curScreen.id : "single") + ":" + ((spec && spec._rev) || 0)} className={navDir === "fwd" ? "jl-in-fwd" : navDir === "back" ? "jl-in-back" : "jl-in-fade"} style={{ height: "100%" }}><Screen spec={spec && spec.platform !== "web" ? curScreen : null} go={go} back={back} canBack={hist.length > 0} /></div>}</PhoneFrame>
             {isFlow && <div style={{ fontSize: 11.5, color: "var(--s-faint)" }}>▶ Tap linked cards to navigate · tap the header to go back</div>}
           </div>}
     </div>
@@ -1642,11 +2041,9 @@ export default function App() {
   useEffect(() => {
     fetch(ASSET_BASE + "manifest.json").then(r => r.ok ? r.json() : null).then(j => {
       if (!j || !j.groups) return;
-      const map = {
-      EMPTY: "The model returned an empty response — try again.",
-      RATE_LIMIT: "Your Anthropic plan\u2019s rate limit (10k input tokens/min) is exhausted — wait ~1 minute and try again. Tip: adding credits in console.anthropic.com raises the limit tier.",
-      BAD_JSON: "The model reply wasn\u2019t valid JSON this time — just press Generate again.",};
+      const map = {};
       for (const g of Object.values(j.groups)) for (const a of g) map[a.id] = ASSET_BASE + a.path;
+      ADDON_IDS = (j.groups.photos || []).map(a => a.id).filter(id => /^addon-/i.test(id));
       setAssets(a => ({ ...a, map, groups: j.groups }));
     }).catch(() => {});
     fetch(ASSET_BASE + "ds-components.json").then(r => r.ok ? r.json() : null).then(j => {
@@ -1684,11 +2081,9 @@ export function EmbeddedBuilder() {
   useEffect(() => {
     fetch(ASSET_BASE + "manifest.json").then(r => r.ok ? r.json() : null).then(j => {
       if (!j || !j.groups) return;
-      const map = {
-      EMPTY: "The model returned an empty response — try again.",
-      RATE_LIMIT: "Your Anthropic plan\u2019s rate limit (10k input tokens/min) is exhausted — wait ~1 minute and try again. Tip: adding credits in console.anthropic.com raises the limit tier.",
-      BAD_JSON: "The model reply wasn\u2019t valid JSON this time — just press Generate again.",};
+      const map = {};
       for (const g of Object.values(j.groups)) for (const a of g) map[a.id] = ASSET_BASE + a.path;
+      ADDON_IDS = (j.groups.photos || []).map(a => a.id).filter(id => /^addon-/i.test(id));
       setAssets(a => ({ ...a, map, groups: j.groups }));
     }).catch(() => {});
     fetch(ASSET_BASE + "ds-components.json").then(r => r.ok ? r.json() : null).then(j => {
