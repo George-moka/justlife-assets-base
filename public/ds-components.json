@@ -1,9 +1,9 @@
 {
   "source": "Justlife DS 2026 v0.5 — Component/cards (node 11714:1003)",
   "fileKey": "WOvsdFSWN9e0xwDB9u55Tn",
-  "generated": "2026-06-19",
-  "count": 93,
-  "live_count": 24,
+  "generated": "2026-06-23",
+  "count": 106,
+  "live_count": 41,
   "components": [
     {
       "name": "Notification Permission",
@@ -410,7 +410,7 @@
         "Show Actions Container"
       ],
       "desc": "Booking confirmation/status header (was Thank You Card). 8 states.",
-      "live": false
+      "live": true
     },
     {
       "name": "Hero Banner",
@@ -655,9 +655,15 @@
         "Show Friday Fee",
         "Show Time slot extra fee",
         "Show Fuel Surcharge Fee",
-        "Fuel Fee Free"
+        "Fuel Fee Free",
+        "Show 3 Seater L-shaped",
+        "Show Balcony Cleaning (2 days)",
+        "Show Cushion",
+        "Show Hair Wash & Blow Dry",
+        "Show Mani-Pedi Combo",
+        "Show Thursday Home Cleaning"
       ],
-      "desc": "Price details preset variants (many optional rows).",
+      "desc": "Price details preset variants; now supports named service line-items (multi-service breakdowns).",
       "live": true
     },
     {
@@ -715,14 +721,24 @@
         "showChevron",
         "showInfo",
         "showRating",
-        "showSubItem2",
-        "showSubItem3",
-        "showSubItem4",
+        "showCurrency",
+        "showSubItem1Bullets",
         "subItem1Title",
         "subItem1Bullets",
-        "showCurrency"
+        "showSubItem2",
+        "showSubItem2Bullets",
+        "subItem2Title",
+        "subItem2Bullets",
+        "showSubItem3",
+        "showSubItem3Bullets",
+        "subItem3Title",
+        "subItem3Bullets",
+        "showSubItem4",
+        "showSubItem4Bullets",
+        "subItem4Title",
+        "subItem4Bullets"
       ],
-      "desc": "Generic label/value table row (expanded sub-items).",
+      "desc": "Generic label/value table row; now with titled bullet sub-items 1-4 (service combo breakdowns).",
       "live": false
     },
     {
@@ -975,7 +991,7 @@
         "Show Icon"
       ],
       "desc": "Tip/callout: icon + message on tonal bg.",
-      "live": false
+      "live": true
     },
     {
       "name": "List Item",
@@ -1042,9 +1058,7 @@
       "variants": {
         "type": [
           "Plain",
-          "Card",
-          "Card Note",
-          "Card Selected"
+          "Card Note"
         ]
       },
       "props": [
@@ -1052,8 +1066,8 @@
         "Note",
         "Show Change"
       ],
-      "desc": "Title + Change link + frequency pill.",
-      "live": false
+      "desc": "Title + Change link + frequency pill. 2 types (Plain / Card Note).",
+      "live": true
     },
     {
       "name": "Frequency Option",
@@ -1061,16 +1075,17 @@
       "variants": {
         "state": [
           "Default",
-          "Selected"
+          "Selected",
+          "Frequency Option Expanded",
+          "Selected Frequency Option Expanded"
         ]
       },
       "props": [
         "Title",
-        "Discount",
         "Description",
         "Show Discount"
       ],
-      "desc": "Selectable frequency card + radio.",
+      "desc": "Selectable frequency card + radio; NEW expanded states show full detail (savings breakdown) inline.",
       "live": true
     },
     {
@@ -1224,7 +1239,7 @@
         "Amount"
       ],
       "desc": "Wallet/credit selectable card.",
-      "live": false
+      "live": true
     },
     {
       "name": "Voucher Code Card",
@@ -1240,7 +1255,7 @@
         "Code"
       ],
       "desc": "Promo code entry/applied card.",
-      "live": false
+      "live": true
     },
     {
       "name": "Credit List Item",
@@ -1412,23 +1427,6 @@
       "live": false
     },
     {
-      "name": "Special Instructions Card",
-      "kind": "set",
-      "variants": {
-        "state": [
-          "Info",
-          "Empty",
-          "Filled"
-        ]
-      },
-      "props": [
-        "Title",
-        "Action"
-      ],
-      "desc": "Booking instructions block.",
-      "live": false
-    },
-    {
       "name": "Category Card",
       "kind": "set",
       "variants": {
@@ -1539,9 +1537,10 @@
           "web"
         ],
         "state": [
-          "Responsive",
+          "Default",
           "extended",
-          "Default"
+          "Responsive",
+          "Responsive Savings"
         ]
       },
       "props": [
@@ -1560,7 +1559,7 @@
         "Show Items",
         "Show Payment Summary"
       ],
-      "desc": "Mobile bottom checkout & CTA bar (price + Continue + plus banner + items/payment summary).",
+      "desc": "Mobile bottom checkout & CTA bar (price + Continue + plus banner). NEW: Responsive Savings state = web bar with Savings Banner + Apple Pay + toolbar.",
       "live": true
     },
     {
@@ -1693,6 +1692,199 @@
       ],
       "desc": "Line item in the checkout summary list (image + title + price + what's included).",
       "live": false
+    },
+    {
+      "name": "Selectable Item / Pill",
+      "kind": "set",
+      "variants": {
+        "State": [
+          "Default",
+          "Selected",
+          "Disabled"
+        ]
+      },
+      "props": [
+        "Label"
+      ],
+      "desc": "Pill-shaped selectable chip (e.g. compact option). 3 states.",
+      "live": true
+    },
+    {
+      "name": "Selectable Item / Number Box",
+      "kind": "set",
+      "variants": {
+        "State": [
+          "Default",
+          "Selected",
+          "Disabled"
+        ]
+      },
+      "props": [
+        "Number"
+      ],
+      "desc": "Small number-box selector (count/quantity pick). 3 states.",
+      "live": true
+    },
+    {
+      "name": "Selectable Item / Date",
+      "kind": "set",
+      "variants": {
+        "State": [
+          "Default",
+          "Selected",
+          "Disabled"
+        ]
+      },
+      "props": [],
+      "desc": "Date selector tile (day + date) for booking calendars. 3 states.",
+      "live": true
+    },
+    {
+      "name": "Selectable Item / Rectangular",
+      "kind": "set",
+      "variants": {
+        "State": [
+          "Default",
+          "Selected",
+          "Disabled"
+        ]
+      },
+      "props": [
+        "Label"
+      ],
+      "desc": "Rectangular selectable card with label. 3 states.",
+      "live": false
+    },
+    {
+      "name": "Selectable Item / Pill with Icon",
+      "kind": "set",
+      "variants": {
+        "State": [
+          "Default",
+          "Selected",
+          "Disabled"
+        ]
+      },
+      "props": [
+        "Label"
+      ],
+      "desc": "Pill chip with leading icon + label. 3 states.",
+      "live": false
+    },
+    {
+      "name": "Selectable Item / Time Slot with Tag",
+      "kind": "set",
+      "variants": {
+        "State": [
+          "Default",
+          "Selected",
+          "Disabled"
+        ],
+        "Tag": [
+          "Extra",
+          "Off"
+        ]
+      },
+      "props": [
+        "Time",
+        "Show Tag"
+      ],
+      "desc": "Time-slot selector with optional tag (Extra fee / Off-peak). 3 states.",
+      "live": true
+    },
+    {
+      "name": "Disclaimer",
+      "kind": "set",
+      "variants": {
+        "type": [
+          "success",
+          "warning",
+          "error",
+          "neutral"
+        ]
+      },
+      "props": [
+        "Show button",
+        "Message",
+        "Show Icon"
+      ],
+      "desc": "Tonal disclaimer/callout banner: icon + message + optional button. 4 tones.",
+      "live": true
+    },
+    {
+      "name": "Professional Chooser",
+      "kind": "set",
+      "variants": {
+        "state": [
+          "default",
+          "selected",
+          "hover"
+        ],
+        "autoassign": [
+          "yes",
+          "no"
+        ]
+      },
+      "props": [],
+      "desc": "Professional selection row with auto-assign toggle. default/selected/hover.",
+      "live": true
+    },
+    {
+      "name": "Professional Card · DS",
+      "kind": "set",
+      "variants": {
+        "autoassign": [
+          "true",
+          "false"
+        ],
+        "state": [
+          "default",
+          "selected"
+        ]
+      },
+      "props": [],
+      "desc": "DS professional card (auto-assign on/off; default/selected).",
+      "live": true
+    },
+    {
+      "name": "BNPL Card",
+      "kind": "cmp",
+      "variants": {},
+      "props": [],
+      "desc": "BNPL / installments banner (Tabby, Tamara)",
+      "live": true
+    },
+    {
+      "name": "Confirmation Hero",
+      "kind": "cmp",
+      "variants": {},
+      "props": [],
+      "desc": "Promo image hero for confirmation screen",
+      "live": true
+    },
+    {
+      "name": "Assigned Professional",
+      "kind": "cmp",
+      "variants": {},
+      "props": [],
+      "desc": "Assigned pro card with Chat/Call",
+      "live": true
+    },
+    {
+      "name": "Kind Banner",
+      "kind": "cmp",
+      "variants": {},
+      "props": [],
+      "desc": "Warm reminder banner",
+      "live": true
+    },
+    {
+      "name": "Booking Details Full",
+      "kind": "cmp",
+      "variants": {},
+      "props": [],
+      "desc": "Full booking summary table",
+      "live": true
     }
   ]
 }
