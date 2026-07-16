@@ -968,7 +968,7 @@ function AppHeader({ title = "Women's Salon", step, nextStep, back = true, searc
 }
 
 // Navbar / App — DS bottom checkout & CTA bar (total · price · Next button · plus banner)
-function NavbarApp({ price = "62.10", oldPrice, discount, subtitle, button = "Next", plusBanner, total = true, homeIndicator = true }) {
+function NavbarApp({ price = "62.10", oldPrice, discount, subtitle, button = "Book service", plusBanner, total = true, homeIndicator = true }) {
   // DS Navbar/App (app/Default): floating white card (radius 16, elevation-xs) on secondary backdrop; elevation-navbar on the bar
   return (
     <div style={{ background: C.bg2, borderTopLeftRadius: 20, borderTopRightRadius: 20, flex: "0 0 auto", filter: "drop-shadow(0 -8px 20px rgba(0,0,0,.10))" }}>
@@ -1065,7 +1065,7 @@ function CustomNode({ n, depth = 0, web = false }) {
     return <div style={{ fontSize: size, fontWeight: (n.w === 600 || n.bold) ? 600 : (n.w === 500 ? 500 : 400), color: tokTx(n.color || "primary"), textAlign: n.align, lineHeight: 1.45 }}>{n.v}</div>;
   }
   if (t === "price") return <Price value={cleanNum(String(n.v ?? "0"))} size={web ? 14 : (n.size === 9 ? 9 : 11)} color={tokTx(n.color || "primary")} />;
-  if (t === "image") return <Img id={n.id} radius={n.r ?? R.md} ph={C.bg3} style={{ width: n.w || "100%", height: n.h || (web ? 140 : 96), objectFit: "cover", flex: n.w ? `0 0 ${n.w}px` : undefined }} />;
+  if (t === "image") return <Img id={n.id} radius={n.r ?? R.md} ph={C.bg3} style={{ width: n.w || "100%", height: Math.min(n.h || (web ? 140 : 96), 240), objectFit: "cover", flex: n.w ? `0 0 ${n.w}px` : undefined }} />;
   if (t === "icon3d") return <Img id={n.id} ph={C.bg3} style={{ width: n.w || 40, height: n.h || 40, objectFit: "contain", transform: "rotate(-10deg)", flex: "0 0 auto" }} />;
   if (t === "pill") {
     const tone = { brand: { bg: C.brandBg, fg: DS.blue.b900 }, success: { bg: DS.success.chip, fg: C.success }, warning: { bg: "#FFF8EE", fg: C.yellowInk }, neutral: { bg: C.bg3, fg: C.text2 }, danger: { bg: C.dangerBg, fg: C.danger } }[n.tone || "brand"] || { bg: C.brandBg, fg: DS.blue.b900 };
@@ -1461,7 +1461,9 @@ function PhoneFrame({ children }) {
   );
 }
 function Screen({ spec, go, back, canBack }) {
-  const nodes = (spec && spec.nodes) || [];
+  let nodes = (spec && spec.nodes) || [];
+  // guardrail: inner pages (with App Header) end with the price bar, never the tab nav
+  if (nodes.some(x => x && x.component === "App Header")) nodes = nodes.map(x => x && x.component === "Navigation Bar" ? { ...x, component: "Navbar / App" } : x);
   const seen = new Set(); const top = [], flow = [], bottom = [];
   for (const n of nodes) {
     if (seen.has(n.component)) continue;
@@ -1539,8 +1541,8 @@ function catalogText(groups, catalog, lite) {
     '- "Payment Method" {method(Visa|Mastercard|Amex|Apple Pay|Google Pay|Tabby|Careem),last4,subtitle,selected}  renders the real brand logo',
     '- "Button" {label,price,variant,size,outline}  variant: primary|secondary|tertiary|danger|pill · size: xs|small|medium|large · outline:true = transparent + colored border/text',
     '- "App Header" {title,step,nextStep,back,search,heart,progress(0-1)}  (TOP screen header; non-home screens; always FIRST)',
-    '- "Navbar / App" {price,oldPrice,discount,subtitle,button,plusBanner,total}  (BOTTOM checkout/CTA bar with price; use for booking/checkout; always LAST)',
-    '- "Navigation Bar" {active}  (BOTTOM tab bar; home screens only; always last)',
+    '- "Navbar / App" {price,oldPrice,discount,subtitle,button,plusBanner,total}  (BOTTOM checkout/CTA bar with price; use on ANY service-detail, booking, add-service or checkout screen (any screen that has an App Header) as the bottom bar; shows price + an Add service / Book service button; always LAST)',
+    '- "Navigation Bar" {active}  (BOTTOM tab bar; ONLY on the home/landing screen. NEVER on a service-detail, booking, add-service or checkout screen - those end with Navbar / App as the bottom bar instead; always last)',
   ];
   if (groups) {
     const { svc, ava, addon } = photoLists(groups);
