@@ -191,6 +191,29 @@ function ServiceGrid({ title = "Our Services", action = "See All", items }) {
 }
 
 // Service Card — bg secondary, radius 20
+function SectionRow({ title = "General Cleaning", action = "See all", cards = [] }) {
+  const list = cards.length ? cards : [{ title: "Home Cleaning" }, { title: "Furniture Cleaning" }, { title: "Deep Cleaning" }];
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ fontSize: 16, fontWeight: 700, color: C.text }}>{title}</div>
+        {action && <div style={{ fontSize: 13, fontWeight: 600, color: DS.blue.b900 }}>{action}</div>}
+      </div>
+      <div style={{ display: "flex", gap: 12, overflowX: "auto", paddingBottom: 4 }}>
+        {list.map((card, i) => (
+          <div key={i} style={{ flex: "0 0 150px", width: 150, display: "flex", flexDirection: "column", gap: 6 }}>
+            <div style={{ position: "relative" }}>
+              <Img id={card.image} radius={R.lg} ph={C.bg3} style={{ width: 150, height: 110, objectFit: "cover" }} />
+              {card.tag && <span style={{ position: "absolute", top: 8, left: 8, background: DS.blue.b900, color: "#fff", fontSize: 10, fontWeight: 600, padding: "3px 8px", borderRadius: 999 }}>{card.tag}</span>}
+            </div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: C.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{card.title || "Service"}</div>
+            {card.subtitle && <div style={{ fontSize: 12, color: C.text3 }}>{card.subtitle}</div>}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 function ServiceCard({ image, title = "Summer Ready Combo", duration = "120 min", desc = "A combo of classic manicure and pedicure treatment for perfect clean nails", price = "100", oldPrice = "399.00", cta = "Add" }) {
   return (
     <div style={{ background: C.bg2, borderRadius: R.xl, padding: "12px 16px", display: "flex", flexDirection: "column", gap: 10 }}>
@@ -1112,7 +1135,7 @@ function GenericDSCard({ __name = "Component", ...props }) {
 // ---- registry ----
 const LIVE = {
   "Input/SearchMobile": { c: SearchBar }, "Input/Search": { c: SearchBar }, "SearchBar": { c: SearchBar },
-  "Hero Banner": { c: HeroBanner }, "Homepage Section": { c: ServiceGrid }, "Section Header": { c: SectionHeader },
+  "Hero Banner": { c: HeroBanner }, "Homepage Section": { c: ServiceGrid }, "Section Row": { c: SectionRow }, "Section Header": { c: SectionHeader },
   "Service Card": { c: ServiceCard }, "Product Card": { c: ProductCard }, "Cashback Card": { c: CashbackCard },
   "Combo Selection": { c: ComboSelection }, "Selectable Item": { c: SelectableItem }, "Plan Booking Card": { c: PlanBookingCard },
   "Rating Summary": { c: RatingSummary }, "Tag": { c: FilterChips }, "Category Card": { c: FilterChips }, "Filters": { c: FilterChips },
@@ -1509,6 +1532,7 @@ function catalogText(groups, catalog, lite) {
     '- "Input/SearchMobile" {placeholder}',
     '- "Hero Banner" {title,subtitle,cta,discount,image(photo id)}',
     '- "Homepage Section" {title,action,items:[{label,icon(3D icon id),tag}]}  (services grid of tiles)',
+    '- "Section Row" {title,action,cards:[{image(photo id),title,subtitle,tag}]}  (titled section with a horizontal scroll of photo cards; use MANY on the home screen - one per category, plus Top offers and Top picks)',
     '- "Service Card" / "Product Card" {title,duration,desc,price,oldPrice,cta(Add|Select),image(photo id)}',
     '- "Combo Selection" {title,price,oldPrice,control(checkbox|radio),selected,image(photo id)}',
     '- "Selectable Item" {title,line2,line3,tag,selected,control(radio|checkbox)}  address/list row; tag e.g. "Default address" (brand)',
@@ -1572,14 +1596,14 @@ RULES:
 2. Output STRICT JSON ONLY: {"title":string,"nodes":[{"component":<name>,"props":{...}}]}. No markdown.
 3. Prices are NUMBERS ONLY (e.g. "149" or "149.00") — never include "AED"/"Dh"; the Dirham mark is added automatically.
 4. MATCH SCREEN TYPE — include only what fits:
-   - Home -> "Input/SearchMobile", "Hero Banner", "Homepage Section", maybe 1 "Service Card", then "Navigation Bar" (last). NO App Header on home.
+   - Home -> "Input/SearchMobile", "Hero Banner", "Homepage Section", then 6-10 "Section Row" (Top offers, Top picks, and one per category), then "Navigation Bar" (last). NO App Header on home.
    - Services list -> "App Header" (first), "Tag" (filters), 2-3 distinct "Service Card"/"Product Card", optional "Rating Summary". No banner/grid/search unless asked.
    - Booking -> "App Header" (first), "Subscription Schedule" or "Frequency Option", "Add-ons Card", "Combo Selection" (1-3), "Special Instructions", end "Navbar / App" (with price). No banner/grid/search.
    - Checkout -> "App Header" (first), "Booking Details — Variants", "Price Details — Variants", "Payment Method", end "Navbar / App" (with price+total+discount). No search/banner.
    - Bookings/subscriptions list -> "App Header", "Plan Booking Card" (1-3, varied status). Address/list -> "Selectable Item".
-5. Use each component name AT MOST ONCE (except Plan Booking Card / Service Card where a few distinct ones are fine). 4-8 nodes. "App Header" always FIRST when used; "Navigation Bar"/"Navbar / App" always LAST. Prefer "Navbar / App" (price CTA) over plain "Button" on booking/checkout.
+5. Use each component name AT MOST ONCE (except Plan Booking Card / Service Card where a few distinct ones are fine). 4-8 nodes on inner pages; HOME may have up to ~14 nodes (many Section Rows). "App Header" always FIRST when used; "Navigation Bar"/"Navbar / App" always LAST. Prefer "Navbar / App" (price CTA) over plain "Button" on booking/checkout.
 8. HOME vs INNER pages (strict):
-   - HOME screen = search bar + Hero Banner + Homepage Section grid + "Navigation Bar" (tab bar) LAST. NEVER put "App Header" or "Navbar / App" on Home — keep it exactly as is.
+   - HOME screen = search bar + Hero Banner + Homepage Section (icon grid) + MANY "Section Row" (6-10 titled photo-card rows: Top offers, Top picks, then one per category like General Cleaning, Salon & Spa, Handyman, Healthcare, AC Cleaning, Pest Control) + "Navigation Bar" (tab bar) LAST. Make Home RICH and long. NEVER put "App Header" or "Navbar / App" on Home — keep it exactly as is.\n\nCANONICAL SCREENS (when the user asks to generate one of these by name, reproduce this EXACT component order and content; change ONLY what the prompt explicitly asks for):\n- FREQUENCY: "App Header" {title:"Frequency"} + "Frequency Option" {options:[{label:"One Time",discount:"10% OFF",bullets:["Perfect pick for an uncertain schedule.","Pay once, with no commitment."]},{label:"Recurring",discount:"25% OFF",bullets:["Flexible, ongoing cleaning.","Pay after each service, no upfront cost."],tabs:["Weekly","Every Two Weeks"],days:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],banner:"Yaay! You've earned 10% discount. Unlock up to 25% by booking more days!"},{label:"Monthly Subscription",discount:"40% OFF",bullets:["Get the same professional every week.","Pause or cancel anytime you want."]}],active:1} + "Justlife Promise" {items:[{title:"More Days, More Savings!",desc:"Save up to 40% based on your plan"},{title:"Reschedule or Cancel Anytime",desc:"Total flexibility at your fingertips!"}]} + "Button" {label:"Next",variant:"secondary"}.\n- HOME CLEANING: "App Header" {title:"Home Cleaning"} + "Selectable Item / Number Box" {label:"How many hours do you need your professional to stay?",count:7,active:1} + "Selectable Item / Number Box" {label:"How many professionals do you need?",count:3,active:1} + "Selectable Item / Pill" {label:"Need cleaning materials?",options:["No, I have them","Yes, please"],active:0,poweredBy:true,info:true} + "Special Instructions" {label:"Any specific instructions?",action:"Add"} + "Navbar / App" {price:"79.20",oldPrice:"88.00",button:"Next"}.\n- POPULAR ADD-ONS: "App Header" {title:"Popular Add-ons"} + "Add-ons Card" {layout:"grid",items:[six {name:"Balcony Cleaning",price:"15",oldPrice:"10"} with the first selected qty 1]} + "Disclaimer" {message:"The duration of the session may change based on your selection.",type:"neutral",button:"Details"} + "Navbar / App" {price:"79.20",oldPrice:"88.00",button:"Next"}.\n- DATE & TIME: "App Header" {title:"Date & Time"} + "Frequency Summary" {title:"Frequency",value:"One Time Service",change:"Change"} + "Professional Chooser" {title:"Which professional do you prefer?",active:1} + "Selectable Item / Date" {label:"When would you like your service?",items:[five {day:"Thu",date:"11 Feb"}],active:1} + "Selectable Item / Time Slot with Tag" {label:"What time would you like us to start?",items:[{time:"08:30-09:00",tag:"5 EXTRA",tagType:"extra"},{time:"08:30-09:00"},{time:"08:30-09:00"},{time:"08:30-09:00"}],active:2} + "Disclaimer" {message:"Enjoy free cancellation up to 6 hours before your booking start time.",type:"neutral",button:"Details"} + "Navbar / App" {price:"79.20",oldPrice:"88.00",button:"Next"}.\n- CHECKOUT: "App Header" {title:"Checkout"} + "BNPL" {provider:"Tabby",subtitle:"Pay in 4 interest-free payments"} + "Payment Method" {brand:"Apple Pay",method:"apple pay",selected:true} + "Info Card" {text:"The session amount will be reserved on your card. You will be charged once the session is completed.",tone:"info"} + "Voucher Wallet" {voucher:"Voucher Code",wallet:"No Available Credit"} + "Price Details \u2014 Variants" {title:"Payment Summary",rows:[{label:"Subtotal",value:"88.00"},{label:"Amazon Card Discount",value:"8.80",discount:true},{label:"Service Fee",value:"9.00"}],total:"88.20",totalLabel:"Total (inc. VAT)"} + "Navbar / App" {price:"88.20",oldPrice:"97.00",button:"Complete"}.\n- THANK YOU / BOOKING STATUS: "Confirmation Hero" {badge:"30% off up to AED 100",title:"Solo or duo Massages & facials right at home.",cta:"Book Now",cta2:"Save for Later"} + "Booking Status" {type:"confirmed",pro:"Leila Mary"} (use type "in-progress" or "professional assigned" if the prompt asks) + "Kind Banner" {text:"Show kind gestures, they go a long way"} + "Booking Details Full" {rows:[{label:"Status",value:"Confirmed",tone:"success"},{label:"Reference code",value:"043DD43"},{label:"Service",value:"Women's Salon"},{label:"Frequency",value:"One time"},{label:"Date & Time",value:"7 Jul 2022, 09:00-09:30"},{label:"Duration",value:"2 Hours, 3 Cleaners"},{label:"Material",value:"No"},{label:"Total (Inc VAT)",value:"600",price:true,bold:true},{label:"Payment Method",value:"Visa **** 0021",payLogo:"visa"}],actions:[{label:"Edit this booking only"},{label:"Manage subscription"}]} + "Price Details" {rows:[{label:"Subtotal",value:"78.00"},{label:"Discount",value:"9.00",discount:true},{label:"Service Fee",value:"9.00"}],total:"219.00",totalLabel:"Total (inc. VAT)",payment:{method:"visa",last4:"0021"},footer:"Show Receipt"}.
    - INNER pages (services list, booking, checkout, details, address) = start with "App Header", and on booking/checkout end with "Navbar / App". These two are INNER-PAGE ONLY and must never appear on Home.
 6. Prefer the detailed CATALOG components (faithful renderers). OTHER DS COMPONENTS are valid too but render as labeled placeholder cards — use them only when clearly relevant.
 7. SEPARATION (native Justlife funnel): "Frequency Option", "Add-ons Card" and Date/Time pickers are SEPARATE steps — never put more than ONE of these three on the same screen unless the user explicitly asks for a combined screen.
@@ -1850,7 +1874,7 @@ JUSTLIFE FUNNEL STRUCTURE (match the native app QA exactly) — one concern per 
  "checkout": App Header + "BNPL" (Tabby) + "Payment Method" (selected, with Details disclaimer) + "Voucher Wallet" + "Price Details — Variants" (named discount rows) + Navbar/App (button "Complete")
  "confirmation": "Confirmation Hero" + "Assigned Professional" + "Kind Banner" + "Booking Details Full" + "Price Details — Variants" (with "Show Receipt")
 NEVER combine frequency + date/time + add-ons on one screen. Pick the 3-5 most relevant steps for the request. Links use ONLY component names from the list. Typical links: "Homepage Section"->services, "Service Card"->booking, "Navbar / App"->next step, final screen may have "Button"->home. NEVER link "App Header". ids: home, services, booking, checkout, confirmation.`;
-    const names = 'COMPONENT NAMES: Input/SearchMobile, Hero Banner, Homepage Section, Service Card, Product Card, Combo Selection, Selectable Item, Selectable Item / Date, Selectable Item / Time Slot with Tag, Selectable Item / Number Box, Disclaimer, Booking Status, Info Card, Plan Booking Card, Cashback Card, Rating Summary, Tag, Add-ons Card, Frequency Option, Subscription Schedule, Quantity Stepper, Special Instructions, Booking Details — Variants, Price Details — Variants, Payment Method, Button, App Header, Navbar / App, Navigation Bar';
+    const names = 'COMPONENT NAMES: Input/SearchMobile, Hero Banner, Homepage Section, Service Card, Product Card, Combo Selection, Selectable Item, Selectable Item / Date, Selectable Item / Time Slot with Tag, Selectable Item / Number Box, Disclaimer, Booking Status, Info Card, Plan Booking Card, Cashback Card, Rating Summary, Tag, Add-ons Card, Frequency Option, Subscription Schedule, Quantity Stepper, Special Instructions, Booking Details — Variants, Price Details — Variants, Payment Method, Button, Section Row, App Header, Navbar / App, Navigation Bar';
     const plan = await callAI(planSys, `${names}\n\nUSER REQUEST: "${text}"\n\nReturn ONLY the JSON.`, 1400);
     const screens = (plan.screens || []).slice(0, 5).map(sc => ({ id: String(sc.id || "").trim() || "screen", title: sc.title || sc.id, nodes: [], pending: true }));
     if (!screens.length) throw new Error("EMPTY");
